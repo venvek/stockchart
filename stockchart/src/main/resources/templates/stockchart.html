@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Chart</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        canvas {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <h1 th:text="'Stock Chart for ' + ${ticker}"></h1>
+    <canvas id="stockChart"></canvas>
+    
+    <script>
+        $(document).ready(function() {
+            const stockData = /*[[${stockData}]]*/ [];
+
+            const ctx = document.getElementById('stockChart').getContext('2d');
+            const labels = stockData.map(data => data.date);
+            const closePrices = stockData.map(data => data.close);
+            const volumes = stockData.map(data => data.volume);
+
+            const stockChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Close Price',
+                            data: closePrices,
+                            borderColor: 'blue',
+                            borderWidth: 2,
+                            fill: false
+                        },
+                        {
+                            label: 'Volume',
+                            data: volumes,
+                            borderColor: 'orange',
+                            borderWidth: 2,
+                            type: 'bar',
+                            backgroundColor: 'rgba(255, 165, 0, 0.3)',
+                            yAxisID: 'volume'
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                        volume: {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Volume'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                        },
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
