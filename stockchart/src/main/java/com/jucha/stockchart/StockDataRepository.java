@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface StockDataRepository extends JpaRepository<StockData, Integer> {
     List<StockData> findAllByTicker(String ticker);
     List<StockData> findByTickerOrderByDateAsc(String ticker);
+    List<StockData> findByTicker(String ticker);
 }

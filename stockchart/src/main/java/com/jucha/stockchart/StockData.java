@@ -22,12 +22,22 @@ public class StockData {
     private Float dividends;
     private Float stockSplits;
     private String ticker;
+    private String formattedDate; // New field for formatted date
+
+    // Getters and Setters
+    public String getFormattedDate() {
+        return formattedDate;
+    }
+
+    public void setFormattedDate(String formattedDate) {
+        this.formattedDate = formattedDate;
+    }
 
     // 기본 생성자
     public StockData() {}
 
     // 생성자
-    public StockData(Date date, Float open, Float high, Float low, Float close, Long volume, Float dividends, Float stockSplits, String ticker) {
+    public StockData(Date date, Float open, Float high, Float low, Float close, Long volume, Float dividends, Float stockSplits, String ticker, String formattedDate ) {
         this.date = date;
         this.open = open;
         this.high = high;
@@ -37,7 +47,11 @@ public class StockData {
         this.dividends = dividends;
         this.stockSplits = stockSplits;
         this.ticker = ticker;
+        this.formattedDate = formattedDate;
+        
     }
+    
+
 
     // Getter 및 Setter 메서드
     public Integer getId() {

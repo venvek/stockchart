@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Stock Chart</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h1>Stock Data for <span th:text="${param.ticker}"></span></h1>
+    
+    
+<canvas id="stockChart" width="400" height="400"></canvas>
+
+
+</body>
+<script>
+    var stockDataList = /*[[${stockDataList}]]*/ [];
+
+    console.log("stockdata" +stockDataList); // Debug line to check the data
+
+    // Prepare data for the chart
+    var labels = stockDataList.map(stock => stock.formattedDate); // Use the formatted date
+    console.log("labels" + labels)
+    var closePrices = stockDataList.map(stock => stock.close); // Close prices
+	console.log("close" + closePrices);
+    // Create the chart
+    var ctx = document.getElementById('stockChart').getContext('2d');
+    var stockChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Close Price',
+                data: closePrices,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                }
+            }
+        }
+    });
+</script>
+
+
+
+
+</html>
