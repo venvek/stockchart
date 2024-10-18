@@ -59,4 +59,9 @@ public class StockDataController {
     	return "mainpage";
     }
     
+    @GetMapping("login")
+    public String loginpage() {
+    	return "login";
+    }
+    
 }
