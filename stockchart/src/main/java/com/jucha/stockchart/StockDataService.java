@@ -1,31 +1,36 @@
 package com.jucha.stockchart;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import DTO.StockDataDTO;
+import Entity.Stock_Data;
 
 import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import java.util.stream.Collectors;
 
 @Service
 public class StockDataService {
 
-	@Autowired
-	private StockDataRepository stockDataRepository;
+	private final StockDataRepo repository;
 
-	public List<StockData> getStockDataByTicker(String ticker) {
-		return stockDataRepository.findByTickerOrderByDateAsc(ticker);
-	}
+	 @Autowired
+	    public StockDataService(StockDataRepo repository) {
+	        this.repository = repository;
+	    }
 
-	public List<StockData> getStockData(String ticker) {
-
-		return stockDataRepository.findByTicker(ticker); // Custom query method
-	}
+		/*
+		 * public List<StockDataDTO> getData(String ticker) { List<Stock_Data>
+		 * stockDataList = repository.findByCompany_TickerOrderByDateAsc(ticker);
+		 * List<StockDataDTO> stockDataDTOList = stockDataList.stream() .map(stock_Data
+		 * -> new StockDataDTO(stock_Data.getDate(), stock_Data.getOpen(),
+		 * stock_Data.getHigh(), stock_Data.getLow(), stock_Data.getClose(),
+		 * stock_Data.getVolume(), stock_Data.getDividends(),
+		 * stock_Data.getStockSplits(), stock_Data.getTicker()))
+		 * .collect(Collectors.toList()); return stockDataDTOList;
+		 * 
+		 * }
+		 */
+	public List<Stock_Data> getStockDataByTicker(String ticker) {
+        return repository.findByTickerOrderByDateAsc(ticker);
+    }
 }
