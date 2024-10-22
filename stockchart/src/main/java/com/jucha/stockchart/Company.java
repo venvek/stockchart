@@ -1,4 +1,4 @@
-package Entity;
+package com.jucha.stockchart;
 
 
 import jakarta.persistence.Column;
@@ -7,7 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -23,8 +22,8 @@ public class Company {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(name = "ticker", nullable = false, unique = true, length = 20)
-    private String ticker;
+    @Column(nullable = false, unique = true)
+    private String ticker; 
 
     @Column(name = "sector", length = 100)
     private String sector;
@@ -98,5 +97,5 @@ public class Company {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-   
+  
 }

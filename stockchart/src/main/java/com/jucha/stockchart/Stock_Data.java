@@ -1,4 +1,4 @@
-package Entity;
+package com.jucha.stockchart;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -37,10 +37,9 @@ public class Stock_Data {
     @Column(name = "stock_splits", precision = 15, scale = 2)
     private BigDecimal stockSplits;
 
-    //@ManyToOne
-    //@JoinColumn(name = "ticker", referencedColumnName = "ticker")
-    @Column(name = "ticker", nullable = false )
-    private String ticker;  // Assuming Company is another Entity representing the company table.
+    @ManyToOne
+    @JoinColumn(name = "ticker", referencedColumnName = "ticker")
+    private Company company;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -125,12 +124,12 @@ public class Stock_Data {
         this.stockSplits = stockSplits;
     }
 
-    public String getTicker() {
-        return ticker ;
+    public Company getCompany() {
+        return company ;
     }
 
-    public void setTicker(String ticker) {
-        this.ticker = ticker;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public LocalDateTime getCreatedAt() {

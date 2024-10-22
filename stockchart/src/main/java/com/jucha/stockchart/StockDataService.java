@@ -2,21 +2,14 @@ package com.jucha.stockchart;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import DTO.StockDataDTO;
-import Entity.Stock_Data;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class StockDataService {
-
-	private final StockDataRepo repository;
-
-	 @Autowired
-	    public StockDataService(StockDataRepo repository) {
-	        this.repository = repository;
-	    }
+	
+	@Autowired
+	private StockDataRepo repository;
 
 		/*
 		 * public List<StockDataDTO> getData(String ticker) { List<Stock_Data>
@@ -31,6 +24,6 @@ public class StockDataService {
 		 * }
 		 */
 	public List<Stock_Data> getStockDataByTicker(String ticker) {
-        return repository.findByTickerOrderByDateAsc(ticker);
+        return repository.findByCompany_TickerOrderByDateAsc(ticker);
     }
 }
