@@ -34,4 +34,7 @@ public class StockDataController {
     public List<Stock_Data> getStockData(@PathVariable String ticker) {
         return stockDataService.getStockDataByTicker(ticker);
     }
+
+    
+    
 }
