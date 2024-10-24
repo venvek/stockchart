@@ -3,47 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Chart</title>
+    <title>Stock Chart for [[${ticker}]]</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Stock Chart for <span id="stockTicker"></span></h1>
+    <h1>Stock Chart for [[${ticker}]]</h1>
     <canvas id="stockChart" width="400" height="200"></canvas>
 
-    <script>
-        const ticker = [[${ticker}]]; 
-        document.getElementById('stockTicker').innerText = ticker;
+    <script th:inline="javascript">
+        // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
+        var stockDataList = /*[[${stockDataList}]]*/ [];
 
+        // Extract the dates and close prices from stock data
+        const labels = stockDataList.map(stock => stock.date);
+        const closePrices = stockDataList.map(stock => stock.close);
+
+        // Create the chart using Chart.js
         const ctx = document.getElementById('stockChart').getContext('2d');
-
-        fetch(`/api/stock-data/${ticker}`)  
-            .then(response => response.json())
-            .then(data => {
-                const labels = data.map(stock => stock.date);
-                const closePrices = data.map(stock => stock.close);
-
-                const stockChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Close Price',
-                            data: closePrices,
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: false
-                            }
-                        }
+        const stockChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,  // X-axis: Dates
+                datasets: [{
+                    label: 'Close Price',
+                    data: closePrices,  // Y-axis: Close prices
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false
                     }
-                });
-            })
-            .catch(error => console.error('Error fetching stock data:', error));
+                }
+            }
+        });
     </script>
 </body>
 </html>
