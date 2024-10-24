@@ -20,7 +20,7 @@ public class StockDataController {
     	return "mainpage";
     }
     
-    @GetMapping("login")
+    @GetMapping("/login")
     public String loginpage() {
     	return "login";
     }
@@ -34,7 +34,11 @@ public class StockDataController {
     public List<Stock_Data> getStockData(@PathVariable String ticker) {
         return stockDataService.getStockDataByTicker(ticker);
     }
-
+    
+    @GetMapping("/join")
+    public String joinpage() {
+    	return "joinpage";
+    }
     
     
 }

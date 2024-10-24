@@ -11,12 +11,12 @@
     <canvas id="stockChart" width="400" height="200"></canvas>
 
     <script>
-        const ticker = [[${ticker}]];  // 서버에서 전달된 티커
+        const ticker = [[${ticker}]]; 
         document.getElementById('stockTicker').innerText = ticker;
 
         const ctx = document.getElementById('stockChart').getContext('2d');
 
-        fetch(`/api/stock-data/${ticker}`)  // REST API로 주식 데이터 요청
+        fetch(`/api/stock-data/${ticker}`)  
             .then(response => response.json())
             .then(data => {
                 const labels = data.map(stock => stock.date);
