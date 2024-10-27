@@ -34,17 +34,17 @@
                         borderColor: 'rgba(86, 229, 245, 1)',
                         backgroundColor: 'rgba(86, 229, 245, 0.2)',
                         borderWidth: 2,
-                        yAxisID: 'price-axis',
+                        yAxisID: 'price-axis', // Connects to the 'price-axis'
                         fill: false
                     },
                     {
                         label: 'Volume',
-                        data: volumes.map(v => v / 1000000),
+                        data: volumes.map(v => v / 1000000), // Adjust volume scale
                         type: 'bar', // Bar chart for volume
                         backgroundColor: 'rgba(135, 138, 136, 0.5)',
                         borderColor: 'rgba(135, 138, 136, 1)',
-                        borderWidth: 1,
-                        yAxisID: 'volume-axis'
+                        borderWidth: 0.5,
+                        yAxisID: 'volume-axis' // Connects to the 'volume-axis'
                     }
                 ]
             },
@@ -53,29 +53,27 @@
                     x: {
                         beginAtZero: true
                     },
-                    y: {
-                        price: {
-                            type: 'linear',
-                            position: 'right', // 주가를 오른쪽으로 배치
-                            title: {
-                                display: true,
-                                text: 'Price'
-                            },
-                            grid: {
-                                drawOnChartArea: false // 주가 축에서 그리드 라인이 그려지지 않도록
-                            }
+                    'price-axis': { // Define the price axis explicitly
+                        type: 'linear',
+                        position: 'right', // 주가를 오른쪽에 배치
+                        title: {
+                            display: true,
+                            text: 'Price'
                         },
-                        volume: {
-                            type: 'linear',
-                            position: 'left', // 거래량을 왼쪽으로 배치
-                            title: {
-                                display: true,
-                                text: 'Volume'
-                            },
-                            suggestedMax: Math.max(...closePrices) / 2, // 주가의 절반으로 최대값 설정
-                            ticks: {
-                                beginAtZero: true
-                            }
+                        grid: {
+                            drawOnChartArea: false // 주가 축에서 그리드 라인이 그려지지 않도록
+                        }
+                    },
+                    'volume-axis': { // Define the volume axis explicitly
+                        type: 'linear',
+                        position: 'left', // 거래량을 왼쪽으로 배치
+                        title: {
+                            display: true,
+                            text: 'Volume (in millions)'
+                        },
+                        suggestedMax: Math.max(...volumes.map(v => v / 1000000)) / 2, // 거래량의 절반 크기로 설정
+                        ticks: {
+                            beginAtZero: true
                         }
                     }
                 }
