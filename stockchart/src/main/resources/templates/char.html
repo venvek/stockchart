@@ -23,7 +23,7 @@
         // Create the chart using Chart.js
         const ctx = document.getElementById('stockChart').getContext('2d');
         const stockChart = new Chart(ctx, {
-            type: 'bar', // Base type is 'bar' for volume, line will be added in datasets
+            type: 'line', // Base type is 'bar' for volume, line will be added in datasets
             data: {
                 labels: labels,
                 datasets: [
