@@ -24,4 +24,13 @@ public class StockhtmlController {
 		model.addAttribute("ticker", ticker);
 		return "char";
 	}
+	
+	@GetMapping("/candle/{ticker}")
+	public String showStockcandleChart(@PathVariable String ticker, Model model) {
+		List<Stock_Data> stockDataList = stockDataService.getStockDataByTicker(ticker);
+
+		model.addAttribute("stockDataList", stockDataList);
+		model.addAttribute("ticker", ticker);
+		return "candlechart";
+	}
 }
