@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Chart for [[${ticker}]]</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial/dist/chartjs-chart-financial.min.js"></script>
+</head>
+<body>
+    <h1>Stock Chart for [[${ticker}]]</h1>
+    <canvas id="stockChart" width="300" height="200"></canvas>
+
+    <script th:inline="javascript">
+        // 주식 데이터와 지표 데이터를 JavaScript로 전달
+        var stockDataList = /*[[${stockDataList}]]*/ [];
+        console.log("stockDataList: ", stockDataList);
+
+        // OHLC 데이터 추출 (날짜, 시가, 고가, 저가, 종가)
+        const ohlcData = stockDataList.map(stock => ({
+            t: stock.date,   // 날짜
+            o: stock.open,   // 시가
+            h: stock.high,   // 고가
+            l: stock.low,    // 저가
+            c: stock.close   // 종가
+        }));
+
+        // 거래량 데이터 추출
+        const volumes = stockDataList.map(stock => stock.volume / 1000000);  // 거래량을 백만 단위로 변환
+
+        console.log("ohlcData: ", ohlcData);
+        console.log("volumes: ", volumes);
+
+        // Chart.js 캔들 차트 및 거래량 막대 차트
+        const ctx = document.getElementById('stockChart').getContext('2d');
+        const stockChart = new Chart(ctx, {
+            type: 'candlestick',  // 캔들 차트
+            data: {
+                datasets: [{
+                    label: 'Stock Price',
+                    data: ohlcData,  // OHLC 데이터
+                    yAxisID: 'price-axis',
+                    borderColor: 'rgba(86, 229, 245, 1)',
+                    backgroundColor: 'rgba(86, 229, 245, 0.2)',
+                }, {
+                    label: 'Volume',
+                    data: volumes,  // 거래량 데이터
+                    type: 'bar',  // 막대 차트
+                    backgroundColor: 'rgba(135, 138, 136, 0.5)',
+                    borderColor: 'rgba(135, 138, 136, 1)',
+                    borderWidth: 1,
+                    yAxisID: 'volume-axis',  // 거래량용 y축
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',  // 날짜형 x축
+                        time: {
+                            unit: 'day',  // 일 단위로 표시
+                        }
+                    },
+                    y: {
+                        'price-axis': {
+                            type: 'linear',
+                            position: 'right',  // 가격 y축은 오른쪽에 표시
+                            title: {
+                                display: true,
+                                text: 'Price'
+                            }
+                        },
+                        'volume-axis': {
+                            type: 'linear',
+                            position: 'left',  // 거래량 y축은 왼쪽에 표시
+                            title: {
+                                display: true,
+                                text: 'Volume (in millions)'
+                            },
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
