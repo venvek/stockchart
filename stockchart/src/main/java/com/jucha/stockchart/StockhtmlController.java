@@ -41,6 +41,7 @@ public class StockhtmlController {
         // 모델에 데이터 추가
         model.addAttribute("stockDataList", stockIndicatorResponse.getStockData());
         model.addAttribute("indicatorList", stockIndicatorResponse.getIndicators());
+        model.addAttribute("ticker", ticker);
 
         // Thymeleaf 템플릿으로 반환
         return "indicator";

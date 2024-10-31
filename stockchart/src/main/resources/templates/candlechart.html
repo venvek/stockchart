@@ -10,82 +10,111 @@
 </head>
 <body>
     <h1>Stock Chart for [[${ticker}]]</h1>
-    <canvas id="stockChart" width="300" height="200"></canvas>
+    <canvas id="stockChart" width="1000" height="1000"></canvas>
 
     <script th:inline="javascript">
         // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
         var stockDataList = /*[[${stockDataList}]]*/ [];
         console.log("stockDataList" + stockDataList);
+	
         
-       
-        // Extract the dates and close prices from stock data
-        const labels = stockDataList.map(stock => stock.date);
+        
+        const lineData = stockDataList.map(stock => ({
+            x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
+            y: stock.close,  // Closing price
+        }));
         
         const ohlcData = stockDataList.map(stock => ({
-            t: stock.date,   // Date or timestamp
+        	t: new Date(stock.date.replace(" ", "T")),   // Date or timestamp
             o: stock.open,   // Opening price
             h: stock.high,   // High price
             l: stock.low,    // Low price
             c: stock.close   // Closing price
         }));
         
-        const volumes = stockDataList.map(stock => stock.volume); 
-        console.log("ohlcData" + ohlcData);
+        const volumes = stockDataList.map(stock => ({
+            x: new Date(stock.date).toISOString(),
+            y: stock.volume
+        }));
+        
+        console.log("ohlcData:", JSON.stringify(ohlcData, null, 2));
+        console.log("Length of ohlcData:", ohlcData.length); // 길이 확인
+        
         console.log("volumes" + volumes);
+        
+        console.log(Math.max(...volumes.map(v => v.y))); 
         // Create the chart using Chart.js
-        const ctx = document.getElementById('stockChart').getContext('2d');
-        const stockChart = new Chart(ctx, {
-            type: 'candlestick', // Base type is 'bar' for volume, line will be added in datasets
-            data: {       
-            	datasets: [{
+    window.onload = function() {
+
+    const ctx = document.getElementById('stockChart').getContext('2d');
+    
+    const stockChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
                     label: 'Stock Price',
-                    data: ohlcData,  // OHLC 데이터
+                    data: lineData,
                     yAxisID: 'price-axis',
                     borderColor: 'rgba(86, 229, 245, 1)',
                     backgroundColor: 'rgba(86, 229, 245, 0.2)',
-                }, {
+                },
+                {
                     label: 'Volume',
-                    data: volumes, // Volume data for bar chart
-                    type: 'bar', // Bar chart for volume
+                    data: volumes,
+                    type: 'bar',
+                    yAxisID: 'volume-axis',
                     backgroundColor: 'rgba(135, 138, 136, 0.5)',
                     borderColor: 'rgba(135, 138, 136, 1)',
                     borderWidth: 1,
-                    yAxisID: 'volume-axis', // Assign to volume-axis
-                }]
-            },
-            options: {
-                scales: {
-                	x: {
-                        type: 'time',  // x축을 날짜로 설정
-                        time: {
-                            unit: 'day',  // 일 단위로 표시
-                        }
-                    },
-                    y: {
-                        'price-axis': {
-                            type: 'linear',
-                            position: 'right',  // 주가는 오른쪽 y축에 표시
-                            title: {
-                                display: true,
-                                text: 'Price'
-                            }
-                        },
-                        'volume-axis': {
-                            type: 'linear',
-                            position: 'left',  // 거래량은 왼쪽 y축에 표시
-                            title: {
-                                display: true,
-                                text: 'Volume (in millions)'
-                            },
-                            suggestedMax: Math.max(...volumes) / 2,  // 거래량의 최대값 설정
-                            ticks: {
-                                beginAtZero: true
-                            }
+                    categoryPercentage: 0.5 // 카테고리 너비를 조절
+                }
+            ]
+        },
+        options: {
+            scales: {
+            	x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        tooltipFormat: 'yyyy-MM-dd',  // 툴팁에 표시할 형식
+                        displayFormats: {
+                            day: 'yyyy-MM-dd'
                         }
                     }
+                },
+                'price-axis': {
+                    type: 'linear',
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Price'
+                    },
+                },
+                'volume-axis': {
+                type: 'linear',
+                position: 'left', // 거래량 y축은 왼쪽에 위치
+                title: {
+                    display: true,
+                    text: 'Volume (in millions)'
+                },
+                suggestedMax: Math.max(...volumes.map(v => v.y)) / 2,
+                ticks: {
+                    beginAtZero: true,
+                    padding: 10 // y축 위쪽의 패딩을 줄임
+                },
+                grid: {
+                    drawBorder: false, // 그리드 라인 숨기기
+                    lineWidth: 1, 
+                    tickMarkLength: 5,
+                    
+                }
                 }
             }
-        });
+        }
+    });
+};
+
     </script>
 </body>
 </html>

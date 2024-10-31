@@ -10,81 +10,187 @@
 </head>
 <body>
     <h1>Stock Chart for [[${ticker}]]</h1>
-    <canvas id="stockChart" width="300" height="200"></canvas>
+    <canvas id="stockChart" width="1000" height="1000"></canvas>
 
     <script th:inline="javascript">
-        // 주식 데이터와 지표 데이터를 JavaScript로 전달
+        // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
         var stockDataList = /*[[${stockDataList}]]*/ [];
-        console.log("stockDataList: ", stockDataList);
-
-        // OHLC 데이터 추출 (날짜, 시가, 고가, 저가, 종가)
+        var indicatorList = /*[[${indicatorList}]]*/ [];
+        
+        console.log("stockDataList" + stockDataList);
+        console.log("stockDataList" + indicatorList);
+	
+        
+        
+        const lineData = stockDataList.map(stock => ({
+            x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
+            y: stock.close,  // Closing price
+        }));
+        
         const ohlcData = stockDataList.map(stock => ({
-            t: stock.date,   // 날짜
-            o: stock.open,   // 시가
-            h: stock.high,   // 고가
-            l: stock.low,    // 저가
-            c: stock.close   // 종가
+        	t: new Date(stock.date.replace(" ", "T")),   // Date or timestamp
+            o: stock.open,   // Opening price
+            h: stock.high,   // High price
+            l: stock.low,    // Low price
+            c: stock.close   // Closing price
+        }));
+        
+        const volumes = stockDataList.map(stock => ({
+            x: new Date(stock.date).toISOString(),
+            y: stock.volume
+        }));
+        
+        const rsiData = indicatorList.map(stock => ({
+            x: new Date(stock.date), // 날짜
+            y: stock.rsi              // RSI 값
         }));
 
-        // 거래량 데이터 추출
-        const volumes = stockDataList.map(stock => stock.volume / 1000000);  // 거래량을 백만 단위로 변환
+        const macdData = indicatorList.map(stock => ({
+            x: new Date(stock.date),
+            y: stock.macd             // MACD 값
+        }));
 
-        console.log("ohlcData: ", ohlcData);
-        console.log("volumes: ", volumes);
+        const cciData = indicatorList.map(stock => ({
+            x: new Date(stock.date),
+            y: stock.cci              // CCI 값
+        }));
 
-        // Chart.js 캔들 차트 및 거래량 막대 차트
-        const ctx = document.getElementById('stockChart').getContext('2d');
-        const stockChart = new Chart(ctx, {
-            type: 'candlestick',  // 캔들 차트
-            data: {
-                datasets: [{
+        const obvData = indicatorList.map(stock => ({
+            x: new Date(stock.date),
+            y: stock.obv              // OBV 값
+        }));
+
+        const maData = indicatorList.map(stock => ({
+            x: new Date(stock.date),
+            y: stock.ma               // 이동 평균 값
+        }));
+        
+        console.log("ohlcData:", JSON.stringify(ohlcData, null, 2));
+        console.log("Length of ohlcData:", ohlcData.length); // 길이 확인
+        
+        console.log("volumes" + volumes);
+        
+        console.log(Math.max(...volumes.map(v => v.y))); 
+        // Create the chart using Chart.js
+    window.onload = function() {
+
+    const ctx = document.getElementById('stockChart').getContext('2d');
+    
+    const stockChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
                     label: 'Stock Price',
-                    data: ohlcData,  // OHLC 데이터
+                    data: lineData,
                     yAxisID: 'price-axis',
                     borderColor: 'rgba(86, 229, 245, 1)',
                     backgroundColor: 'rgba(86, 229, 245, 0.2)',
-                }, {
+                },
+                {
                     label: 'Volume',
-                    data: volumes,  // 거래량 데이터
-                    type: 'bar',  // 막대 차트
+                    data: volumes,
+                    type: 'bar',
+                    yAxisID: 'volume-axis',
                     backgroundColor: 'rgba(135, 138, 136, 0.5)',
                     borderColor: 'rgba(135, 138, 136, 1)',
                     borderWidth: 1,
-                    yAxisID: 'volume-axis',  // 거래량용 y축
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        type: 'time',  // 날짜형 x축
-                        time: {
-                            unit: 'day',  // 일 단위로 표시
-                        }
-                    },
-                    y: {
-                        'price-axis': {
-                            type: 'linear',
-                            position: 'right',  // 가격 y축은 오른쪽에 표시
-                            title: {
-                                display: true,
-                                text: 'Price'
-                            }
-                        },
-                        'volume-axis': {
-                            type: 'linear',
-                            position: 'left',  // 거래량 y축은 왼쪽에 표시
-                            title: {
-                                display: true,
-                                text: 'Volume (in millions)'
-                            },
-                            ticks: {
-                                beginAtZero: true
-                            }
+                    categoryPercentage: 0.5 // 카테고리 너비를 조절
+                },
+                {
+                    label: 'RSI',
+                    data: rsiData,
+                    type: 'line',
+                    yAxisID: 'rsi-axis', // RSI를 위한 y축
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    fill: false,
+                    pointRadius: 0, // 포인트를 숨기려면 0으로 설정
+                },
+                {
+                    label: 'MACD',
+                    data: macdData,
+                    type: 'line',
+                    yAxisID: 'macd-axis', // MACD를 위한 y축
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    fill: false,
+                    pointRadius: 0,
+                },
+            ]
+        },
+        options: {
+            scales: {
+            	x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        tooltipFormat: 'yyyy-MM-dd',  // 툴팁에 표시할 형식
+                        displayFormats: {
+                            day: 'yyyy-MM-dd'
                         }
                     }
+                },
+                'price-axis': {
+                    type: 'linear',
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Price'
+                    },
+                },
+                'volume-axis': {
+                type: 'linear',
+                position: 'left', // 거래량 y축은 왼쪽에 위치
+                title: {
+                    display: true,
+                    text: 'Volume (in millions)'
+                },
+                suggestedMax: Math.max(...volumes.map(v => v.y)) / 2,
+                ticks: {
+                    beginAtZero: true,
+                    padding: 10 // y축 위쪽의 패딩을 줄임
+                },
+                grid: {
+                    drawBorder: false, // 그리드 라인 숨기기
+                    lineWidth: 1, 
+                    tickMarkLength: 5,
+                    
+                },
+                'rsi-axis': {
+                    type: 'linear',
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'RSI'
+                    },
+                    grid: {
+                        drawOnChartArea: false // 그리드 라인을 차트 영역에 그리지 않음
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        max: 100,
+                        min: 0
+                    },
+                    // 여기에 아래쪽 위치 조정 옵션 추가 가능
+                    suggestedMin: 0,
+                    suggestedMax: 100,
+                },
+                'macd-axis': {
+                    type: 'linear',
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'MACD'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    },
+                },
                 }
             }
-        });
+        }
+    });
+};
+
     </script>
 </body>
 </html>
