@@ -17,8 +17,8 @@
         var stockDataList = /*[[${stockDataList}]]*/ [];
         var indicatorList = /*[[${indicatorList}]]*/ [];
         
-        console.log("stockDataList" + stockDataList);
-        console.log("stockDataList" + indicatorList);
+        console.log("stockDataList" +  JSON.stringify(stockDataList, null, 5));
+        console.log("indicatorList" + JSON.stringify(indicatorList, null, 5));
 	
         
         
@@ -157,7 +157,7 @@
                 },
                 'rsi-axis': {
                     type: 'linear',
-                    position: 'left',
+                    position: 'botoom',
                     title: {
                         display: true,
                         text: 'RSI'
@@ -176,7 +176,7 @@
                 },
                 'macd-axis': {
                     type: 'linear',
-                    position: 'left',
+                    position: 'top',
                     title: {
                         display: true,
                         text: 'MACD'

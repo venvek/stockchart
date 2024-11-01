@@ -30,6 +30,10 @@ public class StockDataService {
         return repository.findByCompany_TickerOrderByDateAsc(ticker);
     }
 	
+	public List<Indicators> getindicatorsByTicker(String ticker) {
+		return indicatorsRepo.findByCompany_TickerOrderByDateAsc(ticker);
+	}
+	
 	public StockIndicatorResponse getStockAndIndicators(String ticker) {
         List<Stock_Data> stockData = repository.findByCompany_TickerOrderByDateAsc(ticker);
         List<Indicators> indicators = indicatorsRepo.findByCompany_TickerOrderByDateAsc(ticker);

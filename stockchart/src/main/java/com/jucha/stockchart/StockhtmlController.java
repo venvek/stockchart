@@ -33,14 +33,15 @@ public class StockhtmlController {
 		model.addAttribute("ticker", ticker);
 		return "candlechart";
 	}
+	
 	@GetMapping("/stocks/{ticker}")
     public String getStockChart(@PathVariable String ticker, Model model) {
         // 주식 데이터와 지표 데이터를 가져옴
-        StockIndicatorResponse stockIndicatorResponse = stockDataService.getStockAndIndicators(ticker);
+		List<Stock_Data> stockDataList = stockDataService.getStockDataByTicker(ticker);
+	    List<Indicators> indicatorList = stockDataService.getindicatorsByTicker(ticker);
 
-        // 모델에 데이터 추가
-        model.addAttribute("stockDataList", stockIndicatorResponse.getStockData());
-        model.addAttribute("indicatorList", stockIndicatorResponse.getIndicators());
+	    model.addAttribute("stockDataList", stockDataList);
+	    model.addAttribute("indicatorList", indicatorList); // 이 부분을 확인
         model.addAttribute("ticker", ticker);
 
         // Thymeleaf 템플릿으로 반환
