@@ -16,8 +16,6 @@
         // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
         var stockDataList = /*[[${stockDataList}]]*/ [];
         console.log("stockDataList" + stockDataList);
-	
-        
         
         const lineData = stockDataList.map(stock => ({
             x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
@@ -38,7 +36,6 @@
         }));
         
         console.log("ohlcData:", JSON.stringify(ohlcData, null, 2));
-        console.log("Length of ohlcData:", ohlcData.length); // 길이 확인
         
         console.log("volumes" + volumes);
         

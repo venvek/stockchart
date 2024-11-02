@@ -40,9 +40,14 @@ public class StockDataController {
     	return "joinpage";
     }
     
-    @GetMapping("mypage")
+    @GetMapping("/mypage")
     public String mypage() {
     	return "mypage";
+    }
+    
+    @GetMapping("/admin")
+    public String adminpage() {
+    	return "adminpage";
     }
     
     
