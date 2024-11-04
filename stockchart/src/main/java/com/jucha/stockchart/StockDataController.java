@@ -15,7 +15,7 @@ public class StockDataController {
     private StockDataService stockDataService;
 
   
-    @GetMapping("/")
+    @GetMapping("/main")
     public String Mainpage() {
     	return "mainpage";
     }

@@ -19,7 +19,7 @@ public class Indicators {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 
 	@ManyToOne
 	@JoinColumn(name = "ticker", referencedColumnName = "ticker", nullable = false)
@@ -58,11 +58,11 @@ public class Indicators {
 	// Other fields...
 
 	// Getters and setters
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -82,4 +82,77 @@ public class Indicators {
 		this.date = date;
 	}
 
+	public BigDecimal getRsi() {
+		return rsi;
+	}
+
+	public void setRsi(BigDecimal rsi) {
+		this.rsi = rsi;
+	}
+
+	public BigDecimal getCci() {
+		return cci;
+	}
+
+	public void setCci(BigDecimal cci) {
+		this.cci = cci;
+	}
+
+	public BigDecimal getRs() {
+		return rs;
+	}
+
+	public void setRs(BigDecimal rs) {
+		this.rs = rs;
+	}
+
+	public BigDecimal getObv() {
+		return obv;
+	}
+
+	public void setObv(BigDecimal obv) {
+		this.obv = obv;
+	}
+
+	public BigDecimal getMacd() {
+		return macd;
+	}
+
+	public void setMacd(BigDecimal macd) {
+		this.macd = macd;
+	}
+
+	public BigDecimal getStochastic() {
+		return stochastic;
+	}
+
+	public void setStochastic(BigDecimal stochastic) {
+		this.stochastic = stochastic;
+	}
+
+	public BigDecimal getMa() {
+		return ma;
+	}
+
+	public void setMa(BigDecimal ma) {
+		this.ma = ma;
+	}
+
+	public BigDecimal getBbUpper() {
+		return bbUpper;
+	}
+
+	public void setBbUpper(BigDecimal bbUpper) {
+		this.bbUpper = bbUpper;
+	}
+
+	public BigDecimal getBbLower() {
+		return bbLower;
+	}
+
+	public void setBbLower(BigDecimal bbLower) {
+		this.bbLower = bbLower;
+	}
+
+	
 }
