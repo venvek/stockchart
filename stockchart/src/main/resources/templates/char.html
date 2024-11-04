@@ -1,15 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Chart for [[${ticker}]]</title>
+    <link href="/css/footer.css" rel="stylesheet" type="text/css">
+    <link href="/css/header.css" rel="stylesheet" type="text/css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial/dist/chartjs-chart-financial.min.js"></script>
 </head>
 <body>
+
+<div th:replace="CommonFile/header :: header"></div>
+
     <h1>Stock Chart for [[${ticker}]]</h1>
-    <canvas id="stockChart" width="300" height="200"></canvas>
+    <canvas id="stockChart" width="1000" height="1000"></canvas>
+    
+
+<div th:replace="CommonFile/footer :: footer"></div>
 
     <script th:inline="javascript">
         // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
@@ -49,6 +57,8 @@
                 ]
             },
             options: {
+            	responsive: false, // 차트를 고정 크기로 설정
+                maintainAspectRatio: false,
                 scales: {
                     x: {
                         beginAtZero: true

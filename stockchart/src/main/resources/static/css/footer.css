@@ -1,0 +1,30 @@
+@charset "UTF-8";
+
+.footer-container{
+	border-top: 1px #eaebee solid;
+	display: flex;
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center;     /* 수직 가운데 정렬 */
+    text-align: center;      /* 텍스트 가운데 정렬 */
+    background-color: #f8f8f8;
+}
+.p-head{
+	color:rgb(102, 102, 102);
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 20px;
+	margin-bottom: 6px;
+	padding: 0px;
+	
+}
+
+.footer-content{
+	margin: 0 auto;
+}
+
+p{
+	margin: 0 auto;
+	color: rgb(102,102,102);
+	font-size: 13px;
+}
+
