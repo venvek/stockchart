@@ -8,25 +8,69 @@
     <link href="/css/footer.css" rel="stylesheet" type="text/css">
     <link href="/css/header.css" rel="stylesheet" type="text/css">
     
+    <style type="text/css">
+    
+ .myChart
+    {
+    width: 100%; /* 차트를 컨테이너에 맞춤 */
+    min-width: 900px; /* 최대 너비 설정 */
+    max-width: 900px;
+    max-height: 180px; /* 높이 설정 */
+    border: 1px solid #ccc; /* 경계선 추가 */
+	}
+
+    </style>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial/dist/chartjs-chart-financial.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+
 </head>
 <body>
 
 <div th:replace="CommonFile/header :: header"></div>
 
-    <h1>Stock Chart for [[${ticker}]]</h1>
-    <canvas id="stockChart" width="1000" height="1000"></canvas>
+    <h3>Stock Chart for [[${ticker}]]</h3>
     
-    <div>
-    <canvas id="rsiChart"></canvas>
+    <select id="timePeriod" onchange="updateChart()">
+        <option value="1">1년</option>
+        <option value="3">3년</option>
+        <option value="6">6개월</option>
+        <option value="1m">1개월</option>
+    </select>
+    
+    <div class="chart-container">
+    <div> 
+    <canvas id="rsiChart" class="myChart"></canvas>
 	</div>
-	<div>
-    <canvas id="macdChart"></canvas>
 	</div>
+	
+	<div class="chart-container">
 	<div>
-    <canvas id="obvChart"></canvas>
+    <canvas id="macdChart" class="myChart"></canvas>
+	</div>
+	</div>
+    
+    <canvas id="stockChart" 
+    style="width: 100%; /* 차트를 컨테이너에 맞춤 */
+    min-width: 900px; /* 최대 너비 설정 */
+    max-width: 900px;
+    max-height: 400px; /* 높이 설정 */
+    border: 1px solid #ccc; /* 경계선 추가 */
+    background-color: #f9f9f9;">
+    </canvas>
+    
+    <div class="chart-container">
+	<div>
+	<canvas id="obvChart" class="myChart"></canvas>
+	</div>
+	</div>
+	
+	<div class="chart-container">
+	<div>
+    <canvas id="cciChart" class="myChart"></canvas>
+	</div>
 	</div>
 
 <div th:replace="CommonFile/footer :: footer"></div>
@@ -38,8 +82,6 @@
         
         console.log("stockDataList" +  JSON.stringify(stockDataList, null, 5));
         console.log("indicatorList" + JSON.stringify(indicatorList, null, 5));
-	
-        
         
         const lineData = stockDataList.map(stock => ({
             x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
@@ -59,41 +101,266 @@
             y: stock.volume
         }));
         
-        const rsiData = indicatorList.map(stock => ({
-            x: new Date(stock.date), // 날짜
-            y: stock.rsi              // RSI 값
-        }));
+        const rsiData = {
+        	    labels: indicatorList.map((_, index) => index + 1),
+        	    datasets: [
+        	        {
+        	            label: 'RSI',
+        	            data: indicatorList.map(indicator => indicator.rsi),
+        	            borderColor: 'black', // RSI 선 색깔
+        	            borderWidth: 1,
+        	            fill: false, // 기본 RSI 선은 영역 채우지 않음
+        	            pointRadius: 0 // 동그란 점을 숨김
+        	        }
+        	    ]
+        	};
 
-        const macdData = indicatorList.map(stock => ({
-            x: new Date(stock.date),
-            y: stock.macd             // MACD 값
-        }));
+        // MACD 차트 데이터 생성
+        const macdData = {
+        		labels: indicatorList.map((_, index) => index + 1),
+            datasets: [{
+                label: 'MACD',
+                data: indicatorList.map(indicator => indicator.macd),
+                borderColor: 'black',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            }]
+        };
 
-        const cciData = indicatorList.map(stock => ({
-            x: new Date(stock.date),
-            y: stock.cci              // CCI 값
-        }));
+        // OBV 차트 데이터 생성
+        const obvData = {
+        		labels: indicatorList.map((_, index) => index + 1),
+            datasets: [{
+                label: 'OBV',
+                data: indicatorList.map(indicator => indicator.obv),
+                borderColor: 'black',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            }]
+        };
+        
+     // 예시로 CCI 데이터 추가
+        const cciValues = indicatorList.map(indicator => indicator.cci); // CCI 값만 추출
+        const cciLabels = indicatorList.map(indicator => indicator.date); // 날짜를 라벨로 사용
 
-        const obvData = indicatorList.map(stock => ({
-            x: new Date(stock.date),
-            y: stock.obv              // OBV 값
-        }));
+        const maxCciValue = Math.max(...indicatorList.map(indicator => indicator.cci));
+        const minCciValue = Math.min(...indicatorList.map(indicator => indicator.cci));
+
+        // Y축 최대값과 최소값을 설정
+        const yMax = maxCciValue > 200 ? maxCciValue : 200;
+        const yMin = minCciValue < -200 ? minCciValue : -200;
+        
+        const cciData = {
+        		labels: indicatorList.map((_, index) => index + 1),
+        	    datasets: [{
+        	        label: 'CCI',
+        	        data: indicatorList.map(indicator => indicator.cci),
+        	        borderColor: 'black', // 색상 조정
+        	        borderWidth: 1,
+        	        fill: false,
+        	        pointRadius: 0
+        	    }]
+        	};
 
         const maData = indicatorList.map(stock => ({
             x: new Date(stock.date),
             y: stock.ma               // 이동 평균 값
         }));
         
-        console.log("ohlcData:", JSON.stringify(ohlcData, null, 2));
-        console.log("Length of ohlcData:", ohlcData.length); // 길이 확인
-        
         console.log("volumes" + volumes);
         
-        console.log(Math.max(...volumes.map(v => v.y))); 
-        // Create the chart using Chart.js
     window.onload = function() {
 
     const ctx = document.getElementById('stockChart').getContext('2d');
+    const ctxCCI = document.getElementById('cciChart').getContext('2d');
+    const chartContext = document.getElementById('rsiChart').getContext('2d');
+    const ctxMACD = document.getElementById('macdChart').getContext('2d');
+    const ctxOBV = document.getElementById('obvChart').getContext('2d');
+    
+    const rsiChart = new Chart(chartContext, {
+        type: 'line',
+        data: rsiData,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    min: 0,
+                    max: 100,
+                    ticks: {
+                        stepSize: 10
+                    },
+                    grid: {
+                        color: '#e0e0e0' // 그리드 색깔
+                    }
+                },
+                x: {
+                    grid: {
+                        color: '#e0e0e0' // 그리드 색깔
+                    }
+                }
+            },
+            plugins: {
+                annotation: {
+                    annotations: {
+                        line1: {
+                            type: 'line',
+                            yMin: 30,
+                            yMax: 30,
+                            borderColor: 'red', // 30선 색깔
+                            borderWidth: 1,
+                            label: {
+                                enabled: true,
+                                content: '30',
+                                position: 'end'
+                            }
+                        },
+                        line2: {
+                            type: 'line',
+                            yMin: 70,
+                            yMax: 70,
+                            borderColor: 'green', // 70선 색깔
+                            borderWidth: 1,
+                            label: {
+                                enabled: true,
+                                content: '70',
+                                position: 'end'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    function drawFillAreaRSI() {
+        const width = chartContext.canvas.width;
+        const height = chartContext.canvas.height;
+
+        // 차트를 먼저 그린 후 색칠하기 위해 차트 초기화
+        rsiChart.update(); // 차트를 먼저 업데이트하여 선을 그린 후 색칠
+
+        const ctx = chartContext.canvas.getContext('2d');
+        ctx.clearRect(0, 0, width, height); // 이전 내용을 클리어
+
+        const rsiValues = indicatorList.map(indicator => indicator.rsi);
+        const stepSize = width / (rsiValues.length - 1);
+
+        // 30선과 70선 사이의 색칠
+        for (let i = 0; i < rsiValues.length - 1; i++) {
+            const x = i * stepSize;
+            const nextX = (i + 1) * stepSize;
+            const y1 = height - (rsiValues[i] / 100) * height;
+            const y2 = height - (rsiValues[i + 1] / 100) * height;
+
+            // 30선 아래일 때 색칠
+            if (rsiValues[i] < 30) {
+                ctx.fillStyle = 'rgba(255, 0, 0, 0.3)'; // 빨간색
+                ctx.fillRect(x, y1, stepSize, height - y1);
+            }
+
+            // 70선 위일 때 색칠
+            if (rsiValues[i] > 70) {
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.3)'; // 초록색
+                ctx.fillRect(x, 0, stepSize, y1);
+            }
+
+            // 이전 값을 기준으로 경계 그리기
+            ctx.fillStyle = 'rgba(0, 0, 0, 0)'; // 투명
+            if (rsiValues[i] >= 30 && rsiValues[i] <= 70) {
+                ctx.fillRect(x, y1, stepSize, height - y1);
+            }
+        }
+    }
+
+    // 차트 그리기 후 색칠하기 호출
+    rsiChart.update(); // 차트를 먼저 그린 후
+    drawFillAreaRSI(); // 색칠하기 호출
+
+    new Chart(ctxMACD, {
+        type: 'line',
+        data: macdData,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: 10, // RSI는 0에서 100 사이
+                    suggestedMin: -10 
+                }
+            }
+        }
+    });
+
+    new Chart(ctxOBV, {
+        type: 'line',
+        data: obvData,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    const cciChart = new Chart(ctxCCI, {
+            type: 'line',
+            data: cciData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        min: yMin, // 동적으로 설정한 최소값
+                        max: yMax, // 동적으로 설정한 최대값
+                        ticks: {
+                            stepSize: 50
+                        },
+                        grid: {
+                            color: '#e0e0e0' // 그리드 색깔
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#e0e0e0' // 그리드 색깔
+                        }
+                    }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: -100,
+                                yMax: -100,
+                                borderColor: 'red', // -100선 색깔
+                                borderWidth: 1,
+                                label: {
+                                    enabled: true,
+                                    content: '-100',
+                                    position: 'end'
+                                }
+                            },
+                            line2: {
+                                type: 'line',
+                                yMin: 100,
+                                yMax: 100,
+                                borderColor: 'green', // 100선 색깔
+                                borderWidth: 1,
+                                label: {
+                                    enabled: true,
+                                    content: '100',
+                                    position: 'end'
+                                }
+                            },
+                            
+                        }
+                    }
+                }
+            }
+        });
     
     const stockChart = new Chart(ctx, {
         type: 'line',
@@ -116,24 +383,7 @@
                     borderWidth: 1,
                     categoryPercentage: 0.5 // 카테고리 너비를 조절
                 },
-                {
-                    label: 'RSI',
-                    data: rsiData,
-                    type: 'line',
-                    yAxisID: 'rsi-axis', // RSI를 위한 y축
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    fill: false,
-                    pointRadius: 0, // 포인트를 숨기려면 0으로 설정
-                },
-                {
-                    label: 'MACD',
-                    data: macdData,
-                    type: 'line',
-                    yAxisID: 'macd-axis', // MACD를 위한 y축
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    fill: false,
-                    pointRadius: 0,
-                },
+               
             ]
         },
         options: {
@@ -175,36 +425,6 @@
                     lineWidth: 1, 
                     tickMarkLength: 5,
                     
-                },
-                'rsi-axis': {
-                    type: 'linear',
-                    position: 'botoom',
-                    title: {
-                        display: true,
-                        text: 'RSI'
-                    },
-                    grid: {
-                        drawOnChartArea: false // 그리드 라인을 차트 영역에 그리지 않음
-                    },
-                    ticks: {
-                        beginAtZero: true,
-                        max: 100,
-                        min: 0
-                    },
-                    // 여기에 아래쪽 위치 조정 옵션 추가 가능
-                    suggestedMin: 0,
-                    suggestedMax: 100,
-                },
-                'macd-axis': {
-                    type: 'linear',
-                    position: 'top',
-                    title: {
-                        display: true,
-                        text: 'MACD'
-                    },
-                    grid: {
-                        drawOnChartArea: false
-                    },
                 },
                 }
             }
