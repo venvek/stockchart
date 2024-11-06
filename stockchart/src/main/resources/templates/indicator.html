@@ -196,6 +196,7 @@
                     }
                 },
                 x: {
+                	display: false,
                     grid: {
                         color: '#e0e0e0' // 그리드 색깔
                     }
@@ -288,7 +289,11 @@
                     beginAtZero: true,
                     suggestedMax: 10, // RSI는 0에서 100 사이
                     suggestedMin: -10 
+                },
+                x: {
+                    display: false  // x축 날짜 레이블 숨기기
                 }
+    
             }
         }
     });
@@ -301,6 +306,9 @@
             scales: {
                 y: {
                     beginAtZero: true
+                },
+                x: {
+                    display: false  // x축 날짜 레이블 숨기기
                 }
             }
         }
@@ -323,6 +331,7 @@
                         }
                     },
                     x: {
+						display: false,
                         grid: {
                             color: '#e0e0e0' // 그리드 색깔
                         }

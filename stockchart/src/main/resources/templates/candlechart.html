@@ -46,11 +46,6 @@
             y: stock.volume
         }));
         
-        console.log("ohlcData:", JSON.stringify(ohlcData, null, 2));
-        
-        console.log("volumes" + volumes);
-        
-        console.log(Math.max(...volumes.map(v => v.y))); 
         // Create the chart using Chart.js
     window.onload = function() {
 
