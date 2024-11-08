@@ -32,16 +32,13 @@
 <div th:replace="CommonFile/header :: header"></div>
 
     <h3>Stock Chart for [[${ticker}]]</h3>
-    
-    <input type="text" id="tickerInput" placeholder="Enter Ticker Symbol">
-<button id="searchBtn">Search</button>
-    
-    <select id="timePeriod" onchange="updateChart()">
-        <option value="1">1년</option>
-        <option value="3">3년</option>
-        <option value="6">6개월</option>
-        <option value="1m">1개월</option>
-    </select>
+     
+<form id="stockSearchForm" method="get" action="/stocks">
+    <input type="text" id="tickerInput" name="ticker" placeholder="Enter Ticker" required>
+    <button type="submit">Search</button>
+</form>
+
+<ul id="searchResults"></ul>
     
     <div class="chart-container">
     <div> 
@@ -98,6 +95,8 @@
             l: stock.low,    // Low price
             c: stock.close   // Closing price
         }));
+        
+        console.log("ohlcData" + JSON.stringify(ohlcData, null, 5));
         
         const volumes = stockDataList.map(stock => ({
             x: new Date(stock.date).toISOString(),
@@ -444,6 +443,131 @@
     });
 };
 
+const searchInput = document.getElementById('searchInput');
+const searchButton = document.getElementById('searchButton');
+
+// 차트 인스턴스가 이미 있는 경우 업데이트 하기
+let chart = null;  // 기존 차트 (차트를 갱신할 변수)
+
+// 검색 버튼 클릭 시 차트 데이터 갱신
+searchButton.addEventListener('click', function() {
+    const ticker = searchInput.value.trim().toUpperCase();
+
+    if (ticker) {
+        fetchStockDataAndUpdateChart(ticker);
+    } else {
+        alert('티커를 입력해주세요.');
+    }
+});
+
+// 티커에 맞는 데이터를 가져오는 함수
+function fetchStockDataAndUpdateChart(ticker) {
+    const url = `/api/stock-data/stocks/${ticker}`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // 차트 데이터를 받고 갱신
+            updateChart(data);
+        })
+        .catch(error => {
+            console.error('데이터를 가져오는 데 실패했습니다:', error);
+        });
+}
+
+// 차트를 갱신하는 함수
+function updateChart(stockData) {
+    const ohlcData = stockData.map(stock => ({
+        t: new Date(stock.date.replace(" ", "T")),   // Date or timestamp
+        o: stock.open,   // Opening price
+        h: stock.high,   // High price
+        l: stock.low,    // Low price
+        c: stock.close   // Closing price
+    }));
+
+    // 차트가 이미 존재한다면 업데이트
+    if (chart) {
+        chart.data.datasets[0].data = ohlcData;  // 기존 차트 데이터 업데이트
+        chart.update();  // 차트 갱신
+    } else {
+        // 차트가 없다면 새로 생성
+        createChart(ohlcData);
+    }
+}
+
+// 차트를 새로 생성하는 함수
+function createChart(ohlcData) {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'OHLC',
+                data: ohlcData,
+                borderColor: 'rgb(75, 192, 192)',
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                },
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+}
+
+
+document.getElementById("stockSearchForm").addEventListener("submit", function(event) {
+    event.preventDefault();  // 페이지 새로고침 방지
+
+    var ticker = document.getElementById("tickerInput").value;
+
+    // 티커에 해당하는 주식 데이터를 AJAX로 요청
+    fetch(`/api/stock-data/stocks/${ticker}`)
+        .then(response => response.json())
+        .then(data => {
+            // 차트 데이터를 업데이트하는 로직
+            updateChart(data);
+        })
+        .catch(error => {
+            console.error("Error fetching stock data:", error);
+        });
+});
+
+function updateChart(data) {
+    // 기존 차트를 새로운 데이터로 업데이트
+    var stockData = data.stockDataList;
+    var indicatorData = data.indicatorList;
+
+    // 기존 차트를 삭제하고 새로운 데이터를 기반으로 차트를 생성
+    // 예를 들어, chart.js를 사용할 경우:
+
+    // 캔들스틱 차트를 위한 새로운 데이터 형식
+    const ohlcData = stockData.map(stock => ({
+        t: new Date(stock.date.replace(" ", "T")),
+        o: stock.open,
+        h: stock.high,
+        l: stock.low,
+        c: stock.close
+    }));
+
+    // 차트 업데이트 예시 (기존 차트가 있으면 그 차트를 업데이트)
+    const chart = Chart.getChart("myChart");  // 차트 객체를 가져옴
+
+    if (chart) {
+        chart.data.datasets[0].data = ohlcData;
+        chart.update();
+    }
+}
     </script>
 </body>
 </html>
