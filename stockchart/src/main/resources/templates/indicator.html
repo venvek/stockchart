@@ -568,6 +568,27 @@ function updateChart(data) {
         chart.update();
     }
 }
+
+function getChartDataUrl() {
+    const annotations = myChart.options.plugins.annotation.annotations;
+    const chartData = {
+        labels: myChart.data.labels,
+        data: myChart.data.datasets[0].data,
+        annotations: annotations
+    };
+
+    // 데이터를 URL 파라미터로 변환
+    const params = new URLSearchParams();
+    params.set('data', JSON.stringify(chartData));
+
+    return `http://example.com/share-chart?${params.toString()}`;
+}
+
+// 공유 버튼 클릭 시
+document.getElementById("shareBtn").addEventListener("click", function() {
+    const url = getChartDataUrl();
+    window.open(url, "_blank"); // 새 창에서 공유 URL 열기
+});
     </script>
 </body>
 </html>
