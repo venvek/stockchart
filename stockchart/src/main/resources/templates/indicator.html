@@ -80,9 +80,6 @@
         var stockDataList = /*[[${stockDataList}]]*/ [];
         var indicatorList = /*[[${indicatorList}]]*/ [];
         
-        console.log("stockDataList" +  JSON.stringify(stockDataList, null, 5));
-        console.log("indicatorList" + JSON.stringify(indicatorList, null, 5));
-        
         const lineData = stockDataList.map(stock => ({
             x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
             y: stock.close,  // Closing price
@@ -96,7 +93,6 @@
             c: stock.close   // Closing price
         }));
         
-        console.log("ohlcData" + JSON.stringify(ohlcData, null, 5));
         
         const volumes = stockDataList.map(stock => ({
             x: new Date(stock.date).toISOString(),
