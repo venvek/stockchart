@@ -34,10 +34,13 @@
 
 <button id="captureBtn">Capture Chart</button>
 
+<button onclick="addAnnotation()">Add Line</button>
+
     <h3>Stock Chart for [[${ticker}]]</h3>
      
-<form id="stockSearchForm" method="get" action="/stocks">
-    <input type="text" id="tickerInput" name="ticker" placeholder="Enter Ticker" required> <button type="submit">Search</button>
+<form id="stockSearchForm" action="/stocks" method="get">
+    <input type="text" id="tickerInput" name="ticker" placeholder="Enter ticker">
+    <button type="submit">Search</button>
 </form>
 
 <ul id="searchResults"></ul>
@@ -550,19 +553,16 @@ function updateChart(data) {
     // 예를 들어, chart.js를 사용할 경우:
 
     // 캔들스틱 차트를 위한 새로운 데이터 형식
-    const ohlcData = stockData.map(stock => ({
-        t: new Date(stock.date.replace(" ", "T")),
-        o: stock.open,
-        h: stock.high,
-        l: stock.low,
-        c: stock.close
-    }));
+    const lineData = stockDataList.map(stock => ({
+            x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
+            y: stock.close,  // Closing price
+        }));
 
     // 차트 업데이트 예시 (기존 차트가 있으면 그 차트를 업데이트)
     const chart = Chart.getChart("myChart");  // 차트 객체를 가져옴
 
     if (chart) {
-        chart.data.datasets[0].data = ohlcData;
+        chart.data.datasets[0].data = lineData;
         chart.update();
     }
 }
@@ -599,6 +599,26 @@ document.getElementById("captureBtn").addEventListener("click", function() {
         link.click(); // 다운로드 실행
     });
 });
+
+function addAnnotation() {
+    // 예시로 X값과 Y값을 사용자로부터 입력 받는다고 가정
+    const xValue = prompt("Enter X value (Date):");
+    const yValue = prompt("Enter Y value (Price):");
+
+    if (xValue && yValue) {
+        myChart.options.plugins.annotation.annotations.push({
+            type: 'line',
+            mode: 'horizontal',  // 수평선
+            scaleID: 'y',  // Y축에 선을 그리기
+            value: yValue,  // Y값 (가격)
+            borderColor: 'blue',
+            borderWidth: 2
+        });
+
+        // 차트 업데이트
+        myChart.update();
+    }
+}
     </script>
 </body>
 </html>

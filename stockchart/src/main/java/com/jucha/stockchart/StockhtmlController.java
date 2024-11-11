@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class StockhtmlController {
@@ -45,6 +46,18 @@ public class StockhtmlController {
         model.addAttribute("ticker", ticker);
 
         // Thymeleaf 템플릿으로 반환
+        return "indicator";
+    }
+	
+	@GetMapping("/stocks")
+    public String getStockChart2(@RequestParam("ticker") String ticker, Model model) {
+        List<Stock_Data> stockDataList = stockDataService.getStockDataByTicker(ticker);
+        List<Indicators> indicatorList = stockDataService.getindicatorsByTicker(ticker);
+
+        model.addAttribute("stockDataList", stockDataList);
+        model.addAttribute("indicatorList", indicatorList);
+        model.addAttribute("ticker", ticker);
+
         return "indicator";
     }
 	

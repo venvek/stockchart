@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -55,17 +56,18 @@ public class StockDataController {
     }
     
     @GetMapping("/stocks/{ticker}") // API 요청을 위한 경로
-    public ResponseEntity<?> getStockData(@PathVariable String ticker) {
-        // 주식 데이터와 지표 데이터를 가져옴
+    @ResponseBody
+    public Map<String, Object> getStockDataJson(@PathVariable String ticker) {
         List<Stock_Data> stockDataList = stockDataService.getStockDataByTicker(ticker);
         List<Indicators> indicatorList = stockDataService.getindicatorsByTicker(ticker);
 
+        // 데이터 응답을 JSON 형태로 반환
         Map<String, Object> response = new HashMap<>();
         response.put("stockDataList", stockDataList);
         response.put("indicatorList", indicatorList);
         response.put("ticker", ticker);
 
-        return ResponseEntity.ok(response); // JSON 형식으로 응답
+        return response;
     }
     
 }
