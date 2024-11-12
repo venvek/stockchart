@@ -1,18 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+<style>
+
+.logo-img {
+    width: 200px;  /* 원하는 너비로 조정 */
+    height: 150px; /* 비율에 맞게 높이 자동 조정 */
+}
+
+</style>
 	<link href="/css/header.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <header class="header">
     <div class="container">
         <div class="row header-top">
-            <div class="col logo">
-                <img src="path/to/logo.png" alt="Logo" /> <!-- 로고 이미지 경로 -->
-            </div>
+         <div class="col logo">
+
+        <img src="/images/logo.jpg" alt="Logo" class="logo-img"/>
+</div>
             <div class="col search-bar">
-               <form id="stockSearchForm" method="get" action="/stocks">
-    <input type="text" id="tickerInput" name="ticker" placeholder="Enter Ticker" required>
+            
+            
+              <form id="stockSearchForm" action="/stocks" method="get">
+    <input type="text" id="tickerInput" name="ticker" placeholder="Enter ticker">
     <button type="submit">Search</button>
 </form>
 				
