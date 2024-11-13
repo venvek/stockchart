@@ -3,10 +3,6 @@
 <head>
 <style>
 
-.logo-img {
-    width: 200px;  /* 원하는 너비로 조정 */
-    height: 150px; /* 비율에 맞게 높이 자동 조정 */
-}
 
 </style>
 	<link href="/css/header.css" rel="stylesheet" type="text/css">
@@ -14,23 +10,24 @@
 <body>
 <header class="header">
     <div class="container">
-        <div class="row header-top">
+        <div class="row header-top"> 
          <div class="col logo">
-
-        <img src="/images/logo.jpg" alt="Logo" class="logo-img"/>
+ 		<a href="/main">
+        <img src="/images/logo2.png" alt="Logo" class="logo-img" width="120" height="auto"/>
+		</a>
 </div>
             <div class="col search-bar">
             
             
               <form id="stockSearchForm" action="/stocks" method="get">
-    <input type="text" id="tickerInput" name="ticker" placeholder="Enter ticker">
+    <input type="text" id="tickerInput" name="ticker" placeholder="티커 또는 회사를 입력해주세요">
     <button type="submit">Search</button>
 </form>
 				
             </div>
             <div class="col login">
-                <button type="button">로그인</button>
-            </div>
+    <button type="button" onclick="window.location.href='/login'">로그인</button>
+	</div>
         </div>
         <nav class="menu">
             <ul>
