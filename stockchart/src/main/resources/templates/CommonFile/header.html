@@ -12,7 +12,7 @@
     <div class="container">
         <div class="row header-top"> 
          <div class="col logo">
- 		<a href="/main">
+ 		<a href="/api/stock-data/main">
         <img src="/images/logo2.png" alt="Logo" class="logo-img" width="120" height="auto"/>
 		</a>
 </div>
@@ -91,35 +91,7 @@
         }
     }
 
-    // 차트를 새로 생성하는 함수
-    function createChart(ohlcData) {
-        const ctx = document.getElementById('myChart').getContext('2d');
-        chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: [{
-                    label: 'OHLC',
-                    data: ohlcData,
-                    borderColor: 'rgb(75, 192, 192)',
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'day'
-                        }
-                    },
-                    y: {
-                        beginAtZero: false
-                    }
-                }
-            }
-        });
-    }
+
 </script>
 </body>
 </html>
