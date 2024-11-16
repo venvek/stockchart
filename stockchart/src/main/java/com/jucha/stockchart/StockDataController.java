@@ -5,12 +5,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/stock-data")
@@ -18,7 +21,9 @@ public class StockDataController {
 
     @Autowired
     private StockDataService stockDataService;
-
+    
+    @Autowired
+    private CompanyService companyService;
   
     @GetMapping("/main")
     public String Mainpage() {
@@ -69,5 +74,12 @@ public class StockDataController {
 
         return response;
     }
+    
+    @GetMapping("/suggestions")
+    public List<String> getSuggestions(@RequestParam String ticker) {
+        // 입력된 검색어로 필터링된 결과 반환
+        return companyService.getSuggetsions(ticker);
+    }
+    
     
 }

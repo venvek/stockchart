@@ -2,9 +2,36 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <style>
+  /* 검색창 스타일 */
+  #tickerInput {
+    width: 300px;
+    padding: 8px;
+    font-size: 16px;
+  }
 
+  /* 자동완성 목록 스타일 */
+  #autocompleteList {
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    position: absolute;
+    width: 300px;
+    background-color: #fff;
+    z-index: 1000;
+  }
 
+  /* 목록 아이템 스타일 */
+  .autocomplete-item {
+    padding: 8px;
+    cursor: pointer;
+  }
+
+  .autocomplete-item:hover {
+    background-color: #f0f0f0;
+  }
 </style>
+
 	<link href="/css/header.css" rel="stylesheet" type="text/css">
 </head>
 <body>
@@ -39,59 +66,34 @@
 </header>
 
 <script th:inline="javascript">
-    const searchInput = document.getElementById('searchInput');
-    const searchButton = document.getElementById('searchButton');
 
-    // 차트 인스턴스가 이미 있는 경우 업데이트 하기
-    let chart = null;  // 기존 차트 (차트를 갱신할 변수)
+const input = document.getElementById('tickerInput');
+const autocompleteList = document.getElementById('autocompleteList');
 
-    // 검색 버튼 클릭 시 차트 데이터 갱신
-    searchButton.addEventListener('click', function() {
-        const ticker = searchInput.value.trim().toUpperCase();
+	input.addEventListener('input', async (e) => {
+    const query = e.target.value;
 
-        if (ticker) {
-            fetchStockDataAndUpdateChart(ticker);
-        } else {
-            alert('티커를 입력해주세요.');
-        }
-    });
-
-    // 티커에 맞는 데이터를 가져오는 함수
-    function fetchStockDataAndUpdateChart(ticker) {
-        const url = `/api/stock-data/stocks/${ticker}`;
-
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                // 차트 데이터를 받고 갱신
-                updateChart(data);
-            })
-            .catch(error => {
-                console.error('데이터를 가져오는 데 실패했습니다:', error);
-            });
+    // 검색어가 없으면 목록 숨김
+    if (!query) {
+        autocompleteList.innerHTML = '';
+        return;
     }
 
-    // 차트를 갱신하는 함수
-    function updateChart(stockData) {
-        const ohlcData = stockData.map(stock => ({
-            t: new Date(stock.date.replace(" ", "T")),   // Date or timestamp
-            o: stock.open,   // Opening price
-            h: stock.high,   // High price
-            l: stock.low,    // Low price
-            c: stock.close   // Closing price
-        }));
+    // 서버에 검색 요청
+    const response = await fetch(`/api/suggestions?ticker=${query}`);
+    const suggestions = await response.json();
 
-        // 차트가 이미 존재한다면 업데이트
-        if (chart) {
-            chart.data.datasets[0].data = ohlcData;  // 기존 차트 데이터 업데이트
-            chart.update();  // 차트 갱신
-        } else {
-            // 차트가 없다면 새로 생성
-            createChart(ohlcData);
-        }
-    }
+    // 자동완성 목록 표시
+    autocompleteList.innerHTML = suggestions
+        .map(item => `<div class="autocomplete-item" onclick="selectSuggestion('${item}')">${item}</div>`)
+        .join('');
+	});
 
-
+	// 자동완성 항목 선택 처리
+	function selectSuggestion(value) {
+    input.value = value;
+    autocompleteList.innerHTML = ''; // 목록 초기화
+	}
 </script>
 </body>
 </html>
