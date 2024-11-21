@@ -43,17 +43,18 @@
         <img src="/images/logo2.png" alt="Logo" class="logo-img" width="120" height="auto"/>
 		</a>
 </div>
-            <div class="col search-bar">
-            
-            
+           
+    <div class="col search-bar">
     <form id="stockSearchForm" action="/stocks" method="get" style="display: flex; align-items: center;" >
     <input type="text" id="tickerInput" name="ticker" placeholder="티커를 입력해주세요">
     <button type="submit">Search</button>
-</form>
-				
-            </div>
+	</form>
+    </div>
+    
             <div class="col login">
-    <button type="button" onclick="window.location.href='/login'">로그인</button>
+            <form id="loginbutton" action="/api/stock-data/login" method="get">
+  	  <button type="submit">로그인</button>
+  	  </form>
 	</div>
         </div>
         <nav class="menu">

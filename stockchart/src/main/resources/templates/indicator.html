@@ -18,6 +18,7 @@
     max-height: 180px; /* 높이 설정 */
     border: 1px solid #ccc; /* 경계선 추가 */
 	}
+	
 
     </style>
     
@@ -43,19 +44,27 @@
     <button type="submit">Search</button>
 </form>
 
+
 <ul id="searchResults"></ul>
+    
+   	<div class="chart-button-list">
+   	
+   	<div class="button-container">
+   	<button>버튼리스트</button>
+   	</div>
+   	
+   	</div>
     
     <div class="chart-container">
     <div> 
     <canvas id="rsiChart" class="myChart"></canvas>
 	</div>
-	</div>
 	
-	<div class="chart-container">
+
 	<div>
     <canvas id="macdChart" class="myChart"></canvas>
 	</div>
-	</div>
+
     
     <canvas id="stockChart" 
     style="width: 100%; /* 차트를 컨테이너에 맞춤 */
@@ -66,16 +75,18 @@
     background-color: #f9f9f9;">
     </canvas>
     
-    <div class="chart-container">		
+
 	<div>
 	<canvas id="obvChart" class="myChart"></canvas>
 	</div>
-	</div>
+
 	
-	<div class="chart-container">
+
 	<div>
     <canvas id="cciChart" class="myChart"></canvas>
 	</div>
+	
+	
 	</div>
 
 <div th:replace="CommonFile/footer :: footer"></div>
