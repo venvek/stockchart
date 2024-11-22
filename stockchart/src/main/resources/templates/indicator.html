@@ -19,6 +19,46 @@
     border: 1px solid #ccc; /* 경계선 추가 */
 	}
 	
+	/* 차트와 버튼 리스트를 감싸는 컨테이너 */
+.chart-wrapper {
+  display: flex; /* Flexbox로 가로 정렬 */
+  gap: 20px; /* 버튼 리스트와 차트 사이의 간격 */
+}
+
+/* 왼쪽 버튼 리스트 */
+.chart-button-list {
+  flex: 0 0 150px; /* 고정 너비 */
+  display: flex;
+  flex-direction: column; /* 세로로 정렬 */
+  gap: 10px; /* 버튼 간 간격 */
+  background-color: #f0f0f0; /* 배경색 */
+  padding: 10px; /* 내부 여백 */
+  border: 1px solid #ccc; /* 경계선 */
+  border-radius: 5px; /* 둥근 모서리 */
+}
+
+/* 버튼 스타일 */
+.chart-button-list .button-container button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.chart-button-list .button-container button:hover {
+  background-color: #0056b3;
+}
+
+/* 오른쪽 차트 영역 */
+.chart-container {
+  flex: 1; /* 나머지 공간을 차지 */
+  display: flex;
+  flex-direction: column; /* 차트들을 세로로 정렬 */
+  gap: 20px; /* 차트 간 간격 */
+}
+
 
     </style>
     
@@ -47,11 +87,14 @@
 
 <ul id="searchResults"></ul>
     
+    <div class="chart-wrapper">
    	<div class="chart-button-list">
-   	
-   	<div class="button-container">
-   	<button>버튼리스트</button>
-   	</div>
+   		
+   	  <button>버튼 1</button>
+      <button>버튼 2</button>
+      <button>버튼 3</button>
+      
+
    	
    	</div>
     
@@ -87,6 +130,7 @@
 	</div>
 	
 	
+	</div>
 	</div>
 
 <div th:replace="CommonFile/footer :: footer"></div>
