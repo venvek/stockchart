@@ -92,10 +92,7 @@
    		
    	  <button>버튼 1</button>
       <button>버튼 2</button>
-      <button>버튼 3</button>
       
-
-   	
    	</div>
     
     <div class="chart-container">
@@ -637,43 +634,6 @@ function getChartDataUrl() {
     return `http://example.com/share-chart?${params.toString()}`;
 }
 
-// 공유 버튼 클릭 시
-document.getElementById("shareBtn").addEventListener("click", function() {
-    const url = getChartDataUrl();
-    window.open(url, "_blank"); // 새 창에서 공유 URL 열기
-});
-
-document.getElementById("captureBtn").addEventListener("click", function() {
-    html2canvas(document.getElementById("stockChart")).then(function(canvas) {
-        // 캡처된 이미지를 data URL로 변환
-        const imgData = canvas.toDataURL();
-        // 이미지 다운로드 링크 만들기
-        const link = document.createElement('a');
-        link.href = imgData;
-        link.download = 'chart.png';
-        link.click(); // 다운로드 실행
-    });
-});
-
-function addAnnotation() {
-    // 예시로 X값과 Y값을 사용자로부터 입력 받는다고 가정
-    const xValue = prompt("Enter X value (Date):");
-    const yValue = prompt("Enter Y value (Price):");
-
-    if (xValue && yValue) {
-        myChart.options.plugins.annotation.annotations.push({
-            type: 'line',
-            mode: 'horizontal',  // 수평선
-            scaleID: 'y',  // Y축에 선을 그리기
-            value: yValue,  // Y값 (가격)
-            borderColor: 'blue',
-            borderWidth: 2
-        });
-
-        // 차트 업데이트
-        myChart.update();
-    }
-}
     </script>
 </body>
 </html>
