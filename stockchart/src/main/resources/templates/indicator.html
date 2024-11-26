@@ -95,6 +95,24 @@
       
    	</div>
     
+    <div>
+    <label>기간 선택:</label>
+    <select id="dateRange">
+        <option value="1W">1주</option>
+        <option value="1M">1달</option>
+        <option value="6M">6달</option>
+    </select>
+
+    <label>이동 평균 기간:</label>
+    <input type="number" id="maPeriod" value="20" />
+
+    <label>지표 선택:</label>
+    <input type="checkbox" id="rsi" value="RSI" checked /> RSI
+    <input type="checkbox" id="ma" value="MA" checked /> MA
+
+    <button onclick="updateChart()">적용</button>
+</div>
+    
     <div class="chart-container">
     <div> 
     <canvas id="rsiChart" class="myChart"></canvas>
