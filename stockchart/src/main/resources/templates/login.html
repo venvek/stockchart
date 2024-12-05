@@ -2,7 +2,6 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<link href="/css/footer.css" rel="stylesheet" type="text/css">
     <link href="/css/header.css" rel="stylesheet" type="text/css">
 <title>login page</title>
 </head>
@@ -10,19 +9,17 @@
 
 <div th:replace="CommonFile/header :: header"></div>
 
-<h1> login </h1>
-
-
-<div class="content">
+<div class="content" style="display:flex;justify-content: center;">
       <form class="login-form" method="post" action="/login">
-        <h2>로그인</h2>
+      
+        <h2 style="display:flex;justify-content:center;">로그인</h2>
 
         <p>
-          <label for="username" class="screenreader">Username</label>
+          <label for="username" class="screenreader">아이디</label>
           <input type="text" id="username" name="username" placeholder="Username" required="" autofocus="">
         </p>
         <p>
-          <label for="password" class="screenreader">Password</label>
+          <label for="password" class="screenreader">비밀번호</label>
           <input type="password" id="password" name="password" placeholder="Password" required="">
         </p>
 
@@ -31,7 +28,6 @@
       </form>
     </div>
     
-<div th:replace="CommonFile/footer :: footer"></div>    
 
 </body>
 </html>
