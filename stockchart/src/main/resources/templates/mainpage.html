@@ -5,6 +5,12 @@
 	<link href="/css/footer.css" rel="stylesheet" type="text/css">
     <link href="/css/header.css" rel="stylesheet" type="text/css">
 <title>home main page</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial/dist/chartjs-chart-financial.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+	<script src="https://cdn.jsdelivr.net/npm/html2canvas@0.4.1/dist/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -13,7 +19,103 @@
 
 <h1> hi main page</h1>
 
+   <canvas id="stockChart" 
+    style="width: 100%; /* 차트를 컨테이너에 맞춤 */
+    min-width: 900px; /* 최대 너비 설정 */
+    max-width: 900px;
+    max-height: 400px; /* 높이 설정 */
+    border: 1px solid #ccc; /* 경계선 추가 */
+    background-color: #f9f9f9;">
+    </canvas>
+    
+
+
 <div th:replace="CommonFile/footer :: footer"></div>
 
+
+   <script th:inline="javascript">
+        // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
+        var stockDataList = /*[[${stockDataList}]]*/ [];
+        var indicatorList = /*[[${indicatorList}]]*/ [];
+        
+        const lineData = stockDataList.map(stock => ({
+            x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
+            y: stock.close,  // Closing price
+        }));
+        
+window.onload = function() { 
+
+const ctx = document.getElementById('stockChart').getContext('2d');
+
+const stockChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        datasets: [
+            {
+                label: 'Stock Price',
+                data: lineData,
+                yAxisID: 'price-axis',
+                borderColor: 'rgba(86, 229, 245, 1)',
+                backgroundColor: 'rgba(86, 229, 245, 0.2)',
+            },
+            {
+                label: 'Volume',
+                data: volumes,
+                type: 'bar',
+                yAxisID: 'volume-axis',
+                backgroundColor: 'rgba(135, 138, 136, 0.5)',
+                borderColor: 'rgba(135, 138, 136, 1)',
+                borderWidth: 1,
+                categoryPercentage: 0.5 // 카테고리 너비를 조절
+            },
+           
+        ]
+    },
+    options: {
+    	responsive: false, // 차트를 고정 크기로 설정
+        maintainAspectRatio: false,
+        scales: {
+        	x: {
+                type: 'time',
+                time: {
+                    unit: 'day',
+                    tooltipFormat: 'yyyy-MM-dd',  // 툴팁에 표시할 형식
+                    displayFormats: {
+                        day: 'yyyy-MM-dd'
+                    }
+                }
+            },
+            'price-axis': {
+                type: 'linear',
+                position: 'right',
+                title: {
+                    display: true,
+                    text: 'Price'
+                },
+            },
+            'volume-axis': {
+            type: 'linear',
+            position: 'left', // 거래량 y축은 왼쪽에 위치
+            title: {
+                display: true,
+                text: 'Volume (in millions)'
+            },
+            suggestedMax: Math.max(...volumes.map(v => v.y)) / 2,
+            ticks: {
+                beginAtZero: true,
+                padding: 10 // y축 위쪽의 패딩을 줄임
+            },
+            grid: {
+                drawBorder: false, // 그리드 라인 숨기기
+                lineWidth: 1, 
+                tickMarkLength: 5,
+                
+            },
+            }
+        }
+    }
+});
+};
+</script>
 </body>
 </html>
