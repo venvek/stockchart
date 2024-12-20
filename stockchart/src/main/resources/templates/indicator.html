@@ -608,28 +608,6 @@ document.getElementById("stockSearchForm").addEventListener("submit", function(e
         });
 });
 
-function updateChart(data) {
-    // 기존 차트를 새로운 데이터로 업데이트
-    var stockData = data.stockDataList;
-    var indicatorData = data.indicatorList;
-
-    // 기존 차트를 삭제하고 새로운 데이터를 기반으로 차트를 생성
-    // 예를 들어, chart.js를 사용할 경우:
-
-    // 캔들스틱 차트를 위한 새로운 데이터 형식
-    const lineData = stockDataList.map(stock => ({
-            x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
-            y: stock.close,  // Closing price
-        }));
-
-    // 차트 업데이트 예시 (기존 차트가 있으면 그 차트를 업데이트)
-    const chart = Chart.getChart("myChart");  // 차트 객체를 가져옴
-
-    if (chart) {
-        chart.data.datasets[0].data = lineData;
-        chart.update();
-    }
-}
 
 
 
