@@ -25,6 +25,18 @@
   gap: 20px; /* 버튼 리스트와 차트 사이의 간격 */
 }
 
+.earning-list
+{
+  flex: 0 0 150px; /* 고정 너비 */
+  display: flex;
+  flex-direction: column; /* 세로로 정렬 */
+  gap: 10px; /* 버튼 간 간격 */
+  background-color: #f0f0f0; /* 배경색 */
+  padding: 10px; /* 내부 여백 */
+  border: 1px solid #ccc; /* 경계선 */
+  border-radius: 5px; /* 둥근 모서리 */
+}
+
 /* 왼쪽 버튼 리스트 */
 .chart-button-list {
   flex: 0 0 150px; /* 고정 너비 */
@@ -121,8 +133,8 @@
     
     <canvas id="stockChart" 
     style="width: 100%; /* 차트를 컨테이너에 맞춤 */
-    min-width: 900px; /* 최대 너비 설정 */
-    max-width: 900px;
+    min-width: 800px; /* 최대 너비 설정 */
+    max-width: 800px;
     max-height: 400px; /* 높이 설정 */
     border: 1px solid #ccc; /* 경계선 추가 */
     background-color: #f9f9f9;">
@@ -139,8 +151,15 @@
     <canvas id="cciChart" class="myChart"></canvas>
 	</div>
 	
-	
 	</div>
+	
+	<div class="earning-list" style="display:flex;" >
+   		
+   	  <button>실적</button>
+      <button>표</button>
+      
+   	</div>
+	
 	</div>
 
 <div th:replace="CommonFile/footer :: footer"></div>
