@@ -13,8 +13,8 @@
  .myChart
     {
     width: 100%; /* 차트를 컨테이너에 맞춤 */
-    min-width: 900px; /* 최대 너비 설정 */
-    max-width: 900px;
+    min-width: 100px; /* 최대 너비 설정 */
+    max-width: 1000px;
     max-height: 180px; /* 높이 설정 */
     border: 1px solid #ccc; /* 경계선 추가 */
 	}
@@ -87,6 +87,21 @@
 
 <button id="captureBtn">기간</button>
 
+<div>
+    <label>기간 선택:</label>
+    <select id="dateRange">
+    	<option value="1d">일</option>
+        <option value="1W">주</option>
+        <option value="1M">달</option>
+        <option value="1y">년</option>
+        
+        
+    </select>
+
+
+    <button onclick="updateChart()">적용</button>
+</div>
+
     <h3>Stock Chart for [[${ticker}]] </h3>
      
 <form id="stockSearchForm" action="/stocks" method="get">
@@ -105,20 +120,7 @@
       
    	</div>
     
-    <div>
-    <label>기간 선택:</label>
-    <select id="dateRange">
-    	<option value="1d">일</option>
-        <option value="1W">주</option>
-        <option value="1M">달</option>
-        <option value="1y">년</option>
-        
-        
-    </select>
-
-
-    <button onclick="updateChart()">적용</button>
-</div>
+    
     
     <div class="chart-container">
     <div> 
@@ -133,8 +135,8 @@
     
     <canvas id="stockChart" 
     style="width: 100%; /* 차트를 컨테이너에 맞춤 */
-    min-width: 800px; /* 최대 너비 설정 */
-    max-width: 800px;
+    min-width: 1000px; /* 최대 너비 설정 */
+    max-width: 1000px;
     max-height: 400px; /* 높이 설정 */
     border: 1px solid #ccc; /* 경계선 추가 */
     background-color: #f9f9f9;">
