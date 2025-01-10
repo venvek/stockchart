@@ -158,7 +158,6 @@
 	</div>
 
 	
-
 	<div>
     <canvas id="cciChart" class="myChart"></canvas>
 	</div>
@@ -186,7 +185,6 @@
             y: stock.close,  // Closing price
         }));
         
-        //ohlc가 적용이안됨..
         const ohlcData = stockDataList.map(stock => ({
         	t: new Date(stock.date.replace(" ", "T")),   // Date or timestamp
             o: stock.open,   // Opening price
