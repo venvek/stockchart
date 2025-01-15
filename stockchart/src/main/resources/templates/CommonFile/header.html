@@ -47,7 +47,7 @@
            
     <div class="col search-bar" style="display:flex; align-items:center;">
     <form id="stockSearchForm" action="/stocks" method="get" >
-    <input type="text" id="tickerInput" name="ticker" placeholder="티커를 입력해주세요"  style="width:480px">
+    <input type="text" id="tickerInput" name="ticker" placeholder="티커를 입력해주세요."  style="width:480px">
     <button type="submit">Search</button>
 	</form>
     </div>
@@ -102,6 +102,10 @@ const autocompleteList = document.getElementById('autocompleteList');
 	function selectSuggestion(value) {
     input.value = value;
     autocompleteList.innerHTML = ''; // 목록 초기화
+	}
+	
+	function autocomplete(value) {	
+	input.value = value;
 	}
 </script>
 </body>
