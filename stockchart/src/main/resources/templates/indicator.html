@@ -519,12 +519,15 @@
                 position: 'left', // 거래량 y축은 왼쪽에 위치
                 title: {
                     display: true,
-                    text: 'Volume (in millions)'
+                    text: 'Volume (단위: millions)'
                 },
-                suggestedMax: Math.max(...volumes.map(v => v.y)) / 2,
+                suggestedMax: Math.max(...volumes.map(v => v.y)) / 5,
                 ticks: {
                     beginAtZero: true,
-                    padding: 10 // y축 위쪽의 패딩을 줄임
+                    padding: 10, // y축 위쪽의 패딩을 줄임
+                    callback: function(value) {
+                        return value / 1000000 + 'M';  // y축 값에 'M'을 붙여서 표시
+                    }
                 },
                 grid: {
                     drawBorder: false, // 그리드 라인 숨기기
