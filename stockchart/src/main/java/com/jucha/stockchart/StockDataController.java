@@ -71,6 +71,11 @@ public class StockDataController {
     	return "explain";
     }
     
+    @GetMapping("/enquiry")
+    public String enquirypage() {
+    	return "enquiry";
+    }
+    
     @GetMapping("/stocks/{ticker}") // API 요청을 위한 경로
     @ResponseBody
     public Map<String, Object> getStockDataJson(@PathVariable String ticker) {
