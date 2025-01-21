@@ -36,10 +36,6 @@ public class StockDataController {
     	return "login";
     }
     
-	/*
-	 * @GetMapping("/{ticker}") public List<StockDataDTO> getStockData(@PathVariable
-	 * String ticker) { return stockDataService.getData(ticker); }
-	 */
     
     @GetMapping("/chart/{ticker}")
     public List<Stock_Data> getStockData2(@PathVariable String ticker) {
