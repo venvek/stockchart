@@ -179,6 +179,11 @@
         var stockDataList = /*[[${stockDataList}]]*/ [];
         var indicatorList = /*[[${indicatorList}]]*/ [];
         
+        const rs = stockDataList.map(stock => ({
+            x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
+            y: stock.rs,  // Closing price
+        }));
+        
         const lineData = stockDataList.map(stock => ({
             x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
             y: stock.close,  // Closing price
