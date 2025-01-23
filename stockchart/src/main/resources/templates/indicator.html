@@ -161,6 +161,10 @@
     <canvas id="cciChart" class="myChart"></canvas>
 	</div>
 	
+	<div>
+    <canvas id="rsChart" class="myChart"></canvas>
+	</div>
+	
 	</div>
 	
 	<div class="earning-list" style="display:flex;" >
@@ -179,10 +183,6 @@
         var stockDataList = /*[[${stockDataList}]]*/ [];
         var indicatorList = /*[[${indicatorList}]]*/ [];
         
-        const rs = stockDataList.map(stock => ({
-            x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
-            y: stock.rs,  // Closing price
-        }));
         
         const lineData = stockDataList.map(stock => ({
             x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
@@ -229,6 +229,20 @@
                 pointRadius: 0
             }]
         };
+        
+     // MACD 차트 데이터 생성
+        const rsData = {
+        		labels: indicatorList.map((_, index) => index + 1),
+            datasets: [{
+                label: 'rs',
+                data: indicatorList.map(indicator => indicator.rs),
+                borderColor: 'black',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            }]
+        };
+        
 
         // OBV 차트 데이터 생성
         const obvData = {
@@ -280,7 +294,9 @@
     const chartContext = document.getElementById('rsiChart').getContext('2d');
     const ctxMACD = document.getElementById('macdChart').getContext('2d');
     const ctxOBV = document.getElementById('obvChart').getContext('2d');
+    const ctxrs = document.getElementById('rsChart').getContext('2d');
     
+   
     const rsiChart = new Chart(chartContext, {
         type: 'line',
         data: rsiData,
@@ -380,7 +396,27 @@
     // 차트 그리기 후 색칠하기 호출
     rsiChart.update(); // 차트를 먼저 그린 후
     drawFillAreaRSI(); // 색칠하기 호출
-
+	
+    new Chart(ctxrs, {
+        type: 'line',
+        data: rsData,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: 10, // RSI는 0에서 100 사이
+                    suggestedMin: -10 
+                },
+                x: {
+                    display: false  // x축 날짜 레이블 숨기기
+                }
+    
+            }
+        }
+    });
+    
+    
     new Chart(ctxMACD, {
         type: 'line',
         data: macdData,
