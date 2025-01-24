@@ -96,7 +96,13 @@
         
     </select>
     
-    <label>지표 선택</label>
+
+    <button onclick="updateChart()">업데이트</button>
+    
+</div>
+
+<div>
+<label>지표 추가</label>
     
     <select id="indicatorRange">
     
@@ -108,8 +114,8 @@
         <option value="rs">RS</option>
         
     </select>
-
-    <button onclick="updateChart()">업데이트</button>
+    
+    <button onclick="addChart()">업데이트</button>
     
 </div>
 
@@ -651,6 +657,9 @@ document.getElementById("stockSearchForm").addEventListener("submit", function(e
         });
 });
 
+function addChart(stockData) {
+
+};
 
 
 
