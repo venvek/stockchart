@@ -103,6 +103,8 @@
 
 <div>
 <label>지표 추가</label>
+
+	<button onclick="addbutton()"> 추가 </button>
     
     <select id="indicatorRange">
     
@@ -658,7 +660,19 @@ document.getElementById("stockSearchForm").addEventListener("submit", function(e
 });
 
 function addChart(stockData) {
-
+	
+	var tc = document.getElementById("tickerInput").click;
+	
+	fetch(`/api/stock-data/stocks/${ticker}`)
+	.then(response => response.json())
+	.then(data => {
+	addchart(data);
+	})
+	.catch(error => {
+	console.error("지표 수동추가 안됨", error);
+	
+	})
+	
 };
 
 
