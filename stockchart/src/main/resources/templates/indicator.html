@@ -246,7 +246,7 @@
         const rsData = {
         		labels: indicatorList.map((_, index) => index + 1),
             datasets: [{
-                label: 'rs',
+                label: 'RS',
                 data: indicatorList.map(indicator => indicator.rs),
                 borderColor: 'black',
                 borderWidth: 1,
@@ -259,7 +259,7 @@
         const stoData = {
         		labels: indicatorList.map((_, index) => index + 1),
             datasets: [{
-                label: 'rs',
+                label: 'Stochastic',
                 data: indicatorList.map(indicator => indicator.stochastic),
                 borderColor: 'black',
                 borderWidth: 1,
@@ -275,6 +275,19 @@
             datasets: [{
                 label: 'OBV',
                 data: indicatorList.map(indicator => indicator.obv),
+                borderColor: 'black',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            }]
+        };
+        
+     // OBV 차트 데이터 생성
+        const bbData = {
+        		labels: indicatorList.map((_, index) => index + 1),
+            datasets: [{
+                label: 'OBV',
+                data: indicatorList.map(indicator => indicator.bb_upper),
                 borderColor: 'black',
                 borderWidth: 1,
                 fill: false,
