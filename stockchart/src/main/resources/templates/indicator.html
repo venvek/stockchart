@@ -177,6 +177,10 @@
     <canvas id="stochasticChart" class="myChart"></canvas>
 	</div>
 	
+	<div>
+    <canvas id="bbChart" class="myChart"></canvas>
+	</div>
+	
 	</div>
 	
 	<div class="earning-list" style="display:flex;" >
@@ -282,12 +286,24 @@
             }]
         };
         
-     // OBV 차트 데이터 생성
+     // bb 차트 데이터 생성
         const bbData = {
         		labels: indicatorList.map((_, index) => index + 1),
             datasets: [{
-                label: 'OBV',
+                label: 'bb',
                 data: indicatorList.map(indicator => indicator.bb_upper),
+                borderColor: 'black',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            }]
+        };
+     // bb 차트 데이터 생성
+        const bblData = {
+        		labels: indicatorList.map((_, index) => index + 1),
+            datasets: [{
+                label: 'bb',
+                data: indicatorList.map(indicator => indicator.bb_lower),
                 borderColor: 'black',
                 borderWidth: 1,
                 fill: false,
@@ -334,7 +350,9 @@
     const ctxOBV = document.getElementById('obvChart').getContext('2d');
     const ctxrs = document.getElementById('rsChart').getContext('2d');
     const stochastic = document.getElementById('stochasticChart').getContext('2d');
-   
+   	const ctrbb = document.getElementById('bbChart').getContext('2d');
+    
+    
     const rsiChart = new Chart(chartContext, {
         type: 'line',
         data: rsiData,
@@ -435,6 +453,27 @@
     rsiChart.update(); // 차트를 먼저 그린 후
     drawFillAreaRSI(); // 색칠하기 호출
 	
+    bblData
+    
+    new Chart(ctrbb, {
+        type: 'line',
+        data: bbData,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: 100, // RSI는 0에서 100 사이
+                    suggestedMin: 0 
+                },
+                x: {
+                    display: false  // x축 날짜 레이블 숨기기
+                }
+    
+            }
+        }
+    });
+    
     new Chart(stochastic, {
         type: 'line',
         data: stoData,
