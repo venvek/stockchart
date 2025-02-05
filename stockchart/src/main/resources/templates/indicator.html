@@ -290,7 +290,7 @@
         const bbData = {
         		labels: indicatorList.map((_, index) => index + 1),
             datasets: [{
-                label: 'bb',
+                label: 'bbu',
                 data: indicatorList.map(indicator => indicator.bb_upper),
                 borderColor: 'black',
                 borderWidth: 1,
@@ -302,7 +302,7 @@
         const bblData = {
         		labels: indicatorList.map((_, index) => index + 1),
             datasets: [{
-                label: 'bb',
+                label: 'bbl',
                 data: indicatorList.map(indicator => indicator.bb_lower),
                 borderColor: 'black',
                 borderWidth: 1,
@@ -339,8 +339,6 @@
             y: stock.ma               // 이동 평균 값
         }));
         
-        console.log("volumes" + volumes);
-        
     window.onload = function() { 
 
     const ctx = document.getElementById('stockChart').getContext('2d');
@@ -350,7 +348,7 @@
     const ctxOBV = document.getElementById('obvChart').getContext('2d');
     const ctxrs = document.getElementById('rsChart').getContext('2d');
     const stochastic = document.getElementById('stochasticChart').getContext('2d');
-   	const ctrbb = document.getElementById('bbChart').getContext('2d');
+   	const ctxbbu = document.getElementById('bbChart').getContext('2d');
     
     
     const rsiChart = new Chart(chartContext, {
@@ -452,10 +450,9 @@
     // 차트 그리기 후 색칠하기 호출
     rsiChart.update(); // 차트를 먼저 그린 후
     drawFillAreaRSI(); // 색칠하기 호출
-	
-    bblData
+
     
-    new Chart(ctrbb, {
+    new Chart(ctxbbu, {
         type: 'line',
         data: bbData,
         options: {
