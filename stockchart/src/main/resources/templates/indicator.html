@@ -406,52 +406,7 @@
             }
         }
     });
-    
-    function drawFillAreaRSI() {
-        const width = chartContext.canvas.width;
-        const height = chartContext.canvas.height;
-
-        // 차트를 먼저 그린 후 색칠하기 위해 차트 초기화
-        rsiChart.update(); // 차트를 먼저 업데이트하여 선을 그린 후 색칠
-
-        const ctx = chartContext.canvas.getContext('2d');
-        ctx.clearRect(0, 0, width, height); // 이전 내용을 클리어
-
-        const rsiValues = indicatorList.map(indicator => indicator.rsi);
-        const stepSize = width / (rsiValues.length - 1);
-
-        // 30선과 70선 사이의 색칠
-        for (let i = 0; i < rsiValues.length - 1; i++) {
-            const x = i * stepSize;
-            const nextX = (i + 1) * stepSize;
-            const y1 = height - (rsiValues[i] / 100) * height;
-            const y2 = height - (rsiValues[i + 1] / 100) * height;
-
-            // 30선 아래일 때 색칠
-            if (rsiValues[i] < 30) {
-                ctx.fillStyle = 'rgba(255, 0, 0, 0.3)'; // 빨간색
-                ctx.fillRect(x, y1, stepSize, height - y1);
-            }
-
-            // 70선 위일 때 색칠
-            if (rsiValues[i] > 70) {
-                ctx.fillStyle = 'rgba(0, 255, 0, 0.3)'; // 초록색
-                ctx.fillRect(x, 0, stepSize, y1);
-            }
-
-            // 이전 값을 기준으로 경계 그리기
-            ctx.fillStyle = 'rgba(0, 0, 0, 0)'; // 투명
-            if (rsiValues[i] >= 30 && rsiValues[i] <= 70) {
-                ctx.fillRect(x, y1, stepSize, height - y1);
-            }
-        }
-    }
-
-    // 차트 그리기 후 색칠하기 호출
-    rsiChart.update(); // 차트를 먼저 그린 후
-    drawFillAreaRSI(); // 색칠하기 호출
-
-    
+  
     new Chart(ctxbbu, {
         type: 'line',
         data: bbData,
