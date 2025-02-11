@@ -381,9 +381,7 @@
             }
         }
     });
-  
 
-    
     new Chart(stochastic, {
         type: 'line',
         data: stoData,
@@ -591,9 +589,6 @@
 const searchInput = document.getElementById('searchInput');
 const searchButton = document.getElementById('searchButton');
 
-// 차트 인스턴스가 이미 있는 경우 업데이트 하기
-let chart = null;  // 기존 차트 (차트를 갱신할 변수)
-
 // 검색 버튼 클릭 시 차트 데이터 갱신
 searchButton.addEventListener('click', function() {
     const ticker = searchInput.value.trim().toUpperCase();
@@ -605,22 +600,8 @@ searchButton.addEventListener('click', function() {
     }
 });
 
-// 티커에 맞는 데이터를 가져오는 함수
-function fetchStockDataAndUpdateChart(ticker) {
-    const url = `/api/stock-data/stocks/${ticker}`;
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            // 차트 데이터를 받고 갱신
-            updateChart(data);
-        })
-        .catch(error => {
-            console.error('데이터를 가져오는 데 실패했습니다:', error);
-        });
-}
-
-// 차트를 갱신하는 함수
+// 차트를 갱신
 function updateChart(stockData) {
     const ohlcData = stockData.map(stock => ({
         t: new Date(stock.date.replace(" ", "T")),   // Date or timestamp

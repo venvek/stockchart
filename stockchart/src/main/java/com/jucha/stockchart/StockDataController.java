@@ -87,11 +87,5 @@ public class StockDataController {
         return response;
     }
     
-    @GetMapping("/suggestion")
-    public List<String> getSuggestions(@RequestParam String ticker) {
-        // 입력된 검색어로 필터링된 결과 반환
-        return companyService.getSuggetsions(ticker);
-    }
-    
     
 }
