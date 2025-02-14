@@ -38,7 +38,7 @@
 }
 
 /* 왼쪽 버튼 리스트 */
-.chart-button-list {
+.chart-button-list .chart-setting-left {
   flex: 0 0 150px; /* 고정 너비 */
   display: flex;
   flex-direction: column; /* 세로로 정렬 */
@@ -64,7 +64,15 @@
 }
 
 /* 오른쪽 차트 영역 */
-.chart-container {
+.chart-container  {
+  flex: 0.8; 
+  display: flex;
+  flex-direction: column; /* 차트들을 세로로 정렬 */
+  gap: 20px; /* 차트 간 간격 */
+  justify-content: space-around;
+}
+
+chart-setting-left {
   flex: 0.8; 
   display: flex;
   flex-direction: column; /* 차트들을 세로로 정렬 */
@@ -188,7 +196,28 @@
       
    	</div>
 	
+	
 	</div>
+	
+	
+	<div class="chart-setting-wrapper">
+	
+	<div class="chart-setting-left">
+	
+	<h3>차트세팅 좌 </h3>
+	
+	</div>
+	
+	<div class="chart-setting-right">
+	
+	<h3>차트세팅 우 </h3>
+	
+	</div>
+	
+	
+	
+	</div>
+	
 
 <div th:replace="CommonFile/footer :: footer"></div>
 
