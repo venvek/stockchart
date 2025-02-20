@@ -15,10 +15,24 @@
 
 <div class="chart-button-list">
    		
-   	  <h2>분야별 리스트</h2>
+   	  <h2>히트맵</h2>
+   	  
+   	  
       
    	</div>
 
 <div th:replace="CommonFile/footer :: footer"></div>
+
+<script th:inline="javascript">
+        // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
+        var stockDataList = /*[[${stockDataList}]]*/ [];
+        var indicatorList = /*[[${indicatorList}]]*/ [];
+        
+        
+        const lineData = stockDataList.map(stock => ({
+            x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
+            y: stock.close,  // Closing price
+        }));
+</script>       
 </body>
 </html>
