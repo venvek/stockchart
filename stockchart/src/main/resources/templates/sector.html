@@ -5,6 +5,7 @@
 <link href="/css/footer.css" rel="stylesheet" type="text/css">
     <link href="/css/header.css" rel="stylesheet" type="text/css">
 <title>map page</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -15,10 +16,9 @@
 
 <div class="chart-button-list">
    		
-   	  <h2>히트맵</h2>
+   	<h2>히트맵</h2>
    	  
-   	      <h3>회사티커 [[${ticker}]]</h3>
-    <h3>회사이름 [[${name}]]</h3>
+	<canvas id="heatmap"></canvas>
    	  
       
    	</div>
@@ -26,15 +26,27 @@
 <div th:replace="CommonFile/footer :: footer"></div>
 
 <script th:inline="javascript">
-        // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
-        var stockDataList = /*[[${stockDataList}]]*/ [];
-        var indicatorList = /*[[${indicatorList}]]*/ [];
-        
-        
-        const lineData = stockDataList.map(stock => ({
-            x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
-            y: stock.close,  // Closing price
-        }));
+
+fetch('/api/heatmap')
+    .then(response => response.json())
+    .then(data => {
+        const labels = data.map(d => d.ticker);
+        const values = data.map(d => d.changePercent);
+
+        const ctx = document.getElementById('heatmap').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Stock Change %',
+                    data: values,
+                    backgroundColor: values.map(v => v > 0 ? 'green' : 'red')
+                }]
+            }
+        });
+    });
+
 </script>       
 </body>
 </html>

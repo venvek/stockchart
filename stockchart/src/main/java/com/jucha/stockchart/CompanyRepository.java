@@ -13,4 +13,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     
     @Query("SELECT c.ticker FROM Company c WHERE c.ticker LIKE %:query% OR c.name LIKE %:query%")
     List<String> findTickersByQuery(@Param("query") String query);
+    
+
 }
