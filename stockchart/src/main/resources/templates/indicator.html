@@ -630,25 +630,6 @@ searchButton.addEventListener('click', function() {
 });
 
 
-// 차트를 갱신
-function updateChart(stockData) {
-    const ohlcData = stockData.map(stock => ({
-        t: new Date(stock.date.replace(" ", "T")),   // Date or timestamp
-        o: stock.open,   // Opening price
-        h: stock.high,   // High price
-        l: stock.low,    // Low price
-        c: stock.close   // Closing price
-    }));
-
-    // 차트가 이미 존재한다면 업데이트
-    if (chart) {
-        chart.data.datasets[0].data = ohlcData;  // 기존 차트 데이터 업데이트
-        chart.update();  // 차트 갱신
-    } else {
-        // 차트가 없다면 새로 생성
-        createChart(ohlcData);
-    }
-}
 
 document.getElementById("stockSearchForm").addEventListener("submit", function(event) {
     event.preventDefault();  // 페이지 새로고침 방지
