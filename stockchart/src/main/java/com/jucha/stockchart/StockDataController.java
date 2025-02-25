@@ -71,9 +71,15 @@ public class StockDataController {
     public String enquirypage() {
     	return "enquiry";
     }
+    
     @GetMapping("/recommend")
     public String recommendpage() {
     	return "recommend";
+    }
+    
+    @GetMapping("/heatmap")
+    public String heatmappage() {
+    	return "heatmap";
     }
     
     @GetMapping("/stocks/{ticker}") // API 요청을 위한 경로
