@@ -16,7 +16,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     
     @Query("SELECT c.ticker, c.name, s.close, s.open FROM Company c " +
     	       "JOIN StockData s ON c.ticker = s.ticker " +
-    	       "WHERE s.date = (SELECT MAX(s2.date) FROM StockData s2 WHERE s2.ticker = c.ticker)")
+    	       "WHERE s.date = (SELECT MAX(s2.date) FROM Stock_Data s2 WHERE s2.ticker = c.ticker)")
     	List<Object[]> findLatestStockData();
 
 }

@@ -27,7 +27,7 @@
 
 <script th:inline="javascript">
 
-fetch('/api/stock-data')
+fetch('/api/stock-data/heatmap')
     .then(response => response.json())
     .then(data => {
         const labels = data.map(d => d.ticker);
