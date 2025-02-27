@@ -14,9 +14,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query("SELECT c.ticker FROM Company c WHERE c.ticker LIKE %:query% OR c.name LIKE %:query%")
     List<String> findTickersByQuery(@Param("query") String query);
     
-    @Query("SELECT c.ticker, c.name, s.close, s.open FROM Company c " +
-    	       "JOIN StockData s ON c.ticker = s.ticker " +
-    	       "WHERE s.date = (SELECT MAX(s2.date) FROM Stock_Data s2 WHERE s2.ticker = c.ticker)")
+    @Query("SELECT c.ticker, c.name, c.marketCap, c.previousClose, c.open, c.dayLow, c.dayHigh, c.volume " +
+    	       "FROM Company c")
     	List<Object[]> findLatestStockData();
 
 }
