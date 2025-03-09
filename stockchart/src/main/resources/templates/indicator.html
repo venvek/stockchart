@@ -242,7 +242,7 @@ chart-setting-left {
         
         
         const volumes = stockDataList.map(stock => ({
-            x: new Date(stock.date).toISOString(),
+        	x: new Date(stock.date),
             y: stock.volume
         }));
         

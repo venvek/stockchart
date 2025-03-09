@@ -8,7 +8,7 @@
     <link href="/css/header.css" rel="stylesheet" type="text/css">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial/dist/chartjs-chart-financial.min.js"></script>
+    
 </head>
 
 <body>
@@ -70,12 +70,12 @@ window.onload = function() {
     const ctx = document.getElementById('stockChart').getContext('2d');
 
     const stockChart = new Chart(ctx, {
-        type: 'ohlc',
+        type: 'line',
         data: {
             datasets: [
                 {
                     label: 'Stock Price',
-                    data: ohlcData,
+                    data: lineData,
                     yAxisID: 'price-axis',
                     borderColor: 'rgba(86, 229, 245, 1)',
                     backgroundColor: 'rgba(86, 229, 245, 0.2)',
