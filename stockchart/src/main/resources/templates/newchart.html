@@ -51,19 +51,30 @@ const lineData = stockDataList.map(stock => ({
     y: stock.close,  // Closing price
 }));
 
-const ohlcData = stockDataList.map(stock => ({
+/* const ohlcData = stockDataList.map(stock => ({
 	t: new Date(stock.date.replace(" ", "T")),   // Date or timestamp
     o: stock.open,   // Opening price
     h: stock.high,   // High price
     l: stock.low,    // Low price
     c: stock.close   // Closing price
-}));
+})); */
 
+const ohlcData = [
+	  { t: new Date('2024-03-01'), o: 100, h: 110, l: 95, c: 105 },
+	  { t: new Date('2024-03-02'), o: 106, h: 112, l: 100, c: 102 },
+	  { t: new Date('2024-03-03'), o: 103, h: 108, l: 98, c: 107 }
+	];
 
-const volumes = stockDataList.map(stock => ({
+const volumes = [
+	  { t: new Date('2024-03-01'), y: 5000000 },
+	  { t: new Date('2024-03-02'), y: 4200000 },
+	  { t: new Date('2024-03-03'), y: 6100000 }
+	];
+
+/* const volumes = stockDataList.map(stock => ({
     x: new Date(stock.date).toISOString(),
     y: stock.volume
-}));
+})); */
 
 window.onload = function() { 
 
