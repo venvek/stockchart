@@ -242,7 +242,7 @@ chart-setting-left {
         
         
         const volumes = stockDataList.map(stock => ({
-            x: new Date(stock.date).getTime(), // 숫자로 변환 
+        	x: new Date(stock.date).toISOString(),
             y: stock.volume
         }));
         
