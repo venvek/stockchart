@@ -214,8 +214,7 @@ chart-setting-left {
 	
 	</div>
 	
-	
-	
+
 	</div>
 	
 
@@ -242,7 +241,7 @@ chart-setting-left {
         
         
         const volumes = stockDataList.map(stock => ({
-        	x: new Date(stock.date).toISOString(),
+        	x: new Date(stock.date),
             y: stock.volume
         }));
         
@@ -644,9 +643,26 @@ document.getElementById("stockSearchForm").addEventListener("submit", function(e
             updateChart(data);
         })
         .catch(error => {
-            console.error("오류 fetching stock data:", error);
+            console.error("업데이트 오류", error);
         });
 });
+
+
+
+function updateChart(days) {
+    let endDate = new Date(); 
+    let startDate = new Date();
+    startDate.setDate(endDate.getDate() - days); 
+
+    const filteredData = stockDataList.filter(stock => {
+        let stockDate = new Date(stock.date);
+        return stockDate >= startDate && stockDate <= endDate;
+    });
+
+    //  데이터 업데이트
+    stockChart.data.datasets[0].data = transformData(filteredData);
+    stockChart.update();
+}
 
 function addChart(stockData) {
 	
