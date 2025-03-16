@@ -542,12 +542,12 @@ chart-setting-left {
         });
     
     const stockChart = new Chart(ctx, {
-        type: 'line',
+        type: 'ohlc',
         data: {
             datasets: [
                 {
                     label: 'Stock Price',
-                    data: lineData,
+                    data: ohlcData,
                     yAxisID: 'price-axis',
                     borderColor: 'rgba(86, 229, 245, 1)',
                     backgroundColor: 'rgba(86, 229, 245, 0.2)',

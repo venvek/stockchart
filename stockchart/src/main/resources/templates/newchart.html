@@ -68,8 +68,11 @@ const ohlcData = [
 const volumes = [
 	  { t: new Date('2024-03-01'), y: 5000000 },
 	  { t: new Date('2024-03-02'), y: 4200000 },
-	  { t: new Date('2024-03-03'), y: 6100000 }
-	];
+	  { t: new Date('2024-03-03'), y: 6100000 },
+	  { t: new Date('2024-03-04'), y: 1300000 },
+	  { t: new Date('2024-03-05'), y: 7000000 },
+	  { t: new Date('2024-03-06'), y: 8000000 }
+	]; 
 
 /* const volumes = stockDataList.map(stock => ({
     x: new Date(stock.date).toISOString(),
@@ -81,12 +84,12 @@ window.onload = function() {
     const ctx = document.getElementById('stockChart').getContext('2d');
 
     const stockChart = new Chart(ctx, {
-        type: 'line',
+        type: 'ohlc', 
         data: {
             datasets: [
                 {
                     label: 'Stock Price',
-                    data: lineData,
+                    data: ohlcData,
                     yAxisID: 'price-axis',
                     borderColor: 'rgba(86, 229, 245, 1)',
                     backgroundColor: 'rgba(86, 229, 245, 0.2)',
