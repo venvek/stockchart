@@ -659,9 +659,11 @@ function updateChart(days) {
         return stockDate >= startDate && stockDate <= endDate;
     });
 
-    //  데이터 업데이트
+    //  데이터 업데이트 chart.js api
     stockChart.data.datasets[0].data = transformData(filteredData);
     stockChart.update();
+    
+    
 }
 
 function addChart(stockData) {
@@ -679,6 +681,15 @@ function addChart(stockData) {
 	})
 	
 };
+
+function clearchart(days) {
+	stockChart.clear();
+
+}
+
+function charReset() {
+	stockChart.reset();
+}
 
 
 
