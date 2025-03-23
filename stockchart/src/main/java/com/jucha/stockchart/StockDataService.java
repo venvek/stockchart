@@ -30,4 +30,21 @@ public class StockDataService {
         // 주식 데이터와 지표 데이터를 하나의 응답 형태로 결합할 수 있습니다.
         return new StockIndicatorResponse(stockData, indicators);
     }
+	
+	public List<Stock_Data> getStockData(String ticker) {
+        return repository.findByTicker(ticker);
+    }
+	
+	public List<Stock_Data> getStockDataByPeriod(String ticker, String period) {
+        switch (period) {
+            case "W":
+                return repository.findWeeklyData(ticker);
+            case "M":
+                return repository.findMonthlyData(ticker);
+            case "Y":
+                return repository.findYearlyData(ticker);
+            default: // "D" (일별)
+                return repository.findDailyData(ticker);
+        }
+    }
 }
