@@ -35,16 +35,14 @@ public class StockDataService {
         return repository.findByTicker(ticker);
     }
 	
-	public List<Stock_Data> getStockDataByPeriod(String ticker, String period) {
+	public List<?> getStockDataByPeriod(String ticker, String period) {
         switch (period) {
-            case "W":
-                return repository.findWeeklyData(ticker);
             case "M":
-                return repository.findMonthlyData(ticker);
+                return repository.findMonthlyData(ticker);  // DTO 반환
             case "Y":
-                return repository.findYearlyData(ticker);
-            default: // "D" (일별)
-                return repository.findDailyData(ticker);
+                return repository.findYearlyData(ticker);  // DTO 반환
+            default:
+                return repository.findDailyData(ticker);  // StockData 반환
         }
     }
 }
