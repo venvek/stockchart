@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class StockDataService {
@@ -35,8 +36,10 @@ public class StockDataService {
         return repository.findByTicker(ticker);
     }
 	
-	public List<?> getStockDataByPeriod(String ticker, String period) {
+	public List<Map<String, Object>> getStockDataByPeriod(String ticker, String period) {
         switch (period) {
+        	case "W":
+        		return repository.findWeeklyData(ticker);
             case "M":
                 return repository.findMonthlyData(ticker);  // DTO 반환
             case "Y":
@@ -46,3 +49,4 @@ public class StockDataService {
         }
     }
 }
+

@@ -102,13 +102,12 @@ public class StockDataController {
         return response;
     }
     
-    @GetMapping
-    public List<?> getStockData(
-        @RequestParam String ticker,
-        @RequestParam(defaultValue = "D") String period  // 기본값은 일별(D)
+    @GetMapping("/{ticker}")
+    public List<Stock_Data> getStockData(
+        @PathVariable String ticker,
+        @RequestParam(defaultValue = "D") String period  // 기본값: 일별
     ) {
-        return stockDataService.getStockDataByPeriod(ticker, period);
+        return stockService.getStockDataByPeriod(ticker, period);
     }
-    
     
 }
