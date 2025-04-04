@@ -36,7 +36,7 @@ public class StockDataService {
         return repository.findByTicker(ticker);
     }
 	
-	public List<Map<String, Object>> getStockDataByPeriod(String ticker, String period) {
+	public List<?> getStockDataByPeriod(String ticker, String period) {
         switch (period) {
         	case "W":
         		return repository.findWeeklyData(ticker);

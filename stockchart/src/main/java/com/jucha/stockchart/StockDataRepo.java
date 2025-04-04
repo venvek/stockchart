@@ -23,7 +23,7 @@ public interface StockDataRepo extends JpaRepository<Stock_Data, Long> {
 	               "JOIN company c ON s.ticker = c.ticker " +
 	               "WHERE c.ticker = :ticker GROUP BY week ORDER BY week ASC", 
 	       nativeQuery = true)
-	List<Map<String, Object>> findWeeklyData(@Param("ticker") String ticker);
+	List<HeatMapData> findWeeklyData(@Param("ticker") String ticker);
 
 	// 월별 평균 데이터 
 	@Query(value = "SELECT DATE_FORMAT(s.date, '%Y-%m') AS period, AVG(s.close) AS avgClose " +
@@ -31,7 +31,7 @@ public interface StockDataRepo extends JpaRepository<Stock_Data, Long> {
 	               "JOIN company c ON s.ticker = c.ticker " +
 	               "WHERE c.ticker = :ticker GROUP BY period ORDER BY period ASC", 
 	       nativeQuery = true)
-	List<Map<String, Object>> findMonthlyData(@Param("ticker") String ticker);
+	List<HeatMapData> findMonthlyData(@Param("ticker") String ticker);
 
 	// 연도별 평균 데이터 
 	@Query(value = "SELECT DATE_FORMAT(s.date, '%Y') AS period, AVG(s.close) AS avgClose " +
@@ -39,7 +39,7 @@ public interface StockDataRepo extends JpaRepository<Stock_Data, Long> {
 	               "JOIN company c ON s.ticker = c.ticker " +
 	               "WHERE c.ticker = :ticker GROUP BY period ORDER BY period ASC", 
 	       nativeQuery = true)
-	List<Map<String, Object>> findYearlyData(@Param("ticker") String ticker);
+	List<HeatMapData> findYearlyData(@Param("ticker") String ticker);
     
     
 }
