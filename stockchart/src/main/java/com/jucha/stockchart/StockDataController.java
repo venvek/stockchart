@@ -103,7 +103,7 @@ public class StockDataController {
     }
     
     @GetMapping("/{ticker}")
-    public List<Stock_Data> getStockData(
+    public List<?> getStockData(
         @PathVariable String ticker,
         @RequestParam(defaultValue = "D") String period  // 기본값: 일별
     ) {
