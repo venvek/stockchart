@@ -8,6 +8,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 public class HeatMapData {
     private String ticker;
     private String name;
@@ -31,4 +33,15 @@ public class HeatMapData {
         this.volume = volume;
         this.changePercent = changePercent;
     }
+
+	@Override
+	public String toString() {
+		return "HeatMapData [ticker=" + ticker + ", name=" + name + ", marketCap=" + marketCap + ", previousClose="
+				+ previousClose + ", open=" + open + ", dayLow=" + dayLow + ", dayHigh=" + dayHigh + ", volume="
+				+ volume + ", changePercent=" + changePercent + "]";
+	}
+    
+    
+    
+    
 }

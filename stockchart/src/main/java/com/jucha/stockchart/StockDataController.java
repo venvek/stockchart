@@ -102,12 +102,23 @@ public class StockDataController {
         return response;
     }
     
-    @GetMapping("/{ticker}")
-    public List<?> getStockData(
-        @PathVariable String ticker,
-        @RequestParam(defaultValue = "D") String period  // 기본값: 일별
-    ) {
-        return stockService.getStockDataByPeriod(ticker, period);
-    }
+	/*
+	 * @GetMapping("/scan") public List<Stock_Data> scanStocks(
+	 * 
+	 * @RequestParam(name = "minVolume", required = false, defaultValue = "0") Long
+	 * minVolume,
+	 * 
+	 * @RequestParam(name = "minClose", required = false, defaultValue = "0") Double
+	 * minClose ) { return stockService.scanStocks(minVolume, minClose); }
+	 */
+    
+	/*
+	 * @GetMapping("/{ticker}") public List<?> getStockData(
+	 * 
+	 * @PathVariable String ticker,
+	 * 
+	 * @RequestParam(defaultValue = "D") String period // 기본값: 일별 ) { return
+	 * stockService.getStockDataByPeriod(ticker, period); }
+	 */
     
 }

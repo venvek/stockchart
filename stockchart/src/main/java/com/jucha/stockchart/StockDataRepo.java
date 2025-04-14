@@ -41,5 +41,7 @@ public interface StockDataRepo extends JpaRepository<Stock_Data, Long> {
 	       nativeQuery = true)
 	List<HeatMapData> findYearlyData(@Param("ticker") String ticker);
     
+	@Query("SELECT s FROM StockData s WHERE s.volume >= :minVolume AND s.close >= :minClose")
+	List<Stock_Data> scanStocks(@Param("minVolume") Long minVolume, @Param("minClose") Double minClose);
     
 }
