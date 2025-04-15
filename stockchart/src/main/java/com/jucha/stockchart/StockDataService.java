@@ -48,5 +48,10 @@ public class StockDataService {
                 return repository.findDailyData(ticker);  // StockData 반환
         }
     }
+	
+	public List<Stock_Data> filtervolume(String volume) {
+		return repository.scanStocks(null, null);
+		
+	}
 }
 

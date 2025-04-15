@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:attr="data-theme=${theme != null ? theme : 'light'}">
 <head>
 <style>
   /* 검색창 스타일 */
@@ -31,6 +32,23 @@
   .autocomplete-item:hover {
     background-color: #f0f0f0;
   }
+  
+  :root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+[data-theme='dark'] {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
 </style>
 
 	<link href="/css/header.css" rel="stylesheet" type="text/css">
@@ -68,6 +86,10 @@
             </ul>
             <div class="dark-mode-toggle" style="display:flex;justify-content: space-around">
   <button id="darkModeButton">다크 모드 on off</button>
+  
+   <button id="theme-toggle">🌙 다크모드</button>
+
+    <h1>다크모드 페이지</h1>
   
 </div>
         </nav>
@@ -109,7 +131,31 @@ const autocompleteList = document.getElementById('autocompleteList');
 	autocompleteList.innerHTML = '';
 	}
 	
+	let userTheme = /*[[${theme}]]*/ 'light';
 	
+</script>
+
+<script th:src="@{/js/theme-toggle.js}">
+
+const toggleButton = document.getElementById('theme-toggle');
+const html = document.documentElement;
+
+toggleButton.addEventListener('click', () => {
+  const currentTheme = html.getAttribute('data-theme');
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', newTheme);
+  toggleButton.textContent = newTheme === 'light' ? '🌙 다크모드' : '☀️ 라이트모드';
+  localStorage.setItem('theme', newTheme);
+});
+
+// 페이지 로드시
+window.addEventListener('DOMContentLoaded', () => {
+  // localStorage 우선, 없으면 서버에서 주입된 userTheme 사용
+  const savedTheme = localStorage.getItem('theme') || (typeof userTheme !== 'undefined' ? userTheme : 'light');
+  html.setAttribute('data-theme', savedTheme);
+  toggleButton.textContent = savedTheme === 'light' ? '🌙 다크모드' : '☀️ 라이트모드';
+});
+
 </script>
 </body>
 </html>
