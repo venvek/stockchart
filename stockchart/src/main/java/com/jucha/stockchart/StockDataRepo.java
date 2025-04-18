@@ -12,7 +12,8 @@ import org.springframework.stereotype.Repository;
 public interface StockDataRepo extends JpaRepository<Stock_Data, Long> {
 	List<Stock_Data> findByCompany_TickerOrderByDateAsc(String ticker);
 	
-	List<Stock_Data> findByTicker(String ticker);
+	@Query("SELECT s FROM Stock_Data s WHERE s.company.ticker = :ticker")
+	List<Stock_Data> findByTicker(@Param("ticker") String ticker);
 	
 	@Query("SELECT s FROM Stock_Data s WHERE s.company.ticker = :ticker ORDER BY s.date ASC")
 	List<Stock_Data> findDailyData(@Param("ticker") String ticker);
@@ -41,7 +42,7 @@ public interface StockDataRepo extends JpaRepository<Stock_Data, Long> {
 	       nativeQuery = true)
 	List<HeatMapData> findYearlyData(@Param("ticker") String ticker);
     
-	@Query("SELECT s FROM StockData s WHERE s.volume >= :minVolume AND s.close >= :minClose")
+	@Query("SELECT s FROM Stock_Data s WHERE s.volume >= :minVolume AND s.close >= :minClose")
 	List<Stock_Data> scanStocks(@Param("minVolume") Long minVolume, @Param("minClose") Double minClose);
     
 }
