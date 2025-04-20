@@ -20,8 +20,7 @@ public class SecurityConfig {
             .and()
             .csrf().disable() // (REST API 용일 경우 CSRF 비활성화)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/public", "/login", "/signup").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()      //.authenticated() .requestMatchers("/public", "/login", "/signup","/stocks").permitAll()
             )
             .formLogin(login -> login
                 .loginPage("/login")
