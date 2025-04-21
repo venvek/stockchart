@@ -22,16 +22,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll()      //.authenticated() .requestMatchers("/public", "/login", "/signup","/stocks").permitAll()
             )
-            .formLogin(login -> login
-                .loginPage("/login")
-                .defaultSuccessUrl("/dashboard", true)
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .permitAll()
-            )
+            
             .httpBasic();
 
         return http.build();
