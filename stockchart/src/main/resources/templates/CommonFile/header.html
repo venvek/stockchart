@@ -72,8 +72,7 @@ body {
     
                 <div class="dark-mode-toggle" style="display:flex;justify-content: space-around">
    <button id="darkModeButton">다크 모드 on off</button>
-  
-   <button id="theme-toggle">🌙 다크모드</button>
+ 
 
   
 </div>
@@ -149,14 +148,6 @@ toggleButton.addEventListener('click', () => {
   html.setAttribute('data-theme', newTheme);
   toggleButton.textContent = newTheme === 'light' ? '🌙 다크모드' : '☀️ 라이트모드';
   localStorage.setItem('theme', newTheme);
-});
-
-// 페이지 로드시
-window.addEventListener('DOMContentLoaded', () => {
-  // localStorage 우선, 없으면 서버에서 주입된 userTheme 사용
-  const savedTheme = localStorage.getItem('theme') || (typeof userTheme !== 'undefined' ? userTheme : 'light');
-  html.setAttribute('data-theme', savedTheme);
-  toggleButton.textContent = savedTheme === 'light' ? '🌙 다크모드' : '☀️ 라이트모드';
 });
 
 </script>
