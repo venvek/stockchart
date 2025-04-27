@@ -118,7 +118,6 @@ chart-setting-left {
         <option value="cci">cci</option>
         <option value="macd">macd</option>
         <option value="obv">obv</option>
-        <option value="rs">rs</option>
         <option value="rs">RS</option>
         
     </select>
@@ -128,11 +127,13 @@ chart-setting-left {
 </div>
 
     <h3>회사티커 [[${ticker}]]</h3>
-    <h3>회사이름 [[${name}]]</h3>
-<form id="stockSearchForm" action="/stocks" method="get">
+    
+    <form id="stockSearchForm" action="/stocks" method="get">
+    
     <input type="text" id="tickerInput" name="ticker" placeholder="Enter ticker">
     <button type="submit">Search</button>
-</form>
+    
+	</form>
 
 
 <ul id="searchResults"></ul>
