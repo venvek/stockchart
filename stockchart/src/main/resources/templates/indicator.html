@@ -561,6 +561,15 @@ chart-setting-left {
                     borderWidth: 1,
                     categoryPercentage: 0.5 // 카테고리 너비를 조절
                 },
+                {
+                    label: 'MA 50',
+                    data: maData,
+                    borderColor: 'orange',
+                    borderWidth: 1,
+                    fill: false,
+                    pointRadius: 0,
+                    yAxisID: 'price-axis'
+                },
                
             ]
         },
@@ -607,6 +616,19 @@ chart-setting-left {
                     tickMarkLength: 5,
                     
                 },
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    intersect: false
+                }
                 }
             }
         }
