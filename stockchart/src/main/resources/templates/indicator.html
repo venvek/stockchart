@@ -589,19 +589,11 @@ chart-setting-left {
                 },
                 'price-axis': {
                     type: 'linear',
-                    position: 'right',
-                    title: {
-                        display: true,
-                        text: 'Price'
-                    },
+                    position: 'right',      
                 },
                 'volume-axis': {
                 type: 'linear',
                 position: 'left', // 거래량 y축은 왼쪽에 위치
-                title: {
-                    display: true,
-                    text: 'Volume (단위: millions)'
-                },
                 suggestedMax: Math.max(...volumes.map(v => v.y)) / 5,
                 ticks: {
                     beginAtZero: true,
