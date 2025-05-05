@@ -244,6 +244,55 @@ chart-setting-left {
             y: stock.volume
         }));
         
+        const crosshairPlugin = {
+      		  id: 'crosshair',
+      		  afterEvent(chart, args) {
+      		    const {ctx, chartArea: {top, bottom, left, right}} = chart;
+      		    const event = args.event;
+
+      		    if (!event.x || !event.y) return;
+
+      		    if (
+      		      event.x >= left &&
+      		      event.x <= right &&
+      		      event.y >= top &&
+      		      event.y <= bottom
+      		    ) {
+      		      chart._crosshair = { x: event.x, y: event.y };
+      		    } else {
+      		      chart._crosshair = null;
+      		    }
+
+      		    chart.draw();
+      		  },
+
+      		  afterDraw(chart) {
+      		    const crosshair = chart._crosshair;
+      		    if (!crosshair) return;
+
+      		    const {ctx, chartArea: {top, bottom, left, right}} = chart;
+
+      		    ctx.save();
+      		    ctx.setLineDash([4, 2]);
+      		    ctx.lineWidth = 1;
+      		    ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+
+      		    // 세로선
+      		    ctx.beginPath();
+      		    ctx.moveTo(crosshair.x, top);
+      		    ctx.lineTo(crosshair.x, bottom);
+      		    ctx.stroke();
+
+      		    // 가로선
+      		    ctx.beginPath();
+      		    ctx.moveTo(left, crosshair.y);
+      		    ctx.lineTo(right, crosshair.y);
+      		    ctx.stroke();
+
+      		    ctx.restore();
+      		  }
+      		};
+        
         const rsiData = {
         	    labels: indicatorList.map((_, index) => index + 1),
         	    datasets: [
@@ -621,9 +670,11 @@ chart-setting-left {
                     mode: 'nearest',
                     intersect: false
                 }
+                
                 }
             }
-        }
+        },
+        plugins: [crosshairPlugin] 
     });
 };
 
@@ -641,49 +692,7 @@ searchButton.addEventListener('click', function() {
     }
 });
 
-const crosshairPlugin = {
-	    id: 'crosshair',
-	    afterEvent(chart, args) {
-	        const {ctx, chartArea: {top, bottom, left, right}} = chart;
-	        const event = args.event;
-	        const x = event.x;
-	        const y = event.y;
 
-	        // 마우스가 차트 영역 안에 있을 때만 그리기
-	        if (x >= left && x <= right && y >= top && y <= bottom) {
-	            chart._crosshair = {x, y};
-	        } else {
-	            chart._crosshair = null;
-	        }
-
-	        chart.draw(); // 다시 그리기
-	    },
-	    afterDraw(chart) {
-	        const {ctx, chartArea: {top, bottom, left, right}} = chart;
-	        const crosshair = chart._crosshair;
-
-	        if (!crosshair) return;
-
-	        ctx.save();
-	        ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
-	        ctx.lineWidth = 1;
-	        ctx.setLineDash([4, 2]);
-
-	        // 수직선
-	        ctx.beginPath();
-	        ctx.moveTo(crosshair.x, top);
-	        ctx.lineTo(crosshair.x, bottom);
-	        ctx.stroke();
-
-	        // 수평선
-	        ctx.beginPath();
-	        ctx.moveTo(left, crosshair.y);
-	        ctx.lineTo(right, crosshair.y);
-	        ctx.stroke();
-
-	        ctx.restore();
-	    }
-	};
 
 
 document.getElementById("stockSearchForm").addEventListener("submit", function(event) {
