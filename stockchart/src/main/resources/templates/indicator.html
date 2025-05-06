@@ -148,12 +148,12 @@ chart-setting-left {
     
     <div class="chart-container">
     <div> 
-    <canvas id="rsiChart" class="myChart"></canvas>
+    <canvas id="rsiChart" height="100" class="myChart"></canvas>
 	</div>
 	
 
 	<div>
-    <canvas id="macdChart" class="myChart"></canvas>
+    <canvas id="macdChart" height="100" class="myChart"></canvas>
 	</div>
 
     
@@ -166,9 +166,10 @@ chart-setting-left {
     background-color: #f9f9f9;">
     </canvas>
     
-
+    
+    
 	<div>
-	<canvas id="obvChart" class="myChart"></canvas>
+	<canvas id="obvChart" class="myChart" ></canvas>
 	</div>
 
 	
@@ -181,9 +182,8 @@ chart-setting-left {
 	</div>
 	
 	<div>
-    <canvas id="stochasticChart" class="myChart"></canvas>
+    <canvas id="stochasticChart" height="100" class="myChart"></canvas>
 	</div>
-	
 
 	
 	</div>
@@ -224,6 +224,47 @@ chart-setting-left {
         var stockDataList = /*[[${stockDataList}]]*/ [];
         var indicatorList = /*[[${indicatorList}]]*/ [];
         
+        const baseOptions = {
+        		  responsive: false,
+        		  maintainAspectRatio: false,
+        		  layout: {
+        		    padding: {
+        		      left: 10,
+        		      right: 10
+        		    }
+        		  },
+        		  scales: {
+        		    x: {
+        		      type: 'time',
+        		      display: false, // 마지막 하나만 true
+        		      time: {
+        		        unit: 'day',
+        		        displayFormats: { day: 'yyyy-MM-dd' }
+        		      },
+        		      grid: {
+        		        drawOnChartArea: false
+        		      }
+        		    },
+        		    y: {
+        		      position: 'left',
+        		      ticks: {
+        		        padding: 10
+        		      },
+        		      grid: {
+        		        drawBorder: true,
+        		        lineWidth: 1
+        		      }
+        		    }
+        		  },
+        		  plugins: {
+        		    legend: { display: false },
+        		    tooltip: { mode: 'index', intersect: false }
+        		  },
+        		  interaction: {
+        		    mode: 'nearest',
+        		    intersect: false
+        		  }
+        		};
         
         const lineData = stockDataList.map(stock => ({
             x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
@@ -400,81 +441,20 @@ chart-setting-left {
     const ctxrs = document.getElementById('rsChart').getContext('2d');
     const stochastic = document.getElementById('stochasticChart').getContext('2d');
    
-    
-    
     const rsiChart = new Chart(chartContext, {
         type: 'line',
         data: rsiData,
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    min: 0,
-                    max: 100,
-                    ticks: {
-                        stepSize: 10
-                    },
-                    grid: {
-                        color: '#e0e0e0' // 그리드 색깔
-                    }
-                },
-                x: {
-                	display: false, 
-                    grid: {
-                        color: '#e0e0e0' // 그리드 색깔
-                    }
-                }
-            },
-            plugins: {
-                annotation: {
-                    annotations: {
-                        line1: {
-                            type: 'line',
-                            yMin: 30,
-                            yMax: 30,
-                            borderColor: 'red', // 30선 색깔
-                            borderWidth: 1,
-                            label: {
-                                enabled: true,
-                                content: '30',
-                                position: 'end'
-                            }
-                        },
-                        line2: {
-                            type: 'line',
-                            yMin: 70,
-                            yMax: 70,
-                            borderColor: 'green', // 70선 색깔
-                            borderWidth: 1,
-                            label: {
-                                enabled: true,
-                                content: '70',
-                                position: 'end'
-                            }
-                        }
-                    }
-                }
-            }
+        options: baseOptions
+       ,
+            
         }
-    });
+    );
 
     new Chart(stochastic, {
         type: 'line',
         data: stoData,
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    suggestedMax: 100, // RSI는 0에서 100 사이
-                    suggestedMin: 0 
-                },
-                x: {
-                    display: false  // x축 날짜 레이블 숨기기
-                }
-    
-            }
-        }
+        options: baseOptions
+        
     });
     
     new Chart(ctxrs, {
