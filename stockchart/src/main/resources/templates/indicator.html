@@ -169,16 +169,16 @@ chart-setting-left {
     
     
 	<div>
-	<canvas id="obvChart" class="myChart" ></canvas>
+	<canvas id="obvChart" height="100"class="myChart" ></canvas>
 	</div>
 
 	
 	<div>
-    <canvas id="cciChart" class="myChart"></canvas>
+    <canvas id="cciChart" height="100"  class="myChart"></canvas>
 	</div>
 	
 	<div>
-    <canvas id="rsChart" class="myChart"></canvas>
+    <canvas id="rsChart" height="100" class="myChart"></canvas>
 	</div>
 	
 	<div>
@@ -460,81 +460,29 @@ chart-setting-left {
     new Chart(ctxrs, {
         type: 'line',
         data: rsData,
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    suggestedMax: 10, // RSI는 0에서 100 사이
-                    suggestedMin: -10 
-                },
-                x: {
-                    display: false  // x축 날짜 레이블 숨기기
-                }
-    
-            }
-        }
+        options: baseOptions
     });
     
     
     new Chart(ctxMACD, {
         type: 'line',
         data: macdData,
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    suggestedMax: 10, // RSI는 0에서 100 사이
-                    suggestedMin: -10 
-                },
-                x: {
-                    display: false  // x축 날짜 레이블 숨기기
-                }
-    
-            }
-        }
+        options: baseOptions
+        
     });
 
     new Chart(ctxOBV, {
         type: 'line',
         data: obvData,
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                },
-                x: {
-                    display: false  // x축 날짜 레이블 숨기기
-                }
-            }
-        }
+        options: baseOptions
+        
     });
     
     const cciChart = new Chart(ctxCCI, {
             type: 'line',
             data: cciData,
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        min: yMin, // 동적으로 설정한 최소값
-                        max: yMax, // 동적으로 설정한 최대값
-                        ticks: {
-                            stepSize: 50
-                        },
-                        grid: {
-                            color: '#e0e0e0' // 그리드 색깔
-                        }
-                    },
-                    x: {
-						display: false,
-                        grid: {
-                            color: '#e0e0e0' // 그리드 색깔
-                        }
-                    }
-                },
+            options: baseOptions
+            ,
                 plugins: {
                     annotation: {
                         annotations: {
@@ -567,7 +515,7 @@ chart-setting-left {
                     }
                 }
             }
-        });
+        );
     
     const stockChart = new Chart(ctx, {
         type: 'line',
