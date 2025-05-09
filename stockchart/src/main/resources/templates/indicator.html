@@ -441,14 +441,25 @@ chart-setting-left {
     const ctxrs = document.getElementById('rsChart').getContext('2d');
     const stochastic = document.getElementById('stochasticChart').getContext('2d');
    
+    const customTitlePlugin = {
+    	    id: 'customTitle',
+    	    beforeDraw: (chart) => {
+    	        const {ctx, chartArea: {top, left}, width} = chart;
+    	        ctx.save();
+    	        ctx.font = '16px sans-serif';
+    	        ctx.fillStyle = 'black';
+    	        ctx.textAlign = 'bottom';
+    	        ctx.fillText('RSI Indicator', left + width / 2, top + 20);
+    	        ctx.restore();
+    	    }
+    	};
+    
     const rsiChart = new Chart(chartContext, {
         type: 'line',
         data: rsiData,
-        options: baseOptions
-       ,
-            
-        }
-    );
+        options: baseOptions,
+        plugins: [customTitlePlugin]
+    });
 
     new Chart(stochastic, {
         type: 'line',
@@ -601,7 +612,9 @@ chart-setting-left {
                 
                 }
             }
-        },
+        }
+        
+        ,
         plugins: [crosshairPlugin] 
     });
 };
