@@ -441,15 +441,80 @@ chart-setting-left {
     const ctxrs = document.getElementById('rsChart').getContext('2d');
     const stochastic = document.getElementById('stochasticChart').getContext('2d');
    
-    const customTitlePlugin = {
+    const rsititlePlugin = {
     	    id: 'customTitle',
     	    beforeDraw: (chart) => {
     	        const {ctx, chartArea: {top, left}, width} = chart;
     	        ctx.save();
     	        ctx.font = '16px sans-serif';
     	        ctx.fillStyle = 'black';
-    	        ctx.textAlign = 'bottom';
-    	        ctx.fillText('RSI Indicator', left + width / 2, top + 20);
+    	        ctx.textAlign = 'top';
+    	        ctx.fillText('RSI Indicator', left , top );
+    	        ctx.restore();
+    	    }
+    	};
+    
+    const macdtitlePlugin = {
+    	    id: 'macdcustomTitle',
+    	    beforeDraw: (chart) => {
+    	        const {ctx, chartArea: {top, left}, width} = chart;
+    	        ctx.save();
+    	        ctx.font = '16px sans-serif';
+    	        ctx.fillStyle = 'black';
+    	        ctx.textAlign = 'top';
+    	        ctx.fillText('MACD Indicator', left , top );
+    	        ctx.restore();
+    	    }
+    	};
+    
+    const ccititlePlugin = {
+    	    id: 'ccicustomTitle',
+    	    beforeDraw: (chart) => {
+    	        const {ctx, chartArea: {top, left}, width} = chart;
+    	        ctx.save();
+    	        ctx.font = '16px sans-serif';
+    	        ctx.fillStyle = 'black';
+    	        ctx.textAlign = 'top';
+    	        ctx.fillText('CCI Indicator', left , top );
+    	        ctx.restore();
+    	    }
+    	};
+    
+    const rstitlePlugin = {
+    	    id: 'rscustomTitle',
+    	    beforeDraw: (chart) => {
+    	        const {ctx, chartArea: {top, left}, width} = chart;
+    	        ctx.save();
+    	        ctx.font = '16px sans-serif';
+    	        ctx.fillStyle = 'black';
+    	        ctx.textAlign = 'top';
+    	        ctx.fillText('RS Indicator', left , top );
+    	        ctx.restore();
+    	    }
+    	};
+    
+    const stoctitlePlugin = {
+    	    id: 'stoccustomTitle',
+    	    beforeDraw: (chart) => {
+    	        const {ctx, chartArea: {top, left}, width} = chart;
+    	        ctx.save();
+    	        ctx.font = '16px sans-serif';
+    	        ctx.fillStyle = 'black';
+    	        ctx.textAlign = 'top';
+    	        ctx.fillText('Stochastic Indicator', left , top );
+    	        ctx.restore();
+    	    }
+    	};
+    
+    const obvtitlePlugin = {
+    	    id: 'obvcustomTitle',
+    	    beforeDraw: (chart) => {
+    	        const {ctx, chartArea: {top, left}, width} = chart;
+    	        ctx.save();
+    	        ctx.font = '16px sans-serif';
+    	        ctx.fillStyle = 'black';
+    	        ctx.textAlign = 'top';
+    	        ctx.fillText('OBV Indicator', left , top );
     	        ctx.restore();
     	    }
     	};
@@ -458,73 +523,46 @@ chart-setting-left {
         type: 'line',
         data: rsiData,
         options: baseOptions,
-        plugins: [customTitlePlugin]
+        plugins: [rsititlePlugin]
     });
 
     new Chart(stochastic, {
         type: 'line',
         data: stoData,
-        options: baseOptions
+        options: baseOptions,
+        plugins: [stoctitlePlugin]
         
     });
     
     new Chart(ctxrs, {
         type: 'line',
         data: rsData,
-        options: baseOptions
+        options: baseOptions,
+        plugins: [rstitlePlugin]
     });
     
     
     new Chart(ctxMACD, {
         type: 'line',
         data: macdData,
-        options: baseOptions
+        options: baseOptions,
+        plugins: [macdtitlePlugin] 
         
     });
 
     new Chart(ctxOBV, {
         type: 'line',
         data: obvData,
-        options: baseOptions
+        options: baseOptions,
+        plugins: [obvtitlePlugin] 
         
     });
     
     const cciChart = new Chart(ctxCCI, {
             type: 'line',
             data: cciData,
-            options: baseOptions
-            ,
-                plugins: {
-                    annotation: {
-                        annotations: {
-                            line1: {
-                                type: 'line',
-                                yMin: -100,
-                                yMax: -100,
-                                borderColor: 'red', // -100선 색깔
-                                borderWidth: 1,
-                                label: {
-                                    enabled: true,
-                                    content: '-100',
-                                    position: 'end'
-                                }
-                            },
-                            line2: {
-                                type: 'line',
-                                yMin: 100,
-                                yMax: 100,
-                                borderColor: 'green', // 100선 색깔
-                                borderWidth: 1,
-                                label: {
-                                    enabled: true,
-                                    content: '100',
-                                    position: 'end'
-                                }
-                            },
-                            
-                        }
-                    }
-                }
+            options: baseOptions,
+            plugins: [ccititlePlugin]
             }
         );
     
