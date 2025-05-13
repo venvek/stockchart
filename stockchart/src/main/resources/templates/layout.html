@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Chart Layout</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .meta-info {
+      display: flex;
+      flex-wrap: wrap;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .meta-info div {
+      margin-right: 20px;
+    }
+    .chart-group {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      width: 800px;
+    }
+    .chart-container {
+      position: relative;
+      height: 200px;
+      width: 100%;
+    }
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="meta-info">
+    <div><strong>Symbol:</strong> HSAI</div>
+    <div><strong>Open:</strong> 17.76</div>
+    <div><strong>High:</strong> 17.86</div>
+    <div><strong>Low:</strong> 17.22</div>
+    <div><strong>Volume:</strong> 547,410</div>
+  </div>
+
+  <div class="chart-group">
+    <div class="chart-container">
+      <canvas id="priceChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="volumeChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="macdChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const sampleLabels = ['2025-05-01', '2025-05-02', '2025-05-03', '2025-05-04', '2025-05-05'];
+
+    const priceChart = new Chart(document.getElementById('priceChart'), {
+      type: 'line',
+      data: {
+        labels: sampleLabels,
+        datasets: [{
+          label: 'Stock Price',
+          data: [15, 16, 17, 18, 17.5],
+          borderColor: 'blue',
+          fill: false
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: { display: false },
+          y: { position: 'right' }
+        }
+      }
+    });
+
+    const volumeChart = new Chart(document.getElementById('volumeChart'), {
+      type: 'bar',
+      data: {
+        labels: sampleLabels,
+        datasets: [{
+          label: 'Volume',
+          data: [100000, 200000, 150000, 250000, 180000],
+          backgroundColor: 'gray'
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: { display: false },
+          y: {
+            ticks: {
+              callback: val => val / 1000 + 'K'
+            }
+          }
+        }
+      }
+    });
+
+    const macdChart = new Chart(document.getElementById('macdChart'), {
+      type: 'line',
+      data: {
+        labels: sampleLabels,
+        datasets: [{
+          label: 'MACD',
+          data: [0.1, 0.15, 0.12, 0.2, 0.18],
+          borderColor: 'purple',
+          fill: false
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            ticks: {
+              callback: val => sampleLabels[val] || ''
+            }
+          },
+          y: {
+            position: 'left'
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

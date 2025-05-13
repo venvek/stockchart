@@ -523,14 +523,14 @@ chart-setting-left {
         type: 'line',
         data: rsiData,
         options: baseOptions,
-        plugins: [rsititlePlugin]
+        plugins: [rsititlePlugin,crosshairPlugin]
     });
 
     new Chart(stochastic, {
         type: 'line',
         data: stoData,
         options: baseOptions,
-        plugins: [stoctitlePlugin]
+        plugins: [stoctitlePlugin,crosshairPlugin]
         
     });
     
@@ -538,7 +538,7 @@ chart-setting-left {
         type: 'line',
         data: rsData,
         options: baseOptions,
-        plugins: [rstitlePlugin]
+        plugins: [rstitlePlugin,crosshairPlugin]
     });
     
     
@@ -546,7 +546,7 @@ chart-setting-left {
         type: 'line',
         data: macdData,
         options: baseOptions,
-        plugins: [macdtitlePlugin] 
+        plugins: [macdtitlePlugin,crosshairPlugin] 
         
     });
 
@@ -554,7 +554,7 @@ chart-setting-left {
         type: 'line',
         data: obvData,
         options: baseOptions,
-        plugins: [obvtitlePlugin] 
+        plugins: [obvtitlePlugin,crosshairPlugin] 
         
     });
     
@@ -562,7 +562,7 @@ chart-setting-left {
             type: 'line',
             data: cciData,
             options: baseOptions,
-            plugins: [ccititlePlugin]
+            plugins: [ccititlePlugin,crosshairPlugin]
             }
         );
     
