@@ -157,14 +157,10 @@ chart-setting-left {
 	</div>
 
     
-    <canvas id="stockChart" 
-    style="width: 100%; /* 차트를 컨테이너에 맞춤 */
-    min-width: 1000px; /* 최대 너비 설정 */
-    max-width: 1000px;
-    max-height: 450px; /* 높이 설정 */
-    border: 1px solid #ccc; /* 경계선 추가 */
-    background-color: #f9f9f9;">
-    </canvas>
+    <canvas id="stockChart"
+    width="1000"height="450"
+    style="width: 100%; max-width: 1000px; border: 1px solid #ccc; background-color: #f9f9f9;">
+	</canvas>
     
     
     
@@ -286,53 +282,56 @@ chart-setting-left {
         }));
         
         const crosshairPlugin = {
-      		  id: 'crosshair',
-      		  afterEvent(chart, args) {
-      		    const {ctx, chartArea: {top, bottom, left, right}} = chart;
-      		    const event = args.event;
+        		  id: 'crosshair',
+        		  afterEvent(chart, args) {
+        		    const { chartArea } = chart;
+        		    const event = args.event;
 
-      		    if (!event.x || !event.y) return;
+        		    // 정확한 마우스 위치 가져오기
+        		    const mouseX = event.x;
+        		    const mouseY = event.y;
 
-      		    if (
-      		      event.x >= left &&
-      		      event.x <= right &&
-      		      event.y >= top &&
-      		      event.y <= bottom
-      		    ) {
-      		      chart._crosshair = { x: event.x, y: event.y };
-      		    } else {
-      		      chart._crosshair = null;
-      		    }
+        		    if (
+        		      mouseX >= chartArea.left &&
+        		      mouseX <= chartArea.right &&
+        		      mouseY >= chartArea.top &&
+        		      mouseY <= chartArea.bottom
+        		    ) {
+        		      // 오차 없이 저장
+        		      chart._crosshair = { x: mouseX, y: mouseY };
+        		    } else {
+        		      chart._crosshair = null;
+        		    }
 
-      		    chart.draw();
-      		  },
+        		    chart.draw();
+        		  },
 
-      		  afterDraw(chart) {
-      		    const crosshair = chart._crosshair;
-      		    if (!crosshair) return;
+        		  afterDraw(chart) {
+        		    const crosshair = chart._crosshair;
+        		    if (!crosshair) return;
 
-      		    const {ctx, chartArea: {top, bottom, left, right}} = chart;
+        		    const { ctx, chartArea: { top, bottom, left, right } } = chart;
 
-      		    ctx.save();
-      		    ctx.setLineDash([4, 2]);
-      		    ctx.lineWidth = 1;
-      		    ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+        		    ctx.save();
+        		    ctx.setLineDash([4, 2]);
+        		    ctx.lineWidth = 1;
+        		    ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
 
-      		    // 세로선
-      		    ctx.beginPath();
-      		    ctx.moveTo(crosshair.x, top);
-      		    ctx.lineTo(crosshair.x, bottom);
-      		    ctx.stroke();
+        		    // 세로선
+        		    ctx.beginPath();
+        		    ctx.moveTo(crosshair.x, top);
+        		    ctx.lineTo(crosshair.x, bottom);
+        		    ctx.stroke();
 
-      		    // 가로선
-      		    ctx.beginPath();
-      		    ctx.moveTo(left, crosshair.y);
-      		    ctx.lineTo(right, crosshair.y);
-      		    ctx.stroke();
+        		    // 가로선
+        		    ctx.beginPath();
+        		    ctx.moveTo(left, crosshair.y);
+        		    ctx.lineTo(right, crosshair.y);
+        		    ctx.stroke();
 
-      		    ctx.restore();
-      		  }
-      		};
+        		    ctx.restore();
+        		  }
+        		};
         
         const rsiData = {
         	    labels: indicatorList.map((_, index) => index + 1),
