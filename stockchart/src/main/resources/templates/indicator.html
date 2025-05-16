@@ -85,7 +85,7 @@ chart-setting-left {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial/dist/chartjs-chart-financial.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
 	<script src="https://cdn.jsdelivr.net/npm/html2canvas@0.4.1/dist/html2canvas.min.js"></script>
 
 </head>
@@ -135,6 +135,8 @@ chart-setting-left {
     
 	</form>
 
+<button id="drawHorizontal">가로선 그리기</button>
+<button id="drawVertical">세로선 그리기</button>
 
 <ul id="searchResults"></ul>
     
@@ -160,7 +162,7 @@ chart-setting-left {
     <canvas id="stockChart"
     width="1000"height="450"
     style="width: 100%; max-width: 1000px; border: 1px solid #ccc; background-color: #f9f9f9;">
-	</canvas>
+	</canvas>가로줄 
     
     
     
@@ -216,6 +218,18 @@ chart-setting-left {
 <div th:replace="CommonFile/footer :: footer"></div>
 
     <script th:inline="javascript">
+    
+    let drawMode = null;  // 'horizontal' or 'vertical' or null
+    const drawnLines = []; 
+    
+    document.getElementById('drawHorizontal').addEventListener('click', () => {
+    	  drawMode = 'horizontal';
+    	});
+
+   	document.getElementById('drawVertical').addEventListener('click', () => {
+    	  drawMode = 'vertical';
+    	});
+    
         // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
         var stockDataList = /*[[${stockDataList}]]*/ [];
         var indicatorList = /*[[${indicatorList}]]*/ [];
@@ -329,6 +343,31 @@ chart-setting-left {
         		    ctx.lineTo(right, crosshair.y);
         		    ctx.stroke();
 
+        		    ctx.restore();
+        		  }
+        		};
+        
+        const drawLinesPlugin = {
+        		  id: 'drawLines',
+        		  afterDraw(chart) {
+        		    const { ctx, chartArea: {top, bottom, left, right} } = chart;
+
+        		    ctx.save();
+        		    drawnLines.forEach(line => {
+        		      ctx.strokeStyle = line.color;
+        		      ctx.lineWidth = 2;
+        		      ctx.setLineDash([]);
+
+        		      ctx.beginPath();
+        		      if(line.type === 'horizontal') {
+        		        ctx.moveTo(left, line.position);
+        		        ctx.lineTo(right, line.position);
+        		      } else if(line.type === 'vertical') {
+        		        ctx.moveTo(line.position, top);
+        		        ctx.lineTo(line.position, bottom);
+        		      }
+        		      ctx.stroke();
+        		    });
         		    ctx.restore();
         		  }
         		};
@@ -649,12 +688,29 @@ chart-setting-left {
                 
                 }
             }
-        }
-        
-        ,
+        },
         plugins: [crosshairPlugin] 
     });
-};
+        }; 
+
+        ctx.canvas.addEventListener('click', (event) => {
+        	  if(!drawMode) return;  // 모드 선택 안 했으면 아무것도 안함
+
+        	  // 클릭 위치 가져오기 (캔버스 좌표)
+        	  const rect = ctx.canvas.getBoundingClientRect();
+        	  const x = event.clientX - rect.left;
+        	  const y = event.clientY - rect.top;
+
+        	  // 그려진 선 배열에 추가
+        	  if(drawMode === 'horizontal') {
+        	    drawnLines.push({type: 'horizontal', position: y, color: 'red'});
+        	  } else if(drawMode === 'vertical') {
+        	    drawnLines.push({type: 'vertical', position: x, color: 'blue'});
+        	  }
+
+        	  stockChart.draw(); // 차트 다시 그리기
+        	});
+        
 
 const searchInput = document.getElementById('searchInput');
 const searchButton = document.getElementById('searchButton');
