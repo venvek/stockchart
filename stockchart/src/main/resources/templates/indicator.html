@@ -219,7 +219,7 @@ chart-setting-left {
 
     <script th:inline="javascript">
     
-    let drawMode = null;  // 'horizontal' or 'vertical' or null
+    let drawMode = null; 
     const drawnLines = []; 
     
     document.getElementById('drawHorizontal').addEventListener('click', () => {
@@ -689,27 +689,26 @@ chart-setting-left {
                 }
             }
         },
-        plugins: [crosshairPlugin] 
+        plugins: [crosshairPlugin, drawLinesPlugin] 
     });
         }; 
 
-        ctx.canvas.addEventListener('click', (event) => {
-        	  if(!drawMode) return;  // 모드 선택 안 했으면 아무것도 안함
+        const canvas = document.getElementById('stockChart');  // <canvas id="stockChart">
+        canvas.addEventListener('click', (event) => {
+            if (!drawMode) return;
 
-        	  // 클릭 위치 가져오기 (캔버스 좌표)
-        	  const rect = ctx.canvas.getBoundingClientRect();
-        	  const x = event.clientX - rect.left;
-        	  const y = event.clientY - rect.top;
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
 
-        	  // 그려진 선 배열에 추가
-        	  if(drawMode === 'horizontal') {
-        	    drawnLines.push({type: 'horizontal', position: y, color: 'red'});
-        	  } else if(drawMode === 'vertical') {
-        	    drawnLines.push({type: 'vertical', position: x, color: 'blue'});
-        	  }
+            if(drawMode === 'horizontal') {
+                drawnLines.push({ type: 'horizontal', position: y, color: 'red' });
+            } else if(drawMode === 'vertical') {
+                drawnLines.push({ type: 'vertical', position: x, color: 'blue' });
+            }
 
-        	  stockChart.draw(); // 차트 다시 그리기
-        	});
+            stockChart.draw();  // 차트 다시 그리기
+        });
         
 
 const searchInput = document.getElementById('searchInput');
