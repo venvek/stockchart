@@ -219,8 +219,9 @@ chart-setting-left {
 
     <script th:inline="javascript">
     
-    let drawMode = null; 
-    const drawnLines = []; 
+    let drawMode = null;
+    const drawnLines = [];
+    let previewLine = null; 
     
     document.getElementById('drawHorizontal').addEventListener('click', () => {
     	  drawMode = 'horizontal';
@@ -348,29 +349,45 @@ chart-setting-left {
         		};
         
         const drawLinesPlugin = {
-        		  id: 'drawLines',
-        		  afterDraw(chart) {
-        		    const { ctx, chartArea: {top, bottom, left, right} } = chart;
+        	    id: 'drawLines',
+        	    afterDraw(chart) {
+        	        const { ctx, chartArea } = chart;
 
-        		    ctx.save();
-        		    drawnLines.forEach(line => {
-        		      ctx.strokeStyle = line.color;
-        		      ctx.lineWidth = 2;
-        		      ctx.setLineDash([]);
+        	        ctx.save();
+        	        ctx.setLineDash([4, 2]);
+        	        ctx.lineWidth = 1;
 
-        		      ctx.beginPath();
-        		      if(line.type === 'horizontal') {
-        		        ctx.moveTo(left, line.position);
-        		        ctx.lineTo(right, line.position);
-        		      } else if(line.type === 'vertical') {
-        		        ctx.moveTo(line.position, top);
-        		        ctx.lineTo(line.position, bottom);
-        		      }
-        		      ctx.stroke();
-        		    });
-        		    ctx.restore();
-        		  }
-        		};
+        	        // 확정된 선들 그리기
+        	        drawnLines.forEach(line => {
+        	            ctx.strokeStyle = line.color;
+        	            ctx.beginPath();
+        	            if (line.type === 'horizontal') {
+        	                ctx.moveTo(chartArea.left, line.position);
+        	                ctx.lineTo(chartArea.right, line.position);
+        	            } else {
+        	                ctx.moveTo(line.position, chartArea.top);
+        	                ctx.lineTo(line.position, chartArea.bottom);
+        	            }
+        	            ctx.stroke();
+        	        });
+
+        	        // 미리보기 선 (previewLine)
+        	        if (previewLine) {
+        	            ctx.strokeStyle = previewLine.color;
+        	            ctx.beginPath();
+        	            if (previewLine.type === 'horizontal') {
+        	                ctx.moveTo(chartArea.left, previewLine.position);
+        	                ctx.lineTo(chartArea.right, previewLine.position);
+        	            } else {
+        	                ctx.moveTo(previewLine.position, chartArea.top);
+        	                ctx.lineTo(previewLine.position, chartArea.bottom);
+        	            }
+        	            ctx.stroke();
+        	        }
+
+        	        ctx.restore();
+        	    }
+        	};
         
         const rsiData = {
         	    labels: indicatorList.map((_, index) => index + 1),
@@ -692,22 +709,40 @@ chart-setting-left {
         plugins: [crosshairPlugin, drawLinesPlugin] 
     });
         }; 
-
-        const canvas = document.getElementById('stockChart');  // <canvas id="stockChart">
-        canvas.addEventListener('click', (event) => {
-            if (!drawMode) return;
-
-            const rect = canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            if(drawMode === 'horizontal') {
-                drawnLines.push({ type: 'horizontal', position: y, color: 'red' });
-            } else if(drawMode === 'vertical') {
-                drawnLines.push({ type: 'vertical', position: x, color: 'blue' });
+        
+        const canvas = document.getElementById('stockChart'); 
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (!drawMode) {
+                previewLine = null;
+                return;
             }
 
-            stockChart.draw();  // 차트 다시 그리기
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            previewLine = drawMode === 'horizontal'
+                ? { type: 'horizontal', position: y, color: 'rgba(255, 0, 0, 0.4)' }
+                : { type: 'vertical', position: x, color: 'rgba(0, 0, 255, 0.4)' };
+
+            stockChart.draw();
+        });
+        
+        canvas.addEventListener('click', () => {
+            if (previewLine) {
+                drawnLines.push({ ...previewLine, color: previewLine.color.replace('0.4', '1.0') }); // 확정된 선은 진하게
+                previewLine = null;
+                drawMode = null;
+                stockChart.draw();
+            }
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                drawnLines.pop();
+                stockChart.draw();
+            }
         });
         
 
