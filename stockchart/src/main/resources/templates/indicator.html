@@ -277,6 +277,25 @@ chart-setting-left {
         		  }
         		};
         
+        const zeroLinePlugin = {
+        	    id: 'zeroLine',
+        	    afterDraw(chart) {
+        	        const { ctx, chartArea, scales } = chart;
+        	        const yScale = scales['macd-axis']; // MACD 전용 y축 ID
+
+        	        const zeroY = yScale.getPixelForValue(0);
+
+        	        ctx.save();
+        	        ctx.beginPath();
+        	        ctx.moveTo(chartArea.left, zeroY);
+        	        ctx.lineTo(chartArea.right, zeroY);
+        	        ctx.lineWidth = 1;
+        	        ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+        	        ctx.stroke();
+        	        ctx.restore();
+        	    }
+        	};
+        
         const lineData = stockDataList.map(stock => ({
             x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
             y: stock.close,  // Closing price
@@ -597,12 +616,36 @@ chart-setting-left {
     });
     
     
-    new Chart(ctxMACD, {
+    const macdChart = new Chart(ctxMACD, {
         type: 'line',
         data: macdData,
-        options: baseOptions,
-        plugins: [macdtitlePlugin,crosshairPlugin] 
-        
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        tooltipFormat: 'yyyy-MM-dd'
+                    }
+                },
+                'macd-axis': {
+                    type: 'linear',
+                    position: 'left'
+                }
+            },
+            plugins: {
+                legend: { display: true },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                intersect: false
+            }
+        },
+        plugins: [zeroLinePlugin]
     });
 
     new Chart(ctxOBV, {
