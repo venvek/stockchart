@@ -277,6 +277,7 @@ chart-setting-left {
         		  }
         		};
         
+       
         const zeroLinePlugin = {
         	    id: 'zeroLine',
         	    afterDraw(chart) {
@@ -290,8 +291,40 @@ chart-setting-left {
         	        ctx.moveTo(chartArea.left, zeroY);
         	        ctx.lineTo(chartArea.right, zeroY);
         	        ctx.lineWidth = 1;
-        	        ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+        	        ctx.strokeStyle = 'rgba(0 , 0, 0, 1)';
         	        ctx.stroke();
+        	        ctx.restore();
+        	    }
+        	};
+        
+        const rsiLinesPlugin = {
+        	    id: 'rsiLinesPlugin',
+        	    beforeDraw(chart) {
+        	        const { ctx, chartArea: { top, bottom, left, right }, scales } = chart;
+        	        const yScale = scales.y; // 기본 y축 사용
+
+        	        if (!yScale) return;
+
+        	        // RSI 값 (70과 30)에 해당하는 y좌표 계산
+        	        const y70 = yScale.getPixelForValue(70);
+        	        const y30 = yScale.getPixelForValue(30);
+
+        	        ctx.save();
+        	        ctx.lineWidth = 1;
+        	        ctx.strokeStyle = 'black';
+
+        	        // 70 선
+        	        ctx.beginPath();
+        	        ctx.moveTo(left, y70);
+        	        ctx.lineTo(right, y70);
+        	        ctx.stroke();
+
+        	        // 30 선
+        	        ctx.beginPath();
+        	        ctx.moveTo(left, y30);
+        	        ctx.lineTo(right, y30);
+        	        ctx.stroke();
+
         	        ctx.restore();
         	    }
         	};
@@ -597,7 +630,7 @@ chart-setting-left {
         type: 'line',
         data: rsiData,
         options: baseOptions,
-        plugins: [rsititlePlugin,crosshairPlugin]
+        plugins: [rsititlePlugin,crosshairPlugin,rsiLinesPlugin]
     });
 
     new Chart(stochastic, {
@@ -645,7 +678,7 @@ chart-setting-left {
                 intersect: false
             }
         },
-        plugins: [zeroLinePlugin]
+        plugins: [obvtitlePlugin,zeroLinePlugin]
     });
 
     new Chart(ctxOBV, {
