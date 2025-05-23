@@ -162,7 +162,7 @@ chart-setting-left {
     <canvas id="stockChart"
     width="1000"height="450"
     style="width: 100%; max-width: 1000px; border: 1px solid #ccc; background-color: #f9f9f9;">
-	</canvas>가로줄 
+	</canvas>
     
     
     
@@ -326,6 +326,78 @@ chart-setting-left {
         	        ctx.stroke();
 
         	        ctx.restore();
+        	    }
+        	};
+        
+        const cciLinesPlugin = {
+        	    id: 'cciLinesPlugin',
+        	    beforeDraw(chart) {
+        	        const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+        	        const levels = [100, -100];
+
+        	        ctx.save();
+        	        ctx.strokeStyle = 'orange';
+        	        ctx.lineWidth = 1;
+
+        	        levels.forEach(level => {
+        	            const yPos = y.getPixelForValue(level);
+        	            ctx.beginPath();
+        	            ctx.moveTo(left, yPos);
+        	            ctx.lineTo(right, yPos);
+        	            ctx.stroke();
+        	        });
+
+        	        ctx.restore();
+        	    }
+        	};
+        
+        const cciOptions = {
+        	    responsive: false,
+        	    maintainAspectRatio: false,
+        	    scales: {
+        	        x: {
+        	            type: 'time',
+        	            time: {
+        	                unit: 'day',
+        	                displayFormats: { day: 'yyyy-MM-dd' }
+        	            }
+        	        },
+        	        y: {
+        	            position: 'left'
+        	        }
+        	    },
+        	    plugins: {
+        	        legend: { display: true },
+        	        tooltip: { mode: 'index', intersect: false }
+        	    },
+        	    interaction: {
+        	        mode: 'nearest',
+        	        intersect: false
+        	    }
+        	};
+        
+        const obvOptions = {
+        	    responsive: false,
+        	    maintainAspectRatio: false,
+        	    scales: {
+        	        x: {
+        	            type: 'time',
+        	            time: {
+        	                unit: 'day',
+        	                displayFormats: { day: 'yyyy-MM-dd' }
+        	            }
+        	        },
+        	        y: {
+        	            position: 'left'
+        	        }
+        	    },
+        	    plugins: {
+        	        legend: { display: true },
+        	        tooltip: { mode: 'index', intersect: false }
+        	    },
+        	    interaction: {
+        	        mode: 'nearest',
+        	        intersect: false
         	    }
         	};
         
@@ -678,7 +750,7 @@ chart-setting-left {
                 intersect: false
             }
         },
-        plugins: [obvtitlePlugin,zeroLinePlugin]
+        plugins: [macdtitlePlugin,zeroLinePlugin]
     });
 
     new Chart(ctxOBV, {
@@ -690,12 +762,11 @@ chart-setting-left {
     });
     
     const cciChart = new Chart(ctxCCI, {
-            type: 'line',
-            data: cciData,
-            options: baseOptions,
-            plugins: [ccititlePlugin,crosshairPlugin]
-            }
-        );
+        type: 'line',
+        data: cciData,
+        options: cciOptions,
+        plugins: [ccititlePlugin, cciLinesPlugin]
+    });
     
     const stockChart = new Chart(ctx, {
         type: 'line',
