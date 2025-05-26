@@ -401,6 +401,38 @@ chart-setting-left {
         	    }
         	};
         
+        const rsiLinesPlugin2 = {
+        	    id: 'rsiLinesPlugin',
+        	    beforeDraw(chart) {
+        	        const { ctx, chartArea: { top, bottom, left, right }, scales } = chart;
+        	        const yScale = scales.y; // 기본 y축 사용
+
+        	        if (!yScale) return;
+
+        	        // RSI 값 (70과 30)에 해당하는 y좌표 계산
+        	        const y70 = yScale.getPixelForValue(70);
+        	        const y30 = yScale.getPixelForValue(30);
+
+        	        ctx.save();
+        	        ctx.lineWidth = 1;
+        	        ctx.strokeStyle = 'red';
+
+        	        // 70 선
+        	        ctx.beginPath();
+        	        ctx.moveTo(left, y70);
+        	        ctx.lineTo(right, y70);
+        	        ctx.stroke();
+
+        	        // 30 선
+        	        ctx.beginPath();
+        	        ctx.moveTo(left, y30);
+        	        ctx.lineTo(right, y30);
+        	        ctx.stroke();
+
+        	        ctx.restore();
+        	    }
+        	};
+        
         const lineData = stockDataList.map(stock => ({
             x: new Date(stock.date.replace(" ", "T")), // Date or timestamp
             y: stock.close,  // Closing price
