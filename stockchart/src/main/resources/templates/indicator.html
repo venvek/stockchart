@@ -126,6 +126,14 @@ chart-setting-left {
     
 </div>
 
+<select id="chartTypeSelector">
+  <option value="line">Line</option>
+  <option value="bar">Bar</option>
+  <option value="candlestick">Candlestick</option> <!-- chartjs-chart-financial -->
+</select>
+
+<button id="updateChartBtn2">차트 업데이트</button>
+
     <h3>회사티커 [[${ticker}]]</h3>
     
     <form id="stockSearchForm" action="/stocks" method="get">
@@ -402,7 +410,7 @@ chart-setting-left {
         	};
         
         const rsiLinesPlugin2 = {
-        	    id: 'rsiLinesPlugin',
+        	    id: 'rsiLinesPlugin2',
         	    beforeDraw(chart) {
         	        const { ctx, chartArea: { top, bottom, left, right }, scales } = chart;
         	        const yScale = scales.y; // 기본 y축 사용
@@ -801,7 +809,7 @@ chart-setting-left {
     });
     
     const stockChart = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
             datasets: [
                 {
@@ -939,8 +947,17 @@ searchButton.addEventListener('click', function() {
     }
 });
 
+document.getElementById('chartTypeSelector').addEventListener('change', function () {
+    const selectedType = this.value;
+    
+    stockChart.config.type = selectedType;
+    // 각 dataset이 타입을 갖고 있다면 필요 시 개별 타입도 맞춰줍니다.
+    stockChart.config.data.datasets.forEach(ds => {
+        if (!ds.type) ds.type = selectedType; // 또는 조건 추가해서
+    });
 
-
+    stockChart.update();
+});
 
 document.getElementById("stockSearchForm").addEventListener("submit", function(event) {
     event.preventDefault();  // 페이지 새로고침 방지
