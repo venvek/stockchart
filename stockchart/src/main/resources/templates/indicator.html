@@ -607,18 +607,17 @@ chart-setting-left {
         };
         
 
-        // OBV 차트 데이터 생성
         const obvData = {
-        		labels: indicatorList.map((_, index) => index + 1),
-            datasets: [{
-                label: 'OBV',
-                data: indicatorList.map(indicator => indicator.obv),
-                borderColor: 'black',
-                borderWidth: 1,
-                fill: false,
-                pointRadius: 0
-            }]
-        };
+        	    labels: indicatorList.map((_, index) => index + 1),
+        	    datasets: [{
+        	        label: 'OBV (백만 단위)',
+        	        data: indicatorList.map(indicator => indicator.obv / 1_000_000),
+        	        borderColor: 'black',
+        	        borderWidth: 1,
+        	        fill: false,
+        	        pointRadius: 0
+        	    }]
+        	};
         
 
         
@@ -790,7 +789,7 @@ chart-setting-left {
                 intersect: false
             }
         },
-        plugins: [macdtitlePlugin,zeroLinePlugin]
+        plugins: [macdtitlePlugin]
     });
 
     new Chart(ctxOBV, {
@@ -809,7 +808,7 @@ chart-setting-left {
     });
     
     const stockChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
             datasets: [
                 {
