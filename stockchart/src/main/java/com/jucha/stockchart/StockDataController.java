@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -92,18 +93,39 @@ public class StockDataController {
     	return "layout";
     }
     
-    @GetMapping("/stocks/{ticker}") // API 요청을 위한 경로
+	/*
+	 * @GetMapping("/stocks/{ticker}") // API 요청을 위한 경로
+	 * 
+	 * @ResponseBody public Map<String, Object> getStockDataJson(@PathVariable
+	 * String ticker) { List<Stock_Data> stockDataList =
+	 * stockDataService.getStockDataByTicker(ticker); List<Indicators> indicatorList
+	 * = stockDataService.getindicatorsByTicker(ticker);
+	 * 
+	 * // 데이터 응답을 JSON 형태로 반환 Map<String, Object> response = new HashMap<>();
+	 * response.put("stockDataList", stockDataList); response.put("indicatorList",
+	 * indicatorList); response.put("ticker", ticker);
+	 * 
+	 * return response; }
+	 */
+    @GetMapping("/stocks/{ticker}")
     @ResponseBody
-    public Map<String, Object> getStockDataJson(@PathVariable String ticker) {
+    public Map<String, Object> getStockChartData(@PathVariable String ticker) {
         List<Stock_Data> stockDataList = stockDataService.getStockDataByTicker(ticker);
-        List<Indicators> indicatorList = stockDataService.getindicatorsByTicker(ticker);
 
-        // 데이터 응답을 JSON 형태로 반환
+        List<String> labels = new ArrayList<>();
+        List<Double> prices = new ArrayList<>();
+        List<Long> volumes = new ArrayList<>();
+        
+        for (Stock_Data data : stockDataList) {
+            labels.add(data.getDate().toString());
+            prices.add(data.getClose()); // 혹은 open/high/low 중 원하는 항목
+            volumes.add(data.getVolume());
+        }
+
         Map<String, Object> response = new HashMap<>();
-        response.put("stockDataList", stockDataList);
-        response.put("indicatorList", indicatorList);
-        response.put("ticker", ticker);
-
+        response.put("labels", labels);
+        response.put("prices", prices);
+        response.put("volumes", volumes);
         return response;
     }
     

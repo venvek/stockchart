@@ -94,12 +94,12 @@ chart-setting-left {
 <div th:replace="CommonFile/header :: header"></div>
 
 <div>
-    <label>기간 선택</label>
-    <select id="timePeriod">
-    <option value="D">일별</option>
-    <option value="W">주별</option>
-    <option value="M">월별</option>
-    <option value="Y">년별</option>
+    <label for="timePeriod">기간 선택</label>
+<select id="timePeriod">
+  <option value="D">일별</option>
+  <option value="W">주별</option>
+  <option value="M">월별</option>
+  <option value="Y">년별</option>
 </select>
     
 
@@ -975,23 +975,23 @@ document.getElementById("stockSearchForm").addEventListener("submit", function(e
         });
 });
 
+document.getElementById('timePeriod').addEventListener('change', function () {
+    const selectedPeriod = this.value;  // "D", "W", "M", or "Y"
+    
+    // 예: 서버에 AJAX 요청
+    fetch(`/api/stock-data?period=${selectedPeriod}`)
+      .then(response => response.json())
+      .then(data => {
+          updateChart(data); // 받아온 데이터로 차트 업데이트
+      });
+});
 
 
-function updateChart(days) {
-    let endDate = new Date(); 
-    let startDate = new Date();
-    startDate.setDate(endDate.getDate() - days); 
-
-    const filteredData = stockDataList.filter(stock => {
-        let stockDate = new Date(stock.date);
-        return stockDate >= startDate && stockDate <= endDate;
-    });
-
-    //  데이터 업데이트 chart.js api
-    stockChart.data.datasets[0].data = transformData(filteredData);
+function updateChart(data) {
+    stockChart.data.labels = data.labels;
+    stockChart.data.datasets[0].data = data.prices;
+    stockChart.data.datasets[1].data = data.volumes;
     stockChart.update();
-    
-    
 }
 
 function addChart(stockData) {
