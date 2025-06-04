@@ -118,7 +118,7 @@ public class StockDataController {
         
         for (Stock_Data data : stockDataList) {
             labels.add(data.getDate().toString());
-            prices.add(data.getClose()); // 혹은 open/high/low 중 원하는 항목
+            prices.add(data.getClose().doubleValue()); // 혹은 open/high/low 중 원하는 항목 close가 BigDecimal인데 List<Double>에 넣으려고 하면 IDE가 경고합니다.
             volumes.add(data.getVolume());
         }
 
