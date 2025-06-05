@@ -107,7 +107,7 @@ chart-setting-left {
     
 </div>
 
-<div>
+<!-- <div>
 <label>지표 추가</label>
 
 	<button onclick="addbutton()"> 추가 </button>
@@ -124,7 +124,7 @@ chart-setting-left {
     
     <button onclick="addChart()">업데이트</button>
     
-</div>
+</div> -->
 
 <select id="chartTypeSelector">
   <option value="line">Line</option>
@@ -796,19 +796,13 @@ chart-setting-left {
                     position: 'left'
                 }
             },
-            plugins: {
-                legend: { display: true },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
-            },
+           
             interaction: {
                 mode: 'nearest',
                 intersect: false
             }
         },
-        plugins: [macdtitlePlugin]
+        plugins: [macdtitlePlugin,zeroLinePlugin]
     });
 
     new Chart(ctxOBV, {
