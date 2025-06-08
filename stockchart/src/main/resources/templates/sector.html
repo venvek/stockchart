@@ -4,6 +4,33 @@
 <meta charset="UTF-8">
 <link href="/css/footer.css" rel="stylesheet" type="text/css">
     <link href="/css/header.css" rel="stylesheet" type="text/css">
+    
+<style type="text/css">
+    .heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 5px;
+  width: 100%;
+}
+
+.heatmap-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  height: 80px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.heatmap-tile:hover {
+  transform: scale(1.05);
+}
+
+</style>
+    
 <title>map page</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -18,7 +45,7 @@
    		
    	<h2>히트맵</h2>
    	  
-	<canvas id="heatmap"></canvas>
+	<div id="heatmap" class="heatmap-grid"></div>
    	  
       
    	</div>
@@ -46,6 +73,31 @@ fetch('/api/stock-data/heatmap')
             }
         });
     });
+
+const heatmapContainer = document.getElementById('heatmap');
+
+stockPerformance.forEach(stock => {
+  const tile = document.createElement('div');
+  tile.classList.add('heatmap-tile');
+  tile.style.backgroundColor = getColor(stock.change);
+  tile.innerHTML = `
+    <div>
+      <div>${stock.ticker}</div>
+      <div>${stock.change > 0 ? '+' : ''}${stock.change.toFixed(2)}%</div>
+    </div>
+  `;
+  heatmapContainer.appendChild(tile);
+});
+
+function getColor(change) {
+  if (change > 0) {
+    return `rgba(0, 200, 0, ${Math.min(change / 5, 1)})`; // 초록
+  } else if (change < 0) {
+    return `rgba(200, 0, 0, ${Math.min(Math.abs(change) / 5, 1)})`; // 빨강
+  } else {
+    return '#999';
+  }
+}
 
 </script>       
 </body>

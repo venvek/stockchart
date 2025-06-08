@@ -16,4 +16,8 @@ public class CompanyService {
 		return companyrepository.findTickersByQuery(query);
 	}
 	
+	public List<Company> getAllCompanies() {
+        return companyrepository.findAll();
+    }
+	
 }

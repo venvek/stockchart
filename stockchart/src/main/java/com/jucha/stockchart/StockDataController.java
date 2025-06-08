@@ -129,6 +129,12 @@ public class StockDataController {
         return response;
     }
     
+    @GetMapping("/sector")
+    @ResponseBody
+    public List<Company> getAllCompanies() {
+        return companyService.getAllCompanies();
+    }
+    
 	/*
 	 * @GetMapping("/scan") public List<Stock_Data> scanStocks(
 	 * 
