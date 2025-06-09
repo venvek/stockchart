@@ -6,28 +6,23 @@
     <link href="/css/header.css" rel="stylesheet" type="text/css">
     
 <style type="text/css">
-    .heatmap-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 5px;
-  width: 100%;
+    
+.heatmap-box {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
-
-.heatmap-tile {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  height: 80px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.heatmap-tile:hover {
-  transform: scale(1.05);
-}
+.heatmap-box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}    
 
 </style>
     
@@ -45,8 +40,9 @@
    		
    	<h2>히트맵</h2>
    	  
-	<div id="heatmap" class="heatmap-grid"></div>
-   	  
+	<div id="heatmap" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; padding: 20px;">
+    <!-- 회사 블록들이 여기에 들어감 -->
+	</div>
       
    	</div>
 
@@ -54,55 +50,37 @@
 
 <script th:inline="javascript">
 
-fetch("/api/stock-data/companies")
+fetch("/api/companies")
 .then(res => res.json())
 .then(data => {
-    console.log(data); // 여기서 히트맵이나 테이블 렌더링
-});
+    const container = document.getElementById('heatmap');
+    container.innerHTML = '';
 
-fetch('/api/stock-data/heatmap')
-    .then(response => response.json())
-    .then(data => {
-        const labels = data.map(d => d.ticker);
-        const values = data.map(d => d.changePercent);
+    data.forEach(company => {
+        const change = company.priceChangePercent; // 예: -1.23 또는 +3.45
+        const box = document.createElement('div');
+        box.className = 'heatmap-box';
+        box.textContent = company.name;
 
-        const ctx = document.getElementById('heatmap').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Stock Change %',
-                    data: values,
-                    backgroundColor: values.map(v => v > 0 ? 'green' : 'red')
-                }]
-            }
-        });
+        const color = getColor(change);
+        box.style.backgroundColor = color;
+
+        // tooltip
+        box.title = `${company.name}\nPrice: ${company.currentPrice}\nChange: ${change}%`;
+
+        container.appendChild(box);
     });
-
-const heatmapContainer = document.getElementById('heatmap');
-
-stockPerformance.forEach(stock => {
-  const tile = document.createElement('div');
-  tile.classList.add('heatmap-tile');
-  tile.style.backgroundColor = getColor(stock.change);
-  tile.innerHTML = `
-    <div>
-      <div>${stock.ticker}</div>
-      <div>${stock.change > 0 ? '+' : ''}${stock.change.toFixed(2)}%</div>
-    </div>
-  `;
-  heatmapContainer.appendChild(tile);
 });
 
 function getColor(change) {
-  if (change > 0) {
-    return `rgba(0, 200, 0, ${Math.min(change / 5, 1)})`; // 초록
-  } else if (change < 0) {
-    return `rgba(200, 0, 0, ${Math.min(Math.abs(change) / 5, 1)})`; // 빨강
-  } else {
-    return '#999';
-  }
+if (change === null || isNaN(change)) return '#ccc';
+if (change > 0) {
+    const green = Math.min(255, 100 + change * 10);
+    return `rgb(0, ${green}, 0)`;
+} else {
+    const red = Math.min(255, 100 + Math.abs(change) * 10);
+    return `rgb(${red}, 0, 0)`;
+}
 }
 
 </script>       

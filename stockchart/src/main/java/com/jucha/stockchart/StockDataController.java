@@ -127,8 +127,8 @@ public class StockDataController {
     
     @GetMapping("/companies")
     @ResponseBody
-    public List<Company> getAllCompanies() {
-        return companyService.getAllCompanies();
+    public List<CompanyHeatmapDTO> getCompaniesForHeatmap() {
+        return companyService.getCompaniesWithPriceChange();
     }
     
     @GetMapping("/sector")
