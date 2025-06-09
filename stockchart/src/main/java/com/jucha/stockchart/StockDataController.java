@@ -58,10 +58,6 @@ public class StockDataController {
     	return "adminpage";
     }
     
-    @GetMapping("/sector")
-    public String sectorpage() {
-    	return "sector";
-    }
     
     @GetMapping("/explain")
     public String explainpage() {
@@ -129,10 +125,15 @@ public class StockDataController {
         return response;
     }
     
-    @GetMapping("/sector")
+    @GetMapping("/companies")
     @ResponseBody
     public List<Company> getAllCompanies() {
         return companyService.getAllCompanies();
+    }
+    
+    @GetMapping("/sector")
+    public String showSectorPage() {
+        return "sector";
     }
     
 	/*

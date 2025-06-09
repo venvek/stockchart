@@ -54,6 +54,12 @@
 
 <script th:inline="javascript">
 
+fetch("/api/stock-data/companies")
+.then(res => res.json())
+.then(data => {
+    console.log(data); // 여기서 히트맵이나 테이블 렌더링
+});
+
 fetch('/api/stock-data/heatmap')
     .then(response => response.json())
     .then(data => {
