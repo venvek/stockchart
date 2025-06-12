@@ -1,15 +1,17 @@
 package com.jucha.stockchart;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CompanyService {
 	private CompanyRepository companyrepository;
-	private StockDataRepo stockdatarepositoty;
+	private StockDataRepo stockDataRepository;
 	
 	public CompanyService(CompanyRepository companyrepository) {
 		this.companyrepository = companyrepository;
@@ -29,23 +31,23 @@ public class CompanyService {
 
 	    for (Company company : companies) {
 	        BigDecimal previousClose = company.getPreviousClose();
-	        BigDecimal currentPrice = stockdatarepositoty.findLatestCloseByTicker(company.getTicker());
+	        List<BigDecimal> currentPrices = companyrepository.findLatestCloseByTicker(
+	            company.getTicker(), PageRequest.of(0, 1)
+	        );
 
-	        if (previousClose != null && currentPrice != null) {
-	            double changePercent = currentPrice
-	                .subtract(previousClose)
-	                .divide(previousClose, 4, RoundingMode.HALF_UP)
-	                .multiply(BigDecimal.valueOf(100))
-	                .doubleValue();
+	        if (!currentPrices.isEmpty() && previousClose != null && previousClose.compareTo(BigDecimal.ZERO) != 0) {
+	            BigDecimal currentPrice = currentPrices.get(0);
+	            BigDecimal change = currentPrice.subtract(previousClose);
+	            BigDecimal percent = change.divide(previousClose, 4, RoundingMode.HALF_UP)
+	                                       .multiply(BigDecimal.valueOf(100));
 
-	            CompanyHeatmapDTO dto = new CompanyHeatmapDTO();
-	            dto.setName(company.getName());
-	            dto.setTicker(company.getTicker());
-	            dto.setPreviousClose(previousClose);
-	            dto.setCurrentPrice(currentPrice);
-	            dto.setPriceChangePercent(changePercent);
-
-	            result.add(dto);
+	            result.add(new CompanyHeatmapDTO(
+	                company.getName(),
+	                company.getTicker(),
+	                previousClose,
+	                currentPrice,
+	                percent.doubleValue()
+	            ));
 	        }
 	    }
 
