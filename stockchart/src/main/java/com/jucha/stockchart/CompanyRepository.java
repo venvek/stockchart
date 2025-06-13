@@ -3,6 +3,7 @@ package com.jucha.stockchart;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +22,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     List<Object[]> findLatestStockData();
     
     @Query("SELECT c.previousClose FROM Company c WHERE c.ticker = :ticker")
-    BigDecimal findLatestCloseByTicker(@Param("ticker") String ticker);
+    Optional<BigDecimal> findLatestCloseByTicker(@Param("ticker") String ticker);
     
     
 }

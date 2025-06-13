@@ -31,7 +31,7 @@ public class CompanyService {
 
 	    for (Company company : companies) {
 	        BigDecimal previousClose = company.getPreviousClose();
-	        List<BigDecimal> currentPrices = companyrepository.findLatestCloseByTicker(
+	        List<BigDecimal> currentPrices = stockDataRepository.findLatestCloseByTicker(
 	            company.getTicker(), PageRequest.of(0, 1)
 	        );
 
