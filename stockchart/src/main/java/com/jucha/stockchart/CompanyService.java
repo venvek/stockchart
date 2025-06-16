@@ -11,11 +11,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class CompanyService {
 	private CompanyRepository companyrepository;
-	private StockDataRepo stockDataRepository;
+	private StockDataRepo stockDataRepository;  
+
+    public CompanyService(CompanyRepository companyrepository, StockDataRepo stockDataRepository) {
+        this.companyrepository = companyrepository;
+        this.stockDataRepository = stockDataRepository; 
+    }
 	
-	public CompanyService(CompanyRepository companyrepository) {
-		this.companyrepository = companyrepository;
-	}
 	
 	public List<String> getSuggetsions(String query) {
 		return companyrepository.findTickersByQuery(query);
@@ -24,7 +26,7 @@ public class CompanyService {
 	public List<Company> getAllCompanies() {
         return companyrepository.findAll();
     }
-	
+
 	public List<CompanyHeatmapDTO> getCompaniesWithPriceChange() {
 	    List<Company> companies = companyrepository.findAll();
 	    List<CompanyHeatmapDTO> result = new ArrayList<>();

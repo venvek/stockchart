@@ -46,8 +46,11 @@ public class Stock_Data {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company companys;
 
-    // Constructors, Getters, and Setters
 
     public Stock_Data() {
     }
@@ -147,4 +150,7 @@ public class Stock_Data {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+    
+    
 }
+
