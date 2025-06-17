@@ -24,5 +24,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query("SELECT c.previousClose FROM Company c WHERE c.ticker = :ticker")
     Optional<BigDecimal> findLatestCloseByTicker(@Param("ticker") String ticker);
     
+
     
 }

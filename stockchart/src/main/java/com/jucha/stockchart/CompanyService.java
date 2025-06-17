@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CompanyService {
-	private CompanyRepository companyrepository;
-	private StockDataRepo stockDataRepository;  
+	private final CompanyRepository companyrepository;
+	private final StockDataRepo stockDataRepository;  
 
     public CompanyService(CompanyRepository companyrepository, StockDataRepo stockDataRepository) {
         this.companyrepository = companyrepository;
@@ -28,31 +28,29 @@ public class CompanyService {
     }
 
 	public List<CompanyHeatmapDTO> getCompaniesWithPriceChange() {
-	    List<Company> companies = companyrepository.findAll();
-	    List<CompanyHeatmapDTO> result = new ArrayList<>();
+        List<Company> companies = companyrepository.findAll();
+        List<CompanyHeatmapDTO> result = new ArrayList<>();
 
-	    for (Company company : companies) {
-	        BigDecimal previousClose = company.getPreviousClose();
-	        List<BigDecimal> currentPrices = stockDataRepository.findLatestCloseByTicker(
-	            company.getTicker(), PageRequest.of(0, 1)
-	        );
+        for (Company company : companies) {
+            BigDecimal previousClose = company.getPreviousClose();
+            List<Stock_Data> latestData = stockDataRepository.findTop1ByCompanyOrderByDateDesc(company);
 
-	        if (!currentPrices.isEmpty() && previousClose != null && previousClose.compareTo(BigDecimal.ZERO) != 0) {
-	            BigDecimal currentPrice = currentPrices.get(0);
-	            BigDecimal change = currentPrice.subtract(previousClose);
-	            BigDecimal percent = change.divide(previousClose, 4, RoundingMode.HALF_UP)
-	                                       .multiply(BigDecimal.valueOf(100));
+            if (!latestData.isEmpty() && previousClose != null) {
+                BigDecimal currentPrice = latestData.get(0).getClose();
+                BigDecimal change = currentPrice.subtract(previousClose);
+                BigDecimal percent = change.divide(previousClose, 4, RoundingMode.HALF_UP)
+                                           .multiply(BigDecimal.valueOf(100));
 
-	            result.add(new CompanyHeatmapDTO(
-	                company.getName(),
-	                company.getTicker(),
-	                previousClose,
-	                currentPrice,
-	                percent.doubleValue()
-	            ));
-	        }
-	    }
+                result.add(new CompanyHeatmapDTO(
+                    company.getName(),
+                    company.getTicker(),
+                    previousClose,
+                    currentPrice,
+                    percent.doubleValue()
+                ));
+            }
+        }
 
-	    return result;
-	}
+        return result;
+    }
 }

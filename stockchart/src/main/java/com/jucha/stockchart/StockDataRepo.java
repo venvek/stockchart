@@ -50,4 +50,5 @@ public interface StockDataRepo extends JpaRepository<Stock_Data, Long> {
 	@Query("SELECT s.close FROM Stock_Data s WHERE s.ticker = :ticker ORDER BY s.date DESC")
 	List<BigDecimal> findLatestCloseByTicker(@Param("ticker") String ticker, Pageable pageable);
 	
+	List<Stock_Data> findTop1ByCompanyOrderByDateDesc(Company company);
 }
