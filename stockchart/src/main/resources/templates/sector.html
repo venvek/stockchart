@@ -50,14 +50,19 @@
 
 <script th:inline="javascript">
 
-fetch("/api/companies")
-.then(res => res.json())
+fetch("/api/stock-data/companies")
+.then(res => {
+    if (!res.ok) throw new Error("서버 응답 실패: " + res.status);
+    return res.json();
+})
 .then(data => {
+    console.log("받은 데이터:", data);
+
     const container = document.getElementById('heatmap');
     container.innerHTML = '';
-
+    
     data.forEach(company => {
-        const change = company.priceChangePercent; // 예: -1.23 또는 +3.45
+        const change = company.priceChangePercent;
         const box = document.createElement('div');
         box.className = 'heatmap-box';
         box.textContent = company.name;
@@ -65,11 +70,14 @@ fetch("/api/companies")
         const color = getColor(change);
         box.style.backgroundColor = color;
 
-        // tooltip
         box.title = `${company.name}\nPrice: ${company.currentPrice}\nChange: ${change}%`;
 
         container.appendChild(box);
+        console.log("sector 로그ㄴㅁㄴㅁㄴㅁ");
     });
+})
+.catch(err => {
+    console.error("에러 발생:", err);
 });
 
 function getColor(change) {
