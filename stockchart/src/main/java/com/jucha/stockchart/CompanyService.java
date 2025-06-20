@@ -1,5 +1,6 @@
 package com.jucha.stockchart;
 
+import java.io.Console;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -29,7 +30,10 @@ public class CompanyService {
 
 	public List<CompanyHeatmapDTO> getCompaniesWithPriceChange() {
         List<Company> companies = companyrepository.findAll();
+        System.out.println("회사 수: " + companies.size());
         List<CompanyHeatmapDTO> result = new ArrayList<>();
+        
+        System.out.println("히트맵");
 
         for (Company company : companies) {
             BigDecimal previousClose = company.getPreviousClose();
@@ -40,7 +44,7 @@ public class CompanyService {
                 BigDecimal change = currentPrice.subtract(previousClose);
                 BigDecimal percent = change.divide(previousClose, 4, RoundingMode.HALF_UP)
                                            .multiply(BigDecimal.valueOf(100));
-
+                System.out.println("히트맵2");
                 result.add(new CompanyHeatmapDTO(
                     company.getName(),
                     company.getTicker(),
