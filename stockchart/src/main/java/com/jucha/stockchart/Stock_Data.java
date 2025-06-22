@@ -51,6 +51,7 @@ public class Stock_Data {
     @JoinColumn(name = "company_id")
     private Company companys;
 
+    
 
     public Stock_Data() {
     }
