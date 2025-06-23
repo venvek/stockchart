@@ -36,10 +36,11 @@ public class CompanyService {
 	    
 	    for (Company company : companies) {
 	        BigDecimal previousClose = company.getPreviousClose();
-
-	        // 🔽 이 부분!
+	        
 	        List<BigDecimal> currentPrices = stockDataRepository.findLatestCloseByTicker(
+	        		
 	            company.getTicker(), PageRequest.of(0, 1)
+	            
 	        );
 
 	        if (!currentPrices.isEmpty() && previousClose != null && previousClose.compareTo(BigDecimal.ZERO) != 0) {

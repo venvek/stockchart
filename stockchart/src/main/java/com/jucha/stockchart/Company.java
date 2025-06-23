@@ -29,8 +29,8 @@ public class Company {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String ticker; 
+    @Column(name = "ticker", unique = true, nullable = false)
+    private String ticker;
 
     @Column(name = "sector", length = 100)
     private String sector;
@@ -104,7 +104,7 @@ public class Company {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @OneToMany(mappedBy = "companys", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private List<Stock_Data> stockDataList;
   
 }

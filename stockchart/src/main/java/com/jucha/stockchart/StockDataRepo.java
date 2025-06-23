@@ -1,10 +1,9 @@
 package com.jucha.stockchart;
 
-import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -46,10 +45,11 @@ public interface StockDataRepo extends JpaRepository<Stock_Data, Long> {
     
 	@Query("SELECT s FROM Stock_Data s WHERE s.volume >= :minVolume AND s.close >= :minClose")
 	List<Stock_Data> scanStocks(@Param("minVolume") Long minVolume, @Param("minClose") Double minClose);
-
 	
 	@Query("SELECT s.close FROM Stock_Data s WHERE s.company.ticker = :ticker ORDER BY s.date DESC")
-	List<BigDecimal> findLatestCloseByTicker(@Param("ticker") String ticker, Pageable pageable);
+    List<BigDecimal> findLatestCloseByTicker(@Param("ticker") String ticker, Pageable pageable);
 	
 	List<Stock_Data> findTop1ByCompanyOrderByDateDesc(Company company);
+	
+	
 }
