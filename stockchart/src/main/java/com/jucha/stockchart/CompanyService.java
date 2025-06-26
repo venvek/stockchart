@@ -41,7 +41,7 @@ public class CompanyService {
 	        		
 	            company.getTicker(), PageRequest.of(0, 1)
 	            
-	        );
+	        );	
 
 	        if (!currentPrices.isEmpty() && previousClose != null && previousClose.compareTo(BigDecimal.ZERO) != 0) {
 	            BigDecimal currentPrice = currentPrices.get(0);

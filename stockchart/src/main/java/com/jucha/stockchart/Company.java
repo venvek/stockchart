@@ -29,7 +29,7 @@ public class Company {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(name = "ticker", unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     private String ticker;
 
     @Column(name = "sector", length = 100)
