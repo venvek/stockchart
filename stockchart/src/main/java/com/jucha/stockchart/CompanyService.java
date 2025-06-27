@@ -29,37 +29,32 @@ public class CompanyService {
     }
 
 	public List<CompanyHeatmapDTO> getCompaniesWithPriceChange() {
-	    List<Company> companies = companyrepository.findAll();
-	    List<CompanyHeatmapDTO> result = new ArrayList<>();
+        List<Company> companies = companyrepository.findAll();
+        List<CompanyHeatmapDTO> result = new ArrayList<>();
 
-	    System.out.println("로그");
-	    
-	    for (Company company : companies) {
-	        BigDecimal previousClose = company.getPreviousClose();
-	        
-	        List<BigDecimal> currentPrices = stockDataRepository.findLatestCloseByTicker(
-	        		
-	            company.getTicker(), PageRequest.of(0, 1)
-	            
-	        );	
+        for (Company company : companies) {
+            BigDecimal previousClose = company.getPreviousClose();
+            List<BigDecimal> currentPrices = stockDataRepository.findLatestCloseByTicker(
+                company.getTicker(), PageRequest.of(0, 1)
+            );
 
-	        if (!currentPrices.isEmpty() && previousClose != null && previousClose.compareTo(BigDecimal.ZERO) != 0) {
-	            BigDecimal currentPrice = currentPrices.get(0);
-	            BigDecimal change = currentPrice.subtract(previousClose);
-	            BigDecimal percent = change.divide(previousClose, 4, RoundingMode.HALF_UP)
-	                                       .multiply(BigDecimal.valueOf(100));
+            if (!currentPrices.isEmpty() && previousClose != null && previousClose.compareTo(BigDecimal.ZERO) != 0) {
+                BigDecimal currentPrice = currentPrices.get(0);
+                BigDecimal change = currentPrice.subtract(previousClose);
+                BigDecimal percent = change.divide(previousClose, 4, RoundingMode.HALF_UP)
+                                           .multiply(BigDecimal.valueOf(100));
 
-	            result.add(new CompanyHeatmapDTO(
-	                company.getName(),
-	                company.getTicker(),
-	                previousClose,
-	                currentPrice,
-	                percent.doubleValue()
-	            ));
-	            System.out.println("로그2");
-	        }
-	    }
+                result.add(new CompanyHeatmapDTO(
+                    company.getName(),
+                    company.getTicker(),
+                    previousClose,
+                    currentPrice,
+                    percent.doubleValue()
+                ));
+            }
+        }
 
-	    return result;
-	}
+        return result;
+    }
+}
 }
