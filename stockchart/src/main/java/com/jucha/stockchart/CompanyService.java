@@ -32,11 +32,16 @@ public class CompanyService {
         List<Company> companies = companyrepository.findAll();
         List<CompanyHeatmapDTO> result = new ArrayList<>();
 
+        System.out.println("로그");
+        
         for (Company company : companies) {
             BigDecimal previousClose = company.getPreviousClose();
+            
             List<BigDecimal> currentPrices = stockDataRepository.findLatestCloseByTicker(
+                    
                 company.getTicker(), PageRequest.of(0, 1)
-            );
+                
+            );    
 
             if (!currentPrices.isEmpty() && previousClose != null && previousClose.compareTo(BigDecimal.ZERO) != 0) {
                 BigDecimal currentPrice = currentPrices.get(0);
@@ -51,10 +56,11 @@ public class CompanyService {
                     currentPrice,
                     percent.doubleValue()
                 ));
+                System.out.println("로그2");
             }
         }
 
         return result;
     }
 }
-}
+
