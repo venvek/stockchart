@@ -37,8 +37,8 @@ public class Stock_Data {
     @Column(name = "stock_splits", precision = 15, scale = 2)
     private BigDecimal stockSplits;
 
-    @ManyToOne
-    @JoinColumn(name = "ticker", referencedColumnName = "ticker")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -47,9 +47,6 @@ public class Stock_Data {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id")
-    private Company companys;
     
     public Stock_Data() {
     }

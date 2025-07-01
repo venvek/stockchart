@@ -227,7 +227,11 @@ chart-setting-left {
 
     <script th:inline="javascript">
     
-    const ticker = 'AAPL'; // 또는 동적으로 선택된 값
+    var stockDataList = /*[[${stockDataList}]]*/ [];
+    var indicatorList = /*[[${indicatorList}]]*/ [];
+    
+    let ticker = /*[[${ticker}]]*/ "DEFAULT";
+    
     fetch(`/stocks/${ticker}`)
         .then(res => res.json())
         .then(response => {
@@ -258,9 +262,7 @@ chart-setting-left {
     	  drawMode = 'vertical';
     	});
     
-        // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
-        var stockDataList = /*[[${stockDataList}]]*/ [];
-        var indicatorList = /*[[${indicatorList}]]*/ [];
+
         
         const baseOptions = {
         		  responsive: false,
