@@ -227,28 +227,7 @@ chart-setting-left {
 
     <script th:inline="javascript">
     
-    var stockDataList = /*[[${stockDataList}]]*/ [];
-    var indicatorList = /*[[${indicatorList}]]*/ [];
-    
-    let ticker = /*[[${ticker}]]*/ "DEFAULT";
-    
-    fetch(`/stocks/${ticker}`)
-        .then(res => res.json())
-        .then(response => {
-            const labels = response.labels;
-            const prices = response.prices;
-            const volumes = response.volumes;
 
-            // 데이터 가공
-            const lineData = labels.map((label, i) => ({ x: label, y: prices[i] }));
-            const volumeData = labels.map((label, i) => ({ x: label, y: volumes[i] }));
-
-            // 차트 업데이트
-            stockChart.data.labels = labels;
-            stockChart.data.datasets[0].data = lineData;
-            stockChart.data.datasets[1].data = volumeData;
-            stockChart.update();
-        });
     
     let drawMode = null;
     const drawnLines = [];
@@ -262,7 +241,12 @@ chart-setting-left {
     	  drawMode = 'vertical';
     	});
     
-
+        // Thymeleaf will now properly serialize the stockDataList as a JavaScript object
+        var stockDataList = /*[[${stockDataList}]]*/ [];
+        var indicatorList = /*[[${indicatorList}]]*/ [];
+        
+        console.log("volumes:", volumes);  // 배열 전체 확인
+        console.log("첫 번째 volume 값:", volumes[0]); // 하나만 찍어보기
         
         const baseOptions = {
         		  responsive: false,
