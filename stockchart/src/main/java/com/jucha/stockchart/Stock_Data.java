@@ -37,8 +37,8 @@ public class Stock_Data {
     @Column(name = "stock_splits", precision = 15, scale = 2)
     private BigDecimal stockSplits;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "company_id")
     private Company company;
 
     @Column(name = "created_at", nullable = false, updatable = false)

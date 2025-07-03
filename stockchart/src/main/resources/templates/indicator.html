@@ -227,8 +227,8 @@ chart-setting-left {
 
     <script th:inline="javascript">
     
+    console.log(1500000);
 
-    
     let drawMode = null;
     const drawnLines = [];
     let previewLine = null; 
@@ -645,7 +645,10 @@ chart-setting-left {
         	        pointRadius: 0
         	    }]
         	};
-
+	
+        console.log("라인 데이터 확인:", lineData);
+        console.log("볼륨 데이터 확인:", volumes);
+        
         const maData = indicatorList.map(stock => ({
             x: new Date(stock.date),
             y: stock.ma               // 이동 평균 값
@@ -859,10 +862,8 @@ chart-setting-left {
                 position: 'left', // 거래량 y축은 왼쪽에 위치
                 suggestedMax: Math.max(...volumes.map(v => v.y)) / 5,
                 ticks: {
-                    beginAtZero: true,
-                    padding: 10, // y축 위쪽의 패딩을 줄임
                     callback: function(value) {
-                        return value / 1000000 + 'M';  // y축 값에 'M'을 붙여서 표시
+                        return (value / 1_000_000).toFixed(1) + 'M'; // 1.5M 같은 식으로 표시
                     }
                 },
                 grid: {
@@ -1045,7 +1046,6 @@ fetchStockData("D");
 periodSelect.addEventListener("change", function () {
     fetchStockData(this.value);
 });
-
 
 
 
