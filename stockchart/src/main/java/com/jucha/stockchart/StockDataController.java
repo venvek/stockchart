@@ -103,11 +103,15 @@ public class StockDataController {
 	 * 
 	 * return response; }
 	 */
+    
+    
     @GetMapping("/stocks/{ticker}")
     @ResponseBody
     public Map<String, Object> getStockChartData(@PathVariable String ticker) {
         List<Stock_Data> stockDataList = stockDataService.getStockDataByTicker(ticker);
-
+        System.out.println("불러온 데이터 수: " + stockDataList.size());
+        System.out.println("요청받은 ticker: " + ticker);
+        
         List<String> labels = new ArrayList<>();
         List<Double> prices = new ArrayList<>();
         List<Long> volumes = new ArrayList<>();
@@ -122,6 +126,7 @@ public class StockDataController {
         response.put("labels", labels);
         response.put("prices", prices);
         response.put("volumes", volumes);
+        
         return response;
     }
     

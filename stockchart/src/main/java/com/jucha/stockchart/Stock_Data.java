@@ -38,7 +38,7 @@ public class Stock_Data {
     private BigDecimal stockSplits;
 
     @ManyToOne
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "ticker", referencedColumnName = "ticker")
     private Company company;
 
     @Column(name = "created_at", nullable = false, updatable = false)
