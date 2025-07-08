@@ -34,24 +34,25 @@ public class StockhtmlController {
 	    List<Indicators> indicatorList = stockDataService.getindicatorsByTicker(ticker);
 
 	    model.addAttribute("stockDataList", stockDataList);
-	    model.addAttribute("indicatorList", indicatorList); // 이 부분을 확인
+	    model.addAttribute("indicatorList", indicatorList); 
         model.addAttribute("ticker", ticker);
 
         // Thymeleaf 템플릿으로 반환
         return "indicator";
     }
 	
-	@GetMapping("/stocks")
-    public String getStockChart2(@RequestParam("ticker") String ticker, Model model) {
-        List<Stock_Data> stockDataList = stockDataService.getStockDataByTicker(ticker);
-        List<Indicators> indicatorList = stockDataService.getindicatorsByTicker(ticker);
-
-        model.addAttribute("stockDataList", stockDataList);
-        model.addAttribute("indicatorList", indicatorList);
-        model.addAttribute("ticker", ticker);
-
-        return "indicator";
-    }
+	/*
+	 * @GetMapping("/stocks") public String getStockChart2(@RequestParam("ticker")
+	 * String ticker, Model model) { List<Stock_Data> stockDataList =
+	 * stockDataService.getStockDataByTicker(ticker); List<Indicators> indicatorList
+	 * = stockDataService.getindicatorsByTicker(ticker);
+	 * 
+	 * model.addAttribute("stockDataList", stockDataList);
+	 * model.addAttribute("indicatorList", indicatorList);
+	 * model.addAttribute("ticker", ticker);
+	 * 
+	 * return "indicator"; }
+	 */
 	
 	
 }

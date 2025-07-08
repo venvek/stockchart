@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>tree map</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-treemap@4.3.0/dist/chartjs-chart-treemap.min.js"></script>
+
+<body>
+
+<div th:replace="CommonFile/header :: header"></div>
+
+<canvas id="treemapChart" width="800" height="600"></canvas>
+
+<script th:inline="javascript">
+
+const sectorData = [
+    { name: "Apple", sector: "Tech", marketCap: 2800000000000, change: 1.5 },
+    { name: "Microsoft", sector: "Tech", marketCap: 2400000000000, change: -0.3 },
+    { name: "ExxonMobil", sector: "Energy", marketCap: 400000000000, change: 0.2 },
+    { name: "Chevron", sector: "Energy", marketCap: 300000000000, change: -1.2 },
+];
+
+const ctx = document.getElementById('treemapChart').getContext('2d');
+
+const treemapChart = new Chart(ctx, {
+    type: 'treemap',
+    data: {
+        datasets: [{
+            tree: sectorData.map(d => ({
+                label: d.name,
+                value: d.marketCap,
+                group: d.sector,
+                change: d.change
+            })),
+            key: 'value',
+            groups: ['group'],  // 그룹은 섹터
+            backgroundColor(ctx) {
+                const change = ctx.raw.change;
+                if (change > 0) {
+                    return `rgba(0, 200, 0, ${Math.min(change / 5, 1)})`; // 상승 → 녹색
+                } else {
+                    return `rgba(200, 0, 0, ${Math.min(Math.abs(change) / 5, 1)})`; // 하락 → 빨간색
+                }
+            },
+            borderColor: '#000',
+            borderWidth: 0.5,
+            spacing: 0.5,
+            labels: {
+                display: true,
+                formatter: (ctx) => ctx.raw.label
+            }
+        }]
+    },
+    options: {
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: (ctx) => {
+                        const d = ctx.raw;
+                        return `${d.label} (${d.group})\nChange: ${d.change}%\nCap: $${(d.value / 1e9).toFixed(1)}B`;
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>
