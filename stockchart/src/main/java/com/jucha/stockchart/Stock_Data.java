@@ -38,8 +38,11 @@ public class Stock_Data {
     private BigDecimal stockSplits;
 
     @ManyToOne
-    @JoinColumn(name = "ticker", referencedColumnName = "ticker")
+    @JoinColumn(name = "company_id")  // 외래키
     private Company company;
+
+    @Column(name = "ticker") // 단순한 일반 컬럼
+    private String ticker;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
