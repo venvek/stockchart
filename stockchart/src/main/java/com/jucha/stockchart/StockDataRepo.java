@@ -11,8 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StockDataRepo extends JpaRepository<Stock_Data, Long> {
-	@Query("SELECT s FROM Stock_Data s WHERE s.company.ticker = :ticker ORDER BY s.date ASC")
-	List<Stock_Data> findByCompanyTickerOrdered(@Param("ticker") String ticker);
+	List<Stock_Data> findByTickerOrderByDateAsc(String ticker);
 	
 	@Query("SELECT s FROM Stock_Data s WHERE s.company.ticker = :ticker")
 	List<Stock_Data> findByTicker(@Param("ticker") String ticker);
