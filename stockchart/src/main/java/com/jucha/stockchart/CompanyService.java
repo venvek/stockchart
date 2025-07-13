@@ -29,38 +29,33 @@ public class CompanyService {
     }
 
 	public List<CompanyHeatmapDTO> getCompaniesWithPriceChange() {
-        List<Company> companies = companyrepository.findAll();
-        List<CompanyHeatmapDTO> result = new ArrayList<>();
+	    List<Company> companies = companyrepository.findAll();
+	    List<CompanyHeatmapDTO> result = new ArrayList<>();
 
-        System.out.println("로그");
-        
-        for (Company company : companies) {
-            BigDecimal previousClose = company.getPreviousClose();
-            
-            List<BigDecimal> currentPrices = stockDataRepository.findLatestCloseByTicker(
-                    
-                company.getTicker(), PageRequest.of(0, 1)
-                
-            );    
+	    for (Company company : companies) {
+	        String ticker = company.getTicker();
+	        BigDecimal previousClose = company.getPreviousClose();
 
-            if (!currentPrices.isEmpty() && previousClose != null && previousClose.compareTo(BigDecimal.ZERO) != 0) {
-                BigDecimal currentPrice = currentPrices.get(0);
-                BigDecimal change = currentPrice.subtract(previousClose);
-                BigDecimal percent = change.divide(previousClose, 4, RoundingMode.HALF_UP)
-                                           .multiply(BigDecimal.valueOf(100));
+	        // 최신 종가 조회
+	        List<BigDecimal> latestCloseList = stockDataRepository.findLatestCloseByTicker(ticker, PageRequest.of(0, 1));
+	        if (latestCloseList.isEmpty() || previousClose == null) continue;
 
-                result.add(new CompanyHeatmapDTO(
-                    company.getName(),
-                    company.getTicker(),
-                    previousClose,
-                    currentPrice,
-                    percent.doubleValue()
-                ));
-                System.out.println("로그2");
-            }
-        }
+	        BigDecimal latestClose = latestCloseList.get(0);
+	        BigDecimal changeRate = latestClose.subtract(previousClose)
+	                                            .divide(previousClose, 4, RoundingMode.HALF_UP)
+	                                            .multiply(BigDecimal.valueOf(100));
 
-        return result;
-    }
+	        CompanyHeatmapDTO dto = new CompanyHeatmapDTO();
+	        dto.setTicker(ticker);
+	        dto.setName(company.getName());
+	        dto.setLatestPrice(latestClose);
+	        dto.setPreviousClose(previousClose);
+	        dto.setChangeRate(changeRate);
+
+	        result.add(dto);
+	    }
+
+	    return result;
+	}
 }
 

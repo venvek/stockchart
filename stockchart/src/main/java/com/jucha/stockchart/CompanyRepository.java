@@ -1,5 +1,6 @@
 package com.jucha.stockchart;
 
+import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     	       "FROM Company c")
     List<Object[]> findLatestStockData();
     
-    @Query("SELECT c.previousClose FROM Company c WHERE c.ticker = :ticker")
-    Optional<BigDecimal> findLatestCloseByTicker(@Param("ticker") String ticker);
+    @Query("SELECT s.close FROM Stock_Data s WHERE s.company.ticker = :ticker ORDER BY s.date DESC")
+    List<BigDecimal> findLatestCloseByTicker(@Param("ticker") String ticker, Pageable pageable);
     
 
     
