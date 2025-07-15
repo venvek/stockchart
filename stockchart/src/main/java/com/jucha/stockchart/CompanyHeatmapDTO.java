@@ -9,6 +9,7 @@ public class CompanyHeatmapDTO {
     private BigDecimal latestPrice;
     private BigDecimal previousClose;
     private BigDecimal changeRate;
+    
 	public String getTicker() {
 		return ticker;
 	}

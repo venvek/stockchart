@@ -30,32 +30,34 @@ public class CompanyService {
 
 	public List<CompanyHeatmapDTO> getCompaniesWithPriceChange() {
 	    List<Company> companies = companyrepository.findAll();
-	    List<CompanyHeatmapDTO> result = new ArrayList<>();
+	    List<CompanyHeatmapDTO> heatmapList = new ArrayList<>();
 
 	    for (Company company : companies) {
 	        String ticker = company.getTicker();
+	        String name = company.getName();
 	        BigDecimal previousClose = company.getPreviousClose();
 
-	        // 최신 종가 조회
+	        if (previousClose == null) continue;
+
 	        List<BigDecimal> latestCloseList = stockDataRepository.findLatestCloseByTicker(ticker, PageRequest.of(0, 1));
-	        if (latestCloseList.isEmpty() || previousClose == null) continue;
+	        if (latestCloseList.isEmpty()) continue;
 
 	        BigDecimal latestClose = latestCloseList.get(0);
 	        BigDecimal changeRate = latestClose.subtract(previousClose)
-	                                            .divide(previousClose, 4, RoundingMode.HALF_UP)
-	                                            .multiply(BigDecimal.valueOf(100));
+	                                           .divide(previousClose, 4, RoundingMode.HALF_UP)
+	                                           .multiply(BigDecimal.valueOf(100));
 
 	        CompanyHeatmapDTO dto = new CompanyHeatmapDTO();
 	        dto.setTicker(ticker);
-	        dto.setName(company.getName());
+	        dto.setName(name);
 	        dto.setLatestPrice(latestClose);
 	        dto.setPreviousClose(previousClose);
 	        dto.setChangeRate(changeRate);
 
-	        result.add(dto);
+	        heatmapList.add(dto);
 	    }
 
-	    return result;
+	    return heatmapList;
 	}
 }
 
