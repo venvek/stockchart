@@ -136,6 +136,8 @@ public class StockDataController {
         return companyService.getCompaniesWithPriceChange();
     }
     
+    
+    
     @GetMapping("/sector")
     public String showSectorPage() {
         return "sector";

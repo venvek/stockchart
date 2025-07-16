@@ -7,26 +7,27 @@
     
 <style type="text/css">
     
-.heatmap-box {
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    color: white;
-    border-radius: 5px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-.heatmap-box:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
-}    
+ .heatmap-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .heatmap-box {
+            width: 120px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            border-radius: 8px;
+        }  
 
 </style>
     
-<title>map page</title>
+<title>Stock Heatmap</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -40,8 +41,9 @@
    		
    	<h2>히트맵</h2>
    	  
-	<div id="heatmap" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; padding: 20px;">
-	</div>
+	<div class="heatmap-container" id="heatmapContainer">
+
+    </div>
       
    	</div>
 
@@ -49,37 +51,38 @@
 
 <script th:inline="javascript">
 
-fetch("/api/stock-data/companies")
-.then(res => {
-    if (!res.ok) throw new Error("서버 응답 실패: " + res.status);
-    return res.json();
-})
-.then(data => {
-    console.log("받은 데이터:", data);
+async function fetchHeatmapData() {
+    const response = await fetch('/companies');
+    const data = await response.json();
 
-    const container = document.getElementById('heatmap');
+    const container = document.getElementById('heatmapContainer');
     container.innerHTML = '';
-    
+
     data.forEach(company => {
-        const change = company.priceChangePercent;
         const box = document.createElement('div');
         box.className = 'heatmap-box';
-        box.textContent = company.name;
 
-        const color = getColor(change);
-        box.style.backgroundColor = color;
+        // 색상 설정
+        const rate = parseFloat(company.changeRate);
+        let bgColor = 'gray';
+        if (rate > 0) bgColor = 'green';
+        else if (rate < 0) bgColor = 'red';
 
-        box.title = `${company.name}\nPrice: ${company.currentPrice}\nChange: ${change}%`;
+        box.style.backgroundColor = bgColor;
 
+        // 텍스트 구성
+        box.innerHTML = `
+            ${company.ticker}<br>
+            ${rate.toFixed(2)}%
+        `;
         container.appendChild(box);
-        console.log("sector 로그");
     });
-})
-.catch(err => {
-    console.error("에러 발생:", err);
-});
+}
 
-function getColor(change) {
+// 초기 로드
+fetchHeatmapData();
+
+/* function getColor(change) {
 if (change === null || isNaN(change)) return '#ccc';
 if (change > 0) {
     const green = Math.min(255, 100 + change * 10);
@@ -88,7 +91,7 @@ if (change > 0) {
     const red = Math.min(255, 100 + Math.abs(change) * 10);
     return `rgb(${red}, 0, 0)`;
 }
-}
+} */
 
 </script>       
 </body>
