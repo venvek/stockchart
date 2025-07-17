@@ -136,6 +136,11 @@ public class StockDataController {
         return companyService.getCompaniesWithPriceChange();
     }
     
+    @GetMapping("/api/heatmap")
+    public List<HeatMapData> getHeatmapData() {
+        return companyService.getHeatmapStocks();
+    }
+    
     
     
     @GetMapping("/sector")

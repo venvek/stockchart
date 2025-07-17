@@ -27,6 +27,10 @@ public class CompanyService {
 	public List<Company> getAllCompanies() {
         return companyrepository.findAll();
     }
+	
+	public List<HeatMapData> getHeatmapStocks() {
+        return companyrepository.getHeatmapData();
+    }
 
 	public List<CompanyHeatmapDTO> getCompaniesWithPriceChange() {
 	    List<Company> companies = companyrepository.findAll();
