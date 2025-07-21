@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<meta charset="UTF-8">
+<link href="/css/footer.css" rel="stylesheet" type="text/css">
+    <link href="/css/header.css" rel="stylesheet" type="text/css">
+
+<title>svg d3</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+
+<div th:replace="CommonFile/header :: header"></div>
+
+<div id="chart-container">
+  <svg id="price-chart" width="800" height="400"></svg>
+</div>
+
+<div th:replace="CommonFile/footer :: footer"></div>
+
+<script th:inline="javascript">
+
+const data = [
+	  { date: '2024-01-01', close: 120 },
+	  { date: '2024-01-02', close: 122 },
+	  { date: '2024-01-03', close: 119 },
+	  { date: '2024-01-04', close: 125 },
+	];
+	
+const svg = d3.select("#price-chart");
+const margin = { top: 20, right: 30, bottom: 30, left: 50 };
+const width = +svg.attr("width") - margin.left - margin.right;
+const height = +svg.attr("height") - margin.top - margin.bottom;
+
+const chartArea = svg.append("g")
+  .attr("transform", `translate(${margin.left},${margin.top})`);
+
+// 1. Parse 날짜
+const parseDate = d3.timeParse("%Y-%m-%d");
+data.forEach(d => d.date = parseDate(d.date));
+
+// 2. 축 스케일 정의
+const x = d3.scaleTime()
+  .domain(d3.extent(data, d => d.date))
+  .range([0, width]);
+
+const y = d3.scaleLinear()
+  .domain([d3.min(data, d => d.close) * 0.95, d3.max(data, d => d.close) * 1.05])
+  .range([height, 0]);
+
+// 3. 축 그리기
+chartArea.append("g")
+  .attr("transform", `translate(0,${height})`)
+  .call(d3.axisBottom(x));
+
+chartArea.append("g")
+  .call(d3.axisLeft(y));
+
+// 4. 선 생성기
+const line = d3.line()
+  .x(d => x(d.date))
+  .y(d => y(d.close));
+
+// 5. 선 추가
+chartArea.append("path")
+  .datum(data)
+  .attr("fill", "none")
+  .attr("stroke", "steelblue")
+  .attr("stroke-width", 2)
+  .attr("d", line);
+
+</script>
+</body>
+
+</html>

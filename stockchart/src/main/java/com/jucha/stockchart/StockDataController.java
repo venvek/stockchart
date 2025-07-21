@@ -136,17 +136,23 @@ public class StockDataController {
         return companyService.getCompaniesWithPriceChange();
     }
     
-    @GetMapping("/api/heatmap")
-    public List<HeatMapData> getHeatmapData() {
-        return companyService.getHeatmapStocks();
-    }
-    
+	/*
+	 * @GetMapping("/api/heatmap") public List<HeatMapData> getHeatmapData() {
+	 * return companyService.getHeatmapStocks(); }
+	 */
     
     
     @GetMapping("/sector")
     public String showSectorPage() {
         return "sector";
     }
+    
+    @GetMapping("/D3chart")
+    public String d3chart() {
+        return "D3chart";
+    }
+    
+    
     
 	/*
 	 * @GetMapping("/scan") public List<Stock_Data> scanStocks(
