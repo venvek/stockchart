@@ -7,6 +7,34 @@
     <link href="/css/header.css" rel="stylesheet" type="text/css">
 
 <title>svg d3</title>
+
+<style>
+        .heatmap-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .heatmap-box {
+            width: 140px;
+            height: 100px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: sans-serif;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .ticker { font-size: 16px; }
+        .change { font-size: 14px; }
+        .rsi, .volume { font-size: 12px; font-weight: normal; }
+    </style>
+    
 <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 
@@ -14,9 +42,10 @@
 
 <div th:replace="CommonFile/header :: header"></div>
 
-<div id="chart-container">
-  <svg id="price-chart" width="800" height="400"></svg>
-</div>
+<h1>📈 Stock Heatmap</h1>
+    <div class="heatmap-container" id="heatmapContainer">
+        <!-- JavaScript로 채워짐 -->
+    </div>
 
 <div th:replace="CommonFile/footer :: footer"></div>
 
