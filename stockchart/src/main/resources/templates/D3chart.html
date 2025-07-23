@@ -7,98 +7,161 @@
     <link href="/css/header.css" rel="stylesheet" type="text/css">
 
 <title>svg d3</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
 
 <style>
-        .heatmap-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .heatmap-box {
-            width: 140px;
-            height: 100px;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-family: sans-serif;
-            color: #fff;
-            font-weight: bold;
-            text-align: center;
-            padding: 5px;
-        }
-
-        .ticker { font-size: 16px; }
-        .change { font-size: 14px; }
-        .rsi, .volume { font-size: 12px; font-weight: normal; }
-    </style>
-    
-<script src="https://d3js.org/d3.v7.min.js"></script>
+    body { font-family: sans-serif; }
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    .volume-bar {
+      fill: grey;
+      opacity: 0.5;
+    }
+    .rsi-line {
+      stroke: black;
+      fill: none;
+      stroke-width: 2;
+    }
+    .rsi-zone {
+      fill: rgba(255,0,0,0.1);
+    }
+    .rsi-threshold {
+      stroke: red;
+      stroke-dasharray: 3 3;
+    }
+  </style>
+  
 </head>
 
 <body>
 
 <div th:replace="CommonFile/header :: header"></div>
 
-<h1>📈 Stock Heatmap</h1>
-    <div class="heatmap-container" id="heatmapContainer">
-        <!-- JavaScript로 채워짐 -->
-    </div>
+<div id="chart-container">
+  <svg id="main-chart" width="800" height="400"></svg>
+  <svg id="rsi-chart" width="800" height="200"></svg>
+
+</div>
 
 <div th:replace="CommonFile/footer :: footer"></div>
 
 <script th:inline="javascript">
 
 const data = [
-	  { date: '2024-01-01', close: 120 },
-	  { date: '2024-01-02', close: 122 },
-	  { date: '2024-01-03', close: 119 },
-	  { date: '2024-01-04', close: 125 },
-	];
-	
-const svg = d3.select("#price-chart");
-const margin = { top: 20, right: 30, bottom: 30, left: 50 };
-const width = +svg.attr("width") - margin.left - margin.right;
-const height = +svg.attr("height") - margin.top - margin.bottom;
+    { date: '2024-01-01', close: 120, volume: 1500000, rsi: 45 },
+    { date: '2024-01-02', close: 122, volume: 1800000, rsi: 55 },
+    { date: '2024-01-03', close: 119, volume: 1600000, rsi: 30 },
+    { date: '2024-01-04', close: 125, volume: 2100000, rsi: 75 },
+    { date: '2024-01-05', close: 124, volume: 2000000, rsi: 65 },
+  ];
 
-const chartArea = svg.append("g")
-  .attr("transform", `translate(${margin.left},${margin.top})`);
+  const parseDate = d3.timeParse('%Y-%m-%d');
+  data.forEach(d => d.date = parseDate(d.date));
 
-// 1. Parse 날짜
-const parseDate = d3.timeParse("%Y-%m-%d");
-data.forEach(d => d.date = parseDate(d.date));
+  // SVG 설정
+  const margin = { top: 10, right: 50, bottom: 30, left: 50 };
+  const width = 800 - margin.left - margin.right;
+  const heightMain = 400 - margin.top - margin.bottom;
+  const heightRSI = 150 - margin.top - margin.bottom;
 
-// 2. 축 스케일 정의
-const x = d3.scaleTime()
-  .domain(d3.extent(data, d => d.date))
-  .range([0, width]);
+  // 공통 X 축
+  const x = d3.scaleTime()
+    .domain(d3.extent(data, d => d.date))
+    .range([0, width]);
 
-const y = d3.scaleLinear()
-  .domain([d3.min(data, d => d.close) * 0.95, d3.max(data, d => d.close) * 1.05])
-  .range([height, 0]);
+  // Y 스케일
+  const yPrice = d3.scaleLinear()
+    .domain([d3.min(data, d => d.close) * 0.95, d3.max(data, d => d.close) * 1.05])
+    .range([heightMain, 0]);
 
-// 3. 축 그리기
-chartArea.append("g")
-  .attr("transform", `translate(0,${height})`)
-  .call(d3.axisBottom(x));
+  const yVolume = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.volume)])
+    .range([heightMain, heightMain - 80]);
 
-chartArea.append("g")
-  .call(d3.axisLeft(y));
+  const yRSI = d3.scaleLinear()
+    .domain([0, 100])
+    .range([heightRSI, 0]);
 
-// 4. 선 생성기
-const line = d3.line()
-  .x(d => x(d.date))
-  .y(d => y(d.close));
+  // 메인 차트
+  const svgMain = d3.select("#main-chart")
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
 
-// 5. 선 추가
-chartArea.append("path")
-  .datum(data)
-  .attr("fill", "none")
-  .attr("stroke", "steelblue")
-  .attr("stroke-width", 2)
-  .attr("d", line);
+  svgMain.append("g")
+    .attr("transform", `translate(0,${heightMain})`)
+    .call(d3.axisBottom(x));
+
+  svgMain.append("g").call(d3.axisLeft(yPrice));
+
+  const line = d3.line()
+    .x(d => x(d.date))
+    .y(d => yPrice(d.close));
+
+  svgMain.append("path")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 2)
+    .attr("d", line);
+
+  svgMain.selectAll(".volume")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("class", "volume-bar")
+    .attr("x", d => x(d.date) - 5)
+    .attr("y", d => yVolume(d.volume))
+    .attr("width", 10)
+    .attr("height", d => heightMain - yVolume(d.volume));
+
+  // RSI 차트
+  const svgRSI = d3.select("#rsi-chart")
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  svgRSI.append("g")
+    .attr("transform", `translate(0,${heightRSI})`)
+    .call(d3.axisBottom(x));
+
+  svgRSI.append("g").call(d3.axisLeft(yRSI));
+
+  const rsiLine = d3.line()
+    .x(d => x(d.date))
+    .y(d => yRSI(d.rsi));
+
+  svgRSI.append("path")
+    .datum(data)
+    .attr("class", "rsi-line")
+    .attr("d", rsiLine);
+
+  // RSI 기준선
+  svgRSI.append("line")
+    .attr("class", "rsi-threshold")
+    .attr("x1", 0)
+    .attr("x2", width)
+    .attr("y1", yRSI(70))
+    .attr("y2", yRSI(70));
+
+  svgRSI.append("line")
+    .attr("class", "rsi-threshold")
+    .attr("x1", 0)
+    .attr("x2", width)
+    .attr("y1", yRSI(30))
+    .attr("y2", yRSI(30));
+
+  // RSI 영역 강조 (70 초과 시)
+  svgRSI.selectAll(".rsi-zone")
+    .data(data.filter(d => d.rsi > 70))
+    .enter()
+    .append("rect")
+    .attr("class", "rsi-zone")
+    .attr("x", d => x(d.date) - 5)
+    .attr("y", yRSI(100))
+    .attr("width", 10)
+    .attr("height", yRSI(70) - yRSI(100));
 
 </script>
 </body>
