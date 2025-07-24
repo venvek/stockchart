@@ -10,27 +10,29 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <style>
-    body { font-family: sans-serif; }
-    .axis path, .axis line {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }
     .volume-bar {
-      fill: grey;
-      opacity: 0.5;
+      fill: rgba(0, 0, 255, 0.4);
     }
+
     .rsi-line {
-      stroke: black;
+      stroke: #333;
       fill: none;
       stroke-width: 2;
     }
-    .rsi-zone {
-      fill: rgba(255,0,0,0.1);
-    }
+
     .rsi-threshold {
       stroke: red;
-      stroke-dasharray: 3 3;
+      stroke-dasharray: 4 2;
+    }
+
+    .rsi-zone {
+      fill: rgba(255, 0, 0, 0.1);
+    }
+
+    .price-line {
+      stroke: steelblue;
+      fill: none;
+      stroke-width: 2;
     }
   </style>
   
@@ -40,11 +42,10 @@
 
 <div th:replace="CommonFile/header :: header"></div>
 
-<div id="chart-container">
-  <svg id="main-chart" width="800" height="400"></svg>
-  <svg id="rsi-chart" width="800" height="200"></svg>
 
-</div>
+  <svg id="combined-chart" width="900" height="600"></svg>
+
+
 
 <div th:replace="CommonFile/footer :: footer"></div>
 
@@ -61,18 +62,22 @@ const data = [
   const parseDate = d3.timeParse('%Y-%m-%d');
   data.forEach(d => d.date = parseDate(d.date));
 
-  // SVG 설정
-  const margin = { top: 10, right: 50, bottom: 30, left: 50 };
+  // 사이즈 설정
+  const margin = { top: 10, right: 50, bottom: 30, left: 60 };
   const width = 800 - margin.left - margin.right;
-  const heightMain = 400 - margin.top - margin.bottom;
-  const heightRSI = 150 - margin.top - margin.bottom;
+  const heightMain = 300;
+  const heightRSI = 150;
+  const spacing = 50;
+  const totalHeight = heightMain + heightRSI + spacing + margin.top + margin.bottom;
 
-  // 공통 X 축
+  const svg = d3.select("#combined-chart")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", totalHeight);
+
   const x = d3.scaleTime()
     .domain(d3.extent(data, d => d.date))
     .range([0, width]);
 
-  // Y 스케일
   const yPrice = d3.scaleLinear()
     .domain([d3.min(data, d => d.close) * 0.95, d3.max(data, d => d.close) * 1.05])
     .range([heightMain, 0]);
@@ -85,29 +90,35 @@ const data = [
     .domain([0, 100])
     .range([heightRSI, 0]);
 
-  // 메인 차트
-  const svgMain = d3.select("#main-chart")
-    .append("g")
+  // 📈 메인 차트 (가격, 볼륨)
+
+  const mainGroup = svg.append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  svgMain.append("g")
+  mainGroup.append("text")
+  .attr("x", 0)
+  .attr("y", 5)
+  .attr("font-size", "16px")
+  .attr("font-weight", "bold")
+  .text("가격");
+  
+  mainGroup.append("g")
     .attr("transform", `translate(0,${heightMain})`)
     .call(d3.axisBottom(x));
 
-  svgMain.append("g").call(d3.axisLeft(yPrice));
+  mainGroup.append("g").call(d3.axisLeft(yPrice));
 
-  const line = d3.line()
+  const priceLine = d3.line()
     .x(d => x(d.date))
     .y(d => yPrice(d.close));
 
-  svgMain.append("path")
+  mainGroup.append("path")
     .datum(data)
-    .attr("fill", "none")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 2)
-    .attr("d", line);
+    .attr("class", "price-line")
+    .attr("d", priceLine);
+  
 
-  svgMain.selectAll(".volume")
+  mainGroup.selectAll(".volume-bar")
     .data(data)
     .enter()
     .append("rect")
@@ -117,43 +128,53 @@ const data = [
     .attr("width", 10)
     .attr("height", d => heightMain - yVolume(d.volume));
 
-  // RSI 차트
-  const svgRSI = d3.select("#rsi-chart")
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  svgRSI.append("g")
+  // 📉 RSI 차트
+
+  const rsiGroup = svg.append("g")
+    .attr("transform", `translate(${margin.left},${margin.top + heightMain + spacing})`);
+
+  rsiGroup.append("text")
+  .attr("x", 0)
+  .attr("y", -10)
+  .attr("font-size", "16px")
+  .attr("font-weight", "bold")
+  .text("종가 및 거래량");
+  
+  rsiGroup.append("g")
     .attr("transform", `translate(0,${heightRSI})`)
     .call(d3.axisBottom(x));
 
-  svgRSI.append("g").call(d3.axisLeft(yRSI));
+  rsiGroup.append("g").call(d3.axisLeft(yRSI));
+  
 
   const rsiLine = d3.line()
     .x(d => x(d.date))
     .y(d => yRSI(d.rsi));
 
-  svgRSI.append("path")
+  rsiGroup.append("path")
     .datum(data)
     .attr("class", "rsi-line")
     .attr("d", rsiLine);
 
   // RSI 기준선
-  svgRSI.append("line")
+  rsiGroup.append("line")
     .attr("class", "rsi-threshold")
     .attr("x1", 0)
     .attr("x2", width)
     .attr("y1", yRSI(70))
     .attr("y2", yRSI(70));
 
-  svgRSI.append("line")
+  rsiGroup.append("line")
     .attr("class", "rsi-threshold")
     .attr("x1", 0)
     .attr("x2", width)
     .attr("y1", yRSI(30))
     .attr("y2", yRSI(30));
+  
 
-  // RSI 영역 강조 (70 초과 시)
-  svgRSI.selectAll(".rsi-zone")
+  // RSI 강조영역 (70 이상)
+  rsiGroup.selectAll(".rsi-zone")
     .data(data.filter(d => d.rsi > 70))
     .enter()
     .append("rect")
@@ -162,7 +183,82 @@ const data = [
     .attr("y", yRSI(100))
     .attr("width", 10)
     .attr("height", yRSI(70) - yRSI(100));
+  
+  const heightMACD = 150 - margin.top - margin.bottom;
 
+  const yMACD = d3.scaleLinear()
+    .domain([
+      d3.min(data, d => Math.min(d.macd, d.signal, d.histogram)) * 1.1,
+      d3.max(data, d => Math.max(d.macd, d.signal, d.histogram)) * 1.1
+    ])
+    .range([heightMACD, 0]);
+
+  const svgMACD = d3.select("#macd-chart")
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  svgMACD.append("g")
+    .attr("transform", `translate(0,${heightMACD})`)
+    .call(d3.axisBottom(x));
+
+  svgMACD.append("g").call(d3.axisLeft(yMACD));
+
+  // 제목
+  svgMACD.append("text")
+    .attr("x", 0)
+    .attr("y", -10)
+    .attr("font-size", "16px")
+    .attr("font-weight", "bold")
+    .text("MACD 지표");
+
+  // MACD 선
+  const macdLine = d3.line()
+    .x(d => x(d.date))
+    .y(d => yMACD(d.macd));
+
+  svgMACD.append("path")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "blue")
+    .attr("stroke-width", 1.5)
+    .attr("d", macdLine);
+
+  // Signal 선
+  const signalLine = d3.line()
+    .x(d => x(d.date))
+    .y(d => yMACD(d.signal));
+
+  svgMACD.append("path")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "red")
+    .attr("stroke-width", 1.5)
+    .attr("d", signalLine);
+
+  // Histogram
+  svgMACD.selectAll(".macd-bar")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("class", "macd-bar")
+    .attr("x", d => x(d.date) - 5)
+    .attr("y", d => yMACD(Math.max(0, d.histogram)))
+    .attr("width", 10)
+    .attr("height", d => Math.abs(yMACD(d.histogram) - yMACD(0)))
+    .attr("fill", d => d.histogram >= 0 ? "green" : "orange");
+
+  // 0선
+  svgMACD.append("line")
+    .attr("x1", 0)
+    .attr("x2", width)
+    .attr("y1", yMACD(0))
+    .attr("y2", yMACD(0))
+    .attr("stroke", "#888")
+    .attr("stroke-dasharray", "4 2");
+  
+
+  
+  
 </script>
 </body>
 
