@@ -51,6 +51,7 @@
 
 <div th:replace="CommonFile/header :: header"></div>
 
+<button id="switchData">데이터 바꾸기</button>
 
   <svg id="combined-chart" width="900" height="600"></svg>
 
@@ -67,196 +68,144 @@ const data = [
 	  { date: '2024-01-04', close: 125, volume: 2100000, rsi: 75, macd: 1.8, signal: 1.6, histogram: 0.2 },
 	  { date: '2024-01-05', close: 124, volume: 2000000, rsi: 65, macd: 1.6, signal: 1.7, histogram: -0.1 }
 	];
+	
+const data2 = [
+	  { date: '2025-01-01', close: 20, volume: 150000, rsi: 40, macd: 1.2, signal: 1.0, histogram: 0.2 },
+	  { date: '2025-01-02', close: 22, volume: 180000, rsi: 50, macd: 1.5, signal: 1.3, histogram: 0.2 },
+	  { date: '2025-01-03', close: 19, volume: 160000, rsi: 30, macd: 1.0, signal: 1.2, histogram: -0.2 },
+	  { date: '2025-01-04', close: 25, volume: 210000, rsi: 70, macd: 1.8, signal: 1.6, histogram: 0.2 },
+	  { date: '2025-01-05', close: 24, volume: 200000, rsi: 60, macd: 1.6, signal: 1.7, histogram: -0.1 }
+	];
 
-  const parseDate = d3.timeParse('%Y-%m-%d');
-  data.forEach(d => d.date = parseDate(d.date));
+const parseDate = d3.timeParse('%Y-%m-%d');
+data.forEach(d => d.date = parseDate(d.date));
+data2.forEach(d => d.date = parseDate(d.date));
 
-  // 사이즈 설정
-  const margin = { top: 10, right: 50, bottom: 30, left: 60 };
-  const width = 800 - margin.left - margin.right;
-  const heightMain = 300;
-  const heightRSI = 150;
-  const spacing = 50;
-  const heightMACD = 150;
-  const totalHeight = heightMain + heightRSI + heightMACD + spacing * 2 + margin.top + margin.bottom;
-  
-  const svg = d3.select("#combined-chart")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", totalHeight);
+function drawCombinedChart(data) {
+	  const margin = { top: 10, right: 50, bottom: 30, left: 60 };
+	  const width = 800 - margin.left - margin.right;
+	  const heightMain = 300;
+	  const heightRSI = 150;
+	  const spacing = 50;
+	  const totalHeight = heightMain + heightRSI + spacing + margin.top + margin.bottom;
 
-  const x = d3.scaleTime()
-    .domain(d3.extent(data, d => d.date))
-    .range([0, width]);
+	  const svg = d3.select("#combined-chart")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", totalHeight);
 
-  const yPrice = d3.scaleLinear()
-    .domain([d3.min(data, d => d.close) * 0.95, d3.max(data, d => d.close) * 1.05])
-    .range([heightMain, 0]);
+	  const x = d3.scaleTime()
+	    .domain(d3.extent(data, d => d.date))
+	    .range([0, width]);
 
-  const yVolume = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d.volume)])
-    .range([heightMain, heightMain - 80]);
+	  const yPrice = d3.scaleLinear()
+	    .domain([d3.min(data, d => d.close) * 0.95, d3.max(data, d => d.close) * 1.05])
+	    .range([heightMain, 0]);
 
-  const yRSI = d3.scaleLinear()
-    .domain([0, 100])
-    .range([heightRSI, 0]);
+	  const yVolume = d3.scaleLinear()
+	    .domain([0, d3.max(data, d => d.volume)])
+	    .range([heightMain, heightMain - 80]);
 
-  const yMACD = d3.scaleLinear()
-  .domain([
-    d3.min(data, d => Math.min(d.macd, d.signal, d.histogram)) * 1.2,
-    d3.max(data, d => Math.max(d.macd, d.signal, d.histogram)) * 1.2
-  ])
-  .range([heightMACD, 0]);
-  
-  // 📈 메인 차트 (가격, 볼륨)
+	  const yRSI = d3.scaleLinear()
+	    .domain([0, 100])
+	    .range([heightRSI, 0]);
 
-  const mainGroup = svg.append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+	  // === 메인 차트 ===
+	  const mainGroup = svg.append("g")
+	    .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  mainGroup.append("text")
-  .attr("x", 0)
-  .attr("y", 5)
-  .attr("font-size", "16px")
-  .attr("font-weight", "bold")
-  .text("가격");
-  
-  mainGroup.append("g")
-    .attr("transform", `translate(0,${heightMain})`)
-    .call(d3.axisBottom(x));
+	  mainGroup.append("text")
+	    .attr("x", 0)
+	    .attr("y", 5)
+	    .attr("font-size", "16px")
+	    .attr("font-weight", "bold")
+	    .text("가격");
 
-  mainGroup.append("g").call(d3.axisLeft(yPrice));
+	  mainGroup.append("g")
+	    .attr("transform", `translate(0,${heightMain})`)
+	    .call(d3.axisBottom(x));
 
-  const priceLine = d3.line()
-    .x(d => x(d.date))
-    .y(d => yPrice(d.close));
+	  mainGroup.append("g").call(d3.axisLeft(yPrice));
 
-  mainGroup.append("path")
-    .datum(data)
-    .attr("class", "price-line")
-    .attr("d", priceLine);
-  
+	  const priceLine = d3.line()
+	    .x(d => x(d.date))
+	    .y(d => yPrice(d.close));
 
-  mainGroup.selectAll(".volume-bar")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("class", "volume-bar")
-    .attr("x", d => x(d.date) - 5)
-    .attr("y", d => yVolume(d.volume))
-    .attr("width", 10)
-    .attr("height", d => heightMain - yVolume(d.volume));
+	  mainGroup.append("path")
+	    .datum(data)
+	    .attr("class", "price-line")
+	    .attr("d", priceLine);
 
+	  mainGroup.selectAll(".volume-bar")
+	    .data(data)
+	    .enter()
+	    .append("rect")
+	    .attr("class", "volume-bar")
+	    .attr("x", d => x(d.date) - 5)
+	    .attr("y", d => yVolume(d.volume))
+	    .attr("width", 10)
+	    .attr("height", d => heightMain - yVolume(d.volume));
 
-  // 📉 RSI 차트
+	  // === RSI 차트 ===
+	  const rsiGroup = svg.append("g")
+	    .attr("transform", `translate(${margin.left},${margin.top + heightMain + spacing})`);
 
-  const rsiGroup = svg.append("g")
-    .attr("transform", `translate(${margin.left},${margin.top + heightMain + spacing})`);
+	  rsiGroup.append("text")
+	    .attr("x", 0)
+	    .attr("y", -10)
+	    .attr("font-size", "16px")
+	    .attr("font-weight", "bold")
+	    .text("RSI");
 
-  rsiGroup.append("text")
-  .attr("x", 0)
-  .attr("y", -10)
-  .attr("font-size", "16px")
-  .attr("font-weight", "bold")
-  .text("종가 및 거래량");
-  
-  rsiGroup.append("g")
-    .attr("transform", `translate(0,${heightRSI})`)
-    .call(d3.axisBottom(x));
+	  rsiGroup.append("g")
+	    .attr("transform", `translate(0,${heightRSI})`)
+	    .call(d3.axisBottom(x));
 
-  rsiGroup.append("g").call(d3.axisLeft(yRSI));
-  
+	  rsiGroup.append("g").call(d3.axisLeft(yRSI));
 
-  const rsiLine = d3.line()
-    .x(d => x(d.date))
-    .y(d => yRSI(d.rsi));
+	  const rsiLine = d3.line()
+	    .x(d => x(d.date))
+	    .y(d => yRSI(d.rsi));
 
-  rsiGroup.append("path")
-    .datum(data)
-    .attr("class", "rsi-line")
-    .attr("d", rsiLine);
+	  rsiGroup.append("path")
+	    .datum(data)
+	    .attr("class", "rsi-line")
+	    .attr("d", rsiLine);
 
-  // RSI 기준선
-  rsiGroup.append("line")
-    .attr("class", "rsi-threshold")
-    .attr("x1", 0)
-    .attr("x2", width)
-    .attr("y1", yRSI(70))
-    .attr("y2", yRSI(70));
+	  rsiGroup.append("line")
+	    .attr("class", "rsi-threshold")
+	    .attr("x1", 0)
+	    .attr("x2", width)
+	    .attr("y1", yRSI(70))
+	    .attr("y2", yRSI(70));
 
-  rsiGroup.append("line")
-    .attr("class", "rsi-threshold")
-    .attr("x1", 0)
-    .attr("x2", width)
-    .attr("y1", yRSI(30))
-    .attr("y2", yRSI(30));
-  
+	  rsiGroup.append("line")
+	    .attr("class", "rsi-threshold")
+	    .attr("x1", 0)
+	    .attr("x2", width)
+	    .attr("y1", yRSI(30))
+	    .attr("y2", yRSI(30));
 
-  // RSI 강조영역 (70 이상)
-  rsiGroup.selectAll(".rsi-zone")
-    .data(data.filter(d => d.rsi > 70))
-    .enter()
-    .append("rect")
-    .attr("class", "rsi-zone")
-    .attr("x", d => x(d.date) - 5)
-    .attr("y", yRSI(100))
-    .attr("width", 10)
-    .attr("height", yRSI(70) - yRSI(100));
-  
-  
-  
-  const macdGroup = svg.append("g")
-    .attr("transform", `translate(${margin.left},${margin.top + heightMain + heightRSI + spacing * 2})`);
+	  rsiGroup.selectAll(".rsi-zone")
+	    .data(data.filter(d => d.rsi > 70))
+	    .enter()
+	    .append("rect")
+	    .attr("class", "rsi-zone")
+	    .attr("x", d => x(d.date) - 5)
+	    .attr("y", yRSI(100))
+	    .attr("width", 10)
+	    .attr("height", yRSI(70) - yRSI(100));
+	}
+
+	
 
   
+  drawCombinedChart(data);
   
-  macdGroup.append("text")
-    .attr("x", 0)
-    .attr("y", -10)
-    .attr("font-size", "16px")
-    .attr("font-weight", "bold")
-    .text("MACD");
-
-  macdGroup.append("g")
-  .attr("transform", `translate(0,${heightMACD})`)
-  .call(d3.axisBottom(x));
-
-  macdGroup.append("g").call(d3.axisLeft(yMACD));
-
-  // MACD 선
-  const macdLine = d3.line()
-    .x(d => x(d.date))
-    .y(d => yMACD(d.macd));
-
-  macdGroup.append("path")
-    .datum(data)
-    .attr("class", "macd-line")
-    .attr("d", macdLine)
-    .attr("stroke", "steelblue")
-    .attr("fill", "none");
-
-  // 시그널 선
-  const signalLine = d3.line()
-    .x(d => x(d.date))
-    .y(d => yMACD(d.signal));
-
-  macdGroup.append("path")
-    .datum(data)
-    .attr("class", "signal-line")
-    .attr("d", signalLine)
-    .attr("stroke", "orange")
-    .attr("fill", "none");
+  document.getElementById("switchData").addEventListener("click", () => {
+	  d3.select("#combined-chart").selectAll("*").remove(); // 기존 차트 제거
+	  drawCombinedChart(data2); // data2로 다시 그리기
+	});
   
-  // 히스토그램
-  macdGroup.selectAll(".histogram-bar")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("class", "histogram-bar")
-    .attr("x", d => x(d.date) - 5)
-    .attr("y", d => yMACD(Math.max(0, d.histogram)))
-    .attr("width", 10)
-    .attr("height", d => Math.abs(yMACD(d.histogram) - yMACD(0)))
-    .attr("fill", d => d.histogram >= 0 ? "green" : "red");
-
   
   
 </script>
