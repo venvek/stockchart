@@ -43,6 +43,17 @@
   stroke-dasharray: 4;
 }
     
+ .tooltip {
+    position: absolute;
+    background-color: white;
+    border: 1px solid gray;
+    padding: 8px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    border-radius: 4px;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+  }    
   </style>
   
 </head>
@@ -50,6 +61,8 @@
 <body>
 
 <div th:replace="CommonFile/header :: header"></div>
+
+<div id="tooltip" class="tooltip"></div>
 
 <svg id="combined-chart" width="900" height="700"></svg>
 <button id="switchData">다른 데이터 전환</button>
@@ -251,6 +264,58 @@ function drawCombinedChart(data) {
 	});
   
   
+	const tooltip = d3.select("#tooltip");
+
+	const focusLine = svg.append("line")
+	  .attr("stroke", "gray")
+	  .attr("stroke-dasharray", "3,3")
+	  .attr("stroke-width", 1)
+	  .style("opacity", 0);
+
+	svg.append("rect")
+	  .attr("transform", `translate(${margin.left},${margin.top})`)
+	  .attr("width", width)
+	  .attr("height", totalHeight - margin.top - margin.bottom)
+	  .style("fill", "none")
+	  .style("pointer-events", "all")
+	  .on("mousemove", function (event) {
+	    const [mx] = d3.pointer(event);
+	    const dateX = x.invert(mx);
+
+	    // 가장 가까운 날짜 찾기
+	    const bisect = d3.bisector(d => d.date).left;
+	    const index = bisect(data, dateX);
+	    const d0 = data[index - 1], d1 = data[index];
+	    const d = !d0 ? d1 : !d1 ? d0 : (dateX - d0.date > d1.date - dateX ? d1 : d0);
+
+	    // 수직 라인 위치
+	    const lineX = x(d.date) + margin.left;
+	    focusLine
+	      .attr("x1", lineX)
+	      .attr("x2", lineX)
+	      .attr("y1", margin.top)
+	      .attr("y2", totalHeight - margin.bottom)
+	      .style("opacity", 1);
+
+	    // Tooltip 위치 및 내용 업데이트
+	    tooltip
+	      .style("left", `${lineX + 10}px`)
+	      .style("top", `${event.pageY - 40}px`)
+	      .style("opacity", 1)
+	      .html(`
+	        <strong>${d3.timeFormat("%Y-%m-%d")(d.date)}</strong><br/>
+	        종가: ${d.close}<br/>
+	        거래량: ${d.volume}<br/>
+	        RSI: ${d.rsi}<br/>
+	        MACD: ${d.macd}<br/>
+	        Signal: ${d.signal}<br/>
+	        Histogram: ${d.histogram}
+	      `);
+	  })
+	  .on("mouseleave", function () {
+	    focusLine.style("opacity", 0);
+	    tooltip.style("opacity", 0);
+	  });
   
 </script>
 </body>
