@@ -64,7 +64,7 @@
 
 <div id="tooltip" class="tooltip"></div>
 
-<svg id="combined-chart" width="900" height="700"></svg>
+<svg id="combined-chart" width="1200" height="900"></svg>
 <button id="switchData">다른 데이터 전환</button>
 
 
@@ -93,9 +93,9 @@ function drawCombinedChart(data) {
 	  const parseDate = d3.timeParse('%Y-%m-%d');
 	  data.forEach(d => d.date = parseDate(d.date));
 
-	  const margin = { top: 10, right: 60, bottom: 30, left: 60 };
-	  const width = 800;
-	  const heightMain = 200;
+	  const margin = { top: 30, right: 60, bottom: 30, left: 60 };
+	  const width = 900;
+	  const heightMain = 300;
 	  const heightRSI = 100;
 	  const heightMACD = 100;
 	  const spacing = 30;
@@ -138,14 +138,18 @@ function drawCombinedChart(data) {
 	  const priceLine = d3.line()
 	    .x(d => x(d.date))
 	    .y(d => yPrice(d.close));
+	  
+	  const volumeLine = d3.line()
+	  .x(d => x(d.date))
+	  .y(d => yVolume(d.volume));
 
-	  mainGroup.append("path")
-	    .datum(data)
-	    .attr("class", "price-line")
-	    .attr("fill", "none")
-	    .attr("stroke", "steelblue")
-	    .attr("stroke-width", 2)
-	    .attr("d", priceLine);
+	mainGroup.append("path")
+	  .datum(data)
+	  .attr("class", "volume-line")
+	  .attr("fill", "none")
+	  .attr("stroke", "purple")
+	  .attr("stroke-width", 2)
+	  .attr("d", volumeLine);
 
 	  mainGroup.selectAll(".volume-bar")
 	    .data(data)
@@ -227,9 +231,15 @@ function drawCombinedChart(data) {
 	  const macdLine = d3.line()
 	    .x(d => x(d.date))
 	    .y(d => yMACD(d.macd));
+	  
 	  const signalLine = d3.line()
 	    .x(d => x(d.date))
 	    .y(d => yMACD(d.signal));
+	  
+	  const macdHistogramLine = d3.line()
+	  .x(d => x(d.date))
+	  .y(d => yMACD(d.histogram));
+
 
 	  macdGroup.append("path")
 	    .datum(data)
@@ -244,6 +254,14 @@ function drawCombinedChart(data) {
 	    .attr("stroke", "orange")
 	    .attr("stroke-width", 1.5)
 	    .attr("d", signalLine);
+	  
+	macdGroup.append("path")
+	  .datum(data)
+	  .attr("class", "macd-histogram-line")
+	  .attr("fill", "none")
+	  .attr("stroke", "orange")
+	  .attr("stroke-width", 2)
+	  .attr("d", macdHistogramLine);
 
 	  // histogram 막대
 	  macdGroup.selectAll(".histogram-bar")
