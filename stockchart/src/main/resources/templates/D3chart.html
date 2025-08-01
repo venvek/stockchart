@@ -74,11 +74,10 @@
 <script th:inline="javascript">
 
 const data1 = [
-	  { date: '2025-01-01', close: 20, volume: 150000, rsi: 40, macd: 1.2, signal: 1.0, histogram: 0.2 },
-	  { date: '2025-01-02', close: 22, volume: 180000, rsi: 50, macd: 1.5, signal: 1.3, histogram: 0.2 },
-	  { date: '2025-01-03', close: 19, volume: 160000, rsi: 30, macd: 1.0, signal: 1.2, histogram: -0.2 },
-	  { date: '2025-01-04', close: 25, volume: 210000, rsi: 70, macd: 1.8, signal: 1.6, histogram: 0.2 },
-	  { date: '2025-01-05', close: 24, volume: 200000, rsi: 60, macd: 1.6, signal: 1.7, histogram: -0.1 }
+	  { date: '2024-01-01', close: 120, volume: 1500000, rsi: 45, macd: 1.2, signal: 1.0, histogram: 0.2, obv: 1500000 },
+	  { date: '2024-01-02', close: 122, volume: 1800000, rsi: 55, macd: 1.5, signal: 1.3, histogram: 0.2, obv: 3300000 },
+	  { date: '2024-01-03', close: 119, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.2, histogram: -0.2, obv: 1700000 },
+
 	];
 
 	const data2 = [
@@ -98,8 +97,8 @@ function drawCombinedChart(data) {
 	  const heightMain = 300;
 	  const heightRSI = 100;
 	  const heightMACD = 100;
-	  const spacing = 30;
-	  const totalHeight = heightMain + heightRSI + heightMACD + spacing * 2 + margin.top + margin.bottom;
+	  const spacing = 30;const heightOBV = 150;
+	  const totalHeight = heightMain + heightRSI + heightMACD + heightOBV + spacing * 3 + margin.top + margin.bottom;
 
 	  const svg = d3.select("#combined-chart")
 	    .attr("width", width + margin.left + margin.right)
@@ -149,6 +148,7 @@ function drawCombinedChart(data) {
 	  .attr("fill", "none")
 	  .attr("stroke", "purple")
 	  .attr("stroke-width", 2)
+	  .attr("stroke-dasharray", "4,2") // 점선
 	  .attr("d", volumeLine);
 
 	  mainGroup.selectAll(".volume-bar")
@@ -236,10 +236,18 @@ function drawCombinedChart(data) {
 	    .x(d => x(d.date))
 	    .y(d => yMACD(d.signal));
 	  
-	  const macdHistogramLine = d3.line()
+	  const histogramLine = d3.line()
 	  .x(d => x(d.date))
-	  .y(d => yMACD(d.histogram));
+	  .y(d => yMACD(d.histogram))
+	  .curve(d3.curveMonotoneX); // 부드러운 곡선
 
+	macdGroup.append("path")
+	  .datum(data)
+	  .attr("class", "macd-histogram-line")
+	  .attr("fill", "none")
+	  .attr("stroke", "orange")
+	  .attr("stroke-width", 2)
+	  .attr("d", histogramLine);
 
 	  macdGroup.append("path")
 	    .datum(data)
@@ -255,13 +263,6 @@ function drawCombinedChart(data) {
 	    .attr("stroke-width", 1.5)
 	    .attr("d", signalLine);
 	  
-	macdGroup.append("path")
-	  .datum(data)
-	  .attr("class", "macd-histogram-line")
-	  .attr("fill", "none")
-	  .attr("stroke", "orange")
-	  .attr("stroke-width", 2)
-	  .attr("d", macdHistogramLine);
 
 	  // histogram 막대
 	  macdGroup.selectAll(".histogram-bar")
@@ -334,7 +335,40 @@ function drawCombinedChart(data) {
 	    focusLine.style("opacity", 0);
 	    tooltip.style("opacity", 0);
 	  });
+	
+	const yOBV = d3.scaleLinear()
+	  .domain(d3.extent(data, d => d.obv))
+	  .range([heightOBV, 0]);
+	
+	const obvGroup = svg.append("g")
+	  .attr("transform", `translate(${margin.left}, ${margin.top + heightMain + spacing + heightRSI + spacing + heightMACD + spacing})`);
+
+	obvGroup.append("text")
+	  .attr("x", 0)
+	  .attr("y", -10)
+	  .attr("font-size", "16px")
+	  .attr("font-weight", "bold")
+	  .text("OBV");
+
+	obvGroup.append("g")
+	  .attr("transform", `translate(0,${heightOBV})`)
+	  .call(d3.axisBottom(x));
+
+	obvGroup.append("g")
+	  .call(d3.axisLeft(yOBV));
   
+	const obvLine = d3.line()
+	  .x(d => x(d.date))
+	  .y(d => yOBV(d.obv));
+
+	obvGroup.append("path")
+	  .datum(data)
+	  .attr("fill", "none")
+	  .attr("stroke", "teal")
+	  .attr("stroke-width", 2)
+	  .attr("class", "obv-line")
+	  .attr("d", obvLine);
+	
 </script>
 </body>
 
