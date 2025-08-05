@@ -76,17 +76,17 @@
 const data1 = [
 	  { date: '2024-01-01', close: 120,ma: 118, volume: 1500000, rsi: 45, macd: 1.2, signal: 1.0, histogram: 0.2, obv: 1500000, stochK: 45, stochD: 50 },
 	  { date: '2024-01-02', close: 122,ma: 119, volume: 1800000, rsi: 55, macd: 1.5, signal: 1.3, histogram: 0.2, obv: 3300000, stochK: 45, stochD: 50 },
-	  { date: '2024-01-03', close: 119,ma: 118, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.2, histogram: -0.2, obv: 1700000, stochK: 45, stochD: 50 },
+	  { date: '2024-03-03', close: 119,ma: 118, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.2, histogram: -0.2, obv: 1700000, stochK: 45, stochD: 50 },
 	  { date: '2024-01-03', close: 119,ma: 122, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.3, histogram: 0.1, obv: 1600000, stochK: 45, stochD: 50 },
-	  { date: '2024-01-03', close: 119,ma: 120, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.1, histogram: 0.2, obv: 1900000, stochK: 45, stochD: 50 }
+	  { date: '2024-01-06', close: 119,ma: 120, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.1, histogram: 0.2, obv: 1900000, stochK: 45, stochD: 50 }
 	];
 
 	const data2 = [
 		{ date: '2025-01-01', close: 120, ma: 118, volume: 1500000, rsi: 45, macd: 1.2, signal: 1.0, histogram: 0.2, obv: 1500000, stochK: 45, stochD: 50 },
-		  { date: '2025-01-02', close: 122, ma: 118, volume: 1800000, rsi: 55, macd: 1.5, signal: 1.3, histogram: 0.2, obv: 3300000, stochK: 45, stochD: 50 },
-		  { date: '2025-02-04', close: 119, ma: 118, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.2, histogram: -0.2, obv: 1700000, stochK: 45, stochD: 50 },
-		  { date: '2025-03-03', close: 119, ma: 118, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.3, histogram: 0.1, obv: 1600000, stochK: 45, stochD: 50 },
-		  { date: '2025-04-08', close: 119, ma: 118, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.1, histogram: 0.2, obv: 1900000, stochK: 45, stochD: 50 }
+		  { date: '2025-01-02', close: 122, ma: 119, volume: 1800000, rsi: 55, macd: 1.5, signal: 1.3, histogram: 0.2, obv: 3300000, stochK: 45, stochD: 50 },
+		  { date: '2025-02-04', close: 119, ma: 120, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.2, histogram: -0.2, obv: 1700000, stochK: 45, stochD: 50 },
+		  { date: '2025-03-03', close: 119, ma: 117, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.3, histogram: 0.1, obv: 1600000, stochK: 45, stochD: 50 },
+		  { date: '2025-04-08', close: 119, ma: 122, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.1, histogram: 0.2, obv: 1900000, stochK: 45, stochD: 50 }
 	];
 
 function drawCombinedChart(data) {
@@ -98,11 +98,11 @@ function drawCombinedChart(data) {
 	  const heightMain = 300;
 	  const heightRSI = 100;
 	  const heightMACD = 100;
-	  const spacing = 30;const heightOBV = 150;
+	  const spacing = 30;
+	  const heightOBV = 150;
 	  const heightStoch = 150;
 	  const totalHeight = heightMain + heightRSI + heightMACD + heightOBV + heightStoch + spacing * 4 + margin.top + margin.bottom;
 	  
-
 	  const svg = d3.select("#combined-chart")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", totalHeight);
@@ -121,10 +121,8 @@ function drawCombinedChart(data) {
 	  const yVolume = d3.scaleLinear()
 	    .domain([0, d3.max(data, d => d.volume)])
 	    .range([heightMain, heightMain - 60]);
-
-	  const yStoch = d3.scaleLinear()
-	  .domain([0, 100])
-	  .range([heightStoch, 0]);
+	  
+	  
 	  
 	  const mainGroup = svg.append("g")
 	    .attr("transform", `translate(${margin.left},${margin.top})`);
@@ -170,6 +168,7 @@ function drawCombinedChart(data) {
 
 	  // ========== RSI ==========
 	  const yRSI = d3.scaleLinear().domain([0, 100]).range([heightRSI, 0]);
+	  
 	  const rsiGroup = svg.append("g")
 	    .attr("transform", `translate(${margin.left},${margin.top + heightMain + spacing})`);
 
@@ -212,7 +211,6 @@ function drawCombinedChart(data) {
 	    .attr("stroke", "green")
 	    .attr("stroke-dasharray", "4,2");
 
-	  // ========== MACD ==========
 	  const yMACD = d3.scaleLinear()
 	    .domain([
 	      d3.min(data, d => Math.min(d.macd, d.signal, d.histogram)) * 1.1,
@@ -270,8 +268,6 @@ function drawCombinedChart(data) {
 	    .attr("stroke-width", 1.5)
 	    .attr("d", signalLine);
 	  
-
-	  // histogram 막대
 	  macdGroup.selectAll(".histogram-bar")
 	    .data(data)
 	    .enter()
@@ -288,8 +284,95 @@ function drawCombinedChart(data) {
 	document.getElementById("switchData").addEventListener("click", () => {
 	  drawCombinedChart(data2);
 	});
-  
-  
+	
+	const yOBV = d3.scaleLinear()
+	  .domain(d3.extent(data, d => d.obv))
+	  .range([heightOBV, 0]);
+	
+	const obvLine = d3.line()
+	  .x(d => x(d.date))
+	  .y(d => yOBV(d.obv));
+	
+	const obvGroup = svg.append("g")
+	  .attr("transform", `translate(${margin.left}, ${margin.top + heightMain + spacing + heightRSI + spacing + heightMACD + spacing})`);
+
+	obvGroup.append("text")
+	  .attr("x", 0)
+	  .attr("y", -10)
+	  .attr("font-size", "16px")
+	  .attr("font-weight", "bold")
+	  .text("OBV");
+
+	obvGroup.append("g")
+	  .attr("transform", `translate(0,${heightOBV})`)
+	  .call(d3.axisBottom(x));
+
+	obvGroup.append("g")
+	  .call(d3.axisLeft(yOBV));
+
+	obvGroup.append("path")
+	  .datum(data)
+	  .attr("fill", "none")
+	  .attr("stroke", "teal")
+	  .attr("stroke-width", 2)
+	  .attr("class", "obv-line")
+	  .attr("d", obvLine);
+
+	const yStoch = d3.scaleLinear()
+	  .domain([0, 100])
+	  .range([heightStoch, 0]);
+	
+	const stochGroup = svg.append("g")
+	  .attr("transform", `translate(${margin.left}, ${margin.top + heightMain + spacing + heightRSI + spacing + heightMACD + spacing + heightOBV + spacing})`);
+
+	stochGroup.append("text")
+	  .attr("x", 0)
+	  .attr("y", -10)
+	  .attr("font-size", "16px")
+	  .attr("font-weight", "bold")
+	  .text("Stochastic");
+
+	stochGroup.append("g")
+	  .attr("transform", `translate(0,${heightStoch})`)
+	  .call(d3.axisBottom(x));
+
+	stochGroup.append("g")
+	  .call(d3.axisLeft(yStoch));
+	
+	const stochKLine = d3.line()
+	  .x(d => x(d.date))
+	  .y(d => yStoch(d.stochK));
+
+	const stochDLine = d3.line()
+	  .x(d => x(d.date))
+	  .y(d => yStoch(d.stochD));
+
+	stochGroup.append("path")
+	  .datum(data)
+	  .attr("fill", "none")
+	  .attr("stroke", "blue")
+	  .attr("stroke-width", 2)
+	  .attr("class", "stoch-k-line")
+	  .attr("d", stochKLine);
+
+	stochGroup.append("path")
+	  .datum(data)
+	  .attr("fill", "none")
+	  .attr("stroke", "red")
+	  .attr("stroke-width", 2)
+	  .attr("class", "stoch-d-line")
+	  .attr("d", stochDLine);
+	
+	[80, 20].forEach(level => {
+		  stochGroup.append("line")
+		    .attr("x1", 0)
+		    .attr("x2", width)
+		    .attr("y1", yStoch(level))
+		    .attr("y2", yStoch(level))
+		    .attr("stroke", "#ccc")
+		    .attr("stroke-dasharray", "4 2");
+		});
+	
 	const tooltip = d3.select("#tooltip");
 
 	const focusLine = svg.append("line")
@@ -342,90 +425,6 @@ function drawCombinedChart(data) {
 	    focusLine.style("opacity", 0);
 	    tooltip.style("opacity", 0);
 	  });
-	
-	const yOBV = d3.scaleLinear()
-	  .domain(d3.extent(data, d => d.obv))
-	  .range([heightOBV, 0]);
-	
-	const obvGroup = svg.append("g")
-	  .attr("transform", `translate(${margin.left}, ${margin.top + heightMain + spacing + heightRSI + spacing + heightMACD + spacing})`);
-
-	obvGroup.append("text")
-	  .attr("x", 0)
-	  .attr("y", -10)
-	  .attr("font-size", "16px")
-	  .attr("font-weight", "bold")
-	  .text("OBV");
-
-	obvGroup.append("g")
-	  .attr("transform", `translate(0,${heightOBV})`)
-	  .call(d3.axisBottom(x));
-
-	obvGroup.append("g")
-	  .call(d3.axisLeft(yOBV));
-  
-	const obvLine = d3.line()
-	  .x(d => x(d.date))
-	  .y(d => yOBV(d.obv));
-
-	obvGroup.append("path")
-	  .datum(data)
-	  .attr("fill", "none")
-	  .attr("stroke", "teal")
-	  .attr("stroke-width", 2)
-	  .attr("class", "obv-line")
-	  .attr("d", obvLine);
-	
-	const stochGroup = svg.append("g")
-	  .attr("transform", `translate(${margin.left}, ${margin.top + heightMain + spacing + heightRSI + spacing + heightMACD + spacing + heightOBV + spacing})`);
-
-	stochGroup.append("text")
-	  .attr("x", 0)
-	  .attr("y", -10)
-	  .attr("font-size", "16px")
-	  .attr("font-weight", "bold")
-	  .text("Stochastic");
-
-	stochGroup.append("g")
-	  .attr("transform", `translate(0,${heightStoch})`)
-	  .call(d3.axisBottom(x));
-
-	stochGroup.append("g")
-	  .call(d3.axisLeft(yStoch));
-	
-	const stochKLine = d3.line()
-	  .x(d => x(d.date))
-	  .y(d => yStoch(d.stochK));
-
-	const stochDLine = d3.line()
-	  .x(d => x(d.date))
-	  .y(d => yStoch(d.stochD));
-
-	stochGroup.append("path")
-	  .datum(data)
-	  .attr("fill", "none")
-	  .attr("stroke", "blue")
-	  .attr("stroke-width", 2)
-	  .attr("class", "stoch-k-line")
-	  .attr("d", stochKLine);
-
-	stochGroup.append("path")
-	  .datum(data)
-	  .attr("fill", "none")
-	  .attr("stroke", "red")
-	  .attr("stroke-width", 2)
-	  .attr("class", "stoch-d-line")
-	  .attr("d", stochDLine);
-	
-	[80, 20].forEach(level => {
-		  stochGroup.append("line")
-		    .attr("x1", 0)
-		    .attr("x2", width)
-		    .attr("y1", yStoch(level))
-		    .attr("y2", yStoch(level))
-		    .attr("stroke", "#ccc")
-		    .attr("stroke-dasharray", "4 2");
-		});
 	
 </script>
 </body>
