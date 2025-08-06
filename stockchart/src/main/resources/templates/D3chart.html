@@ -64,7 +64,8 @@
 
 <div id="tooltip" class="tooltip"></div>
 
-<svg id="combined-chart" width="1200" height="900"></svg>
+<svg id="combined-chart" width="1500" height="1300"></svg>
+
 <button id="switchData">다른 데이터 전환</button>
 
 
@@ -74,11 +75,11 @@
 <script th:inline="javascript">
 
 const data1 = [
-	  { date: '2024-01-01', close: 120,ma: 118, volume: 1500000, rsi: 45, macd: 1.2, signal: 1.0, histogram: 0.2, obv: 1500000, stochK: 45, stochD: 50 },
-	  { date: '2024-01-02', close: 122,ma: 119, volume: 1800000, rsi: 55, macd: 1.5, signal: 1.3, histogram: 0.2, obv: 3300000, stochK: 45, stochD: 50 },
-	  { date: '2024-03-03', close: 119,ma: 118, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.2, histogram: -0.2, obv: 1700000, stochK: 45, stochD: 50 },
-	  { date: '2024-01-03', close: 119,ma: 122, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.3, histogram: 0.1, obv: 1600000, stochK: 45, stochD: 50 },
-	  { date: '2024-01-06', close: 119,ma: 120, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.1, histogram: 0.2, obv: 1900000, stochK: 45, stochD: 50 }
+	{ date: '2025-01-01', close: 20, volume: 150000, rsi: 40, macd: 1.2, signal: 1.0, histogram: 0.2, high: 21, low: 19 },
+	  { date: '2025-01-02', close: 21, volume: 180000, rsi: 50, macd: 1.5, signal: 1.3, histogram: 0.2, high: 23, low: 21 },
+	  { date: '2025-01-04', close: 20, volume: 150000, rsi: 40, macd: 1.2, signal: 1.0, histogram: 0.2, high: 21, low: 19 },
+	  { date: '2025-01-05', close: 23, volume: 180000, rsi: 50, macd: 1.5, signal: 1.3, histogram: 0.2, high: 23, low: 21 },
+	  { date: '2025-01-07', close: 26, volume: 150000, rsi: 40, macd: 1.2, signal: 1.0, histogram: 0.2, high: 21, low: 19 }
 	];
 
 	const data2 = [
@@ -426,6 +427,103 @@ function drawCombinedChart(data) {
 	    tooltip.style("opacity", 0);
 	  });
 	
+	function calculateMA(data, period = 5) {
+		  const maData = [];
+		  for (let i = 0; i < data.length; i++) {
+		    if (i < period - 1) {
+		      maData.push({ ...data[i], ma: null });
+		      continue;
+		    }
+		    const sum = data.slice(i - period + 1, i + 1).reduce((acc, d) => acc + d.close, 0);
+		    const avg = sum / period;
+		    maData.push({ ...data[i], ma: avg });
+		  }
+		  return maData;
+		}
+	
+	const dataWithMA = calculateMA(data);
+	
+	function calculateStochastic(data, period = 14, smoothK = 3, smoothD = 3) {
+		  const result = [];
+
+		  for (let i = 0; i < data.length; i++) {
+		    if (i < period - 1) {
+		      result.push({ ...data[i], k: null, d: null });
+		      continue;
+		    }
+
+		    const slice = data.slice(i - period + 1, i + 1);
+		    const low = d3.min(slice, d => d.low);
+		    const high = d3.max(slice, d => d.high);
+
+		    const k = ((data[i].close - low) / (high - low)) * 100;
+
+		    result.push({ ...data[i], k, d: null }); // D는 나중에
+		  }
+
+		  // Smooth K (3-day moving average of %K)
+		  for (let i = 0; i < result.length; i++) {
+		    if (i < period + smoothK - 2) continue;
+
+		    const smoothKVal = d3.mean(result.slice(i - smoothK + 1, i + 1), d => d.k);
+		    result[i].k = smoothKVal;
+		  }
+
+		  // Smooth D (3-day moving average of %D)
+		  for (let i = 0; i < result.length; i++) {
+		    if (i < period + smoothK + smoothD - 3) continue;
+
+		    const smoothDVal = d3.mean(result.slice(i - smoothD + 1, i + 1), d => d.k);
+		    result[i].d = smoothDVal;
+		  }
+
+		  return result;
+		}
+	
+	
+	    const dataWithStoch = calculateStochastic(data);
+	    
+	    const heightSTC = 100;
+	    const ySTC = d3.scaleLinear().domain([0, 100]).range([heightSTC, 0]);
+
+	    const stcGroup = svg.append("g")
+	      .attr("transform", `translate(${margin.left},${margin.top + heightMain + spacing + heightRSI + spacing + heightOBV + spacing})`);
+
+	    stcGroup.append("g")
+	      .attr("transform", `translate(0,${heightSTC})`)
+	      .call(d3.axisBottom(x));
+
+	    stcGroup.append("g").call(d3.axisLeft(ySTC));
+
+	    stcGroup.append("text")
+	      .attr("x", 0)
+	      .attr("y", -10)
+	      .text("Stochastic Oscillator");
+	
+	    const kLine = d3.line()
+	    .defined(d => d.k !== null)
+	    .x(d => x(d.date))
+	    .y(d => ySTC(d.k));
+
+	  const dLine = d3.line()
+	    .defined(d => d.d !== null)
+	    .x(d => x(d.date))
+	    .y(d => ySTC(d.d));
+
+	  stcGroup.append("path")
+	    .datum(dataWithStoch)
+	    .attr("fill", "none")
+	    .attr("stroke", "blue")
+	    .attr("stroke-width", 1.5)
+	    .attr("d", kLine);
+
+	  stcGroup.append("path")
+	    .datum(dataWithStoch)
+	    .attr("fill", "none")
+	    .attr("stroke", "red")
+	    .attr("stroke-width", 1.5)
+	    .attr("d", dLine);
+	  
 </script>
 </body>
 
