@@ -64,7 +64,7 @@
 
 <div id="tooltip" class="tooltip"></div>
 
-<svg id="combined-chart" width="1500" height="1300"></svg>
+<svg id="combined-chart" width=2000" height=2000"></svg>
 
 <button id="switchData">다른 데이터 전환</button>
 
@@ -95,14 +95,15 @@ function drawCombinedChart(data) {
 	  data.forEach(d => d.date = parseDate(d.date));
 
 	  const margin = { top: 30, right: 60, bottom: 30, left: 60 };
-	  const width = 900;
-	  const heightMain = 300;
+	  const width = 1500;
+	  const heightMain = 100;
 	  const heightRSI = 100;
 	  const heightMACD = 100;
 	  const spacing = 30;
 	  const heightOBV = 150;
 	  const heightStoch = 150;
-	  const totalHeight = heightMain + heightRSI + heightMACD + heightOBV + heightStoch + spacing * 4 + margin.top + margin.bottom;
+	  const heightSTC = 100;
+	  const totalHeight = heightMain + heightRSI + heightMACD + heightOBV + heightSTC + spacing * 4 + margin.top + margin.bottom;
 	  
 	  const svg = d3.select("#combined-chart")
 	    .attr("width", width + margin.left + margin.right)
@@ -278,6 +279,150 @@ function drawCombinedChart(data) {
 	    .attr("width", 4)
 	    .attr("height", d => Math.abs(yMACD(d.histogram) - yMACD(0)))
 	    .attr("fill", d => d.histogram >= 0 ? "green" : "red");
+	  
+		const yOBV = d3.scaleLinear()
+		  .domain(d3.extent(data, d => d.obv))
+		  .range([heightOBV, 0]);
+		
+		const obvLine = d3.line()
+		  .x(d => x(d.date))
+		  .y(d => yOBV(d.obv));
+		
+		const obvGroup = svg.append("g")
+		  .attr("transform", `translate(${margin.left}, ${margin.top + heightMain + spacing + heightRSI + spacing + heightMACD + spacing})`);
+
+		obvGroup.append("text")
+		  .attr("x", 0)
+		  .attr("y", -10)
+		  .attr("font-size", "16px")
+		  .attr("font-weight", "bold")
+		  .text("OBV");
+
+		obvGroup.append("g")
+		  .attr("transform", `translate(0,${heightOBV})`)
+		  .call(d3.axisBottom(x));
+
+		obvGroup.append("g")
+		  .call(d3.axisLeft(yOBV));
+
+		obvGroup.append("path")
+		  .datum(data)
+		  .attr("fill", "none")
+		  .attr("stroke", "teal")
+		  .attr("stroke-width", 2)
+		  .attr("class", "obv-line")
+		  .attr("d", obvLine);
+
+		const yStoch = d3.scaleLinear()
+		  .domain([0, 100])
+		  .range([heightStoch, 0]);
+		
+		const stochGroup = svg.append("g")
+		  .attr("transform", `translate(${margin.left}, ${margin.top + heightMain + spacing + heightRSI + spacing + heightMACD + spacing + heightOBV + spacing})`);
+
+		stochGroup.append("text")
+		  .attr("x", 0)
+		  .attr("y", -10)
+		  .attr("font-size", "16px")
+		  .attr("font-weight", "bold")
+		  .text("Stochastic");
+
+		stochGroup.append("g")
+		  .attr("transform", `translate(0,${heightStoch})`)
+		  .call(d3.axisBottom(x));
+
+		stochGroup.append("g")
+		  .call(d3.axisLeft(yStoch));
+		
+		const stochKLine = d3.line()
+		  .x(d => x(d.date))
+		  .y(d => yStoch(d.stochK));
+
+		const stochDLine = d3.line()
+		  .x(d => x(d.date))
+		  .y(d => yStoch(d.stochD));
+
+		stochGroup.append("path")
+		  .datum(data)
+		  .attr("fill", "none")
+		  .attr("stroke", "blue")
+		  .attr("stroke-width", 2)
+		  .attr("class", "stoch-k-line")
+		  .attr("d", stochKLine);
+
+		stochGroup.append("path")
+		  .datum(data)
+		  .attr("fill", "none")
+		  .attr("stroke", "red")
+		  .attr("stroke-width", 2)
+		  .attr("class", "stoch-d-line")
+		  .attr("d", stochDLine);
+		
+		[80, 20].forEach(level => {
+			  stochGroup.append("line")
+			    .attr("x1", 0)
+			    .attr("x2", width)
+			    .attr("y1", yStoch(level))
+			    .attr("y2", yStoch(level))
+			    .attr("stroke", "#ccc")
+			    .attr("stroke-dasharray", "4 2");
+			});
+		
+		const tooltip = d3.select("#tooltip");
+
+		const focusLine = svg.append("line")
+		  .attr("stroke", "gray")
+		  .attr("stroke-dasharray", "3,3")
+		  .attr("stroke-width", 1)
+		  .style("opacity", 0);
+
+		svg.append("rect")
+		  .attr("transform", `translate(${margin.left},${margin.top})`)
+		  .attr("width", width)
+		  .attr("height", totalHeight - margin.top - margin.bottom)
+		  .style("fill", "none")
+		  .style("pointer-events", "all")
+		  .on("mousemove", function (event) {
+		    const [mx] = d3.pointer(event);
+		    const dateX = x.invert(mx);
+
+		    // 가장 가까운 날짜 찾기
+		    const bisect = d3.bisector(d => d.date).left;
+		    const index = bisect(data, dateX);
+		    const d0 = data[index - 1], d1 = data[index];
+		    const d = !d0 ? d1 : !d1 ? d0 : (dateX - d0.date > d1.date - dateX ? d1 : d0);
+
+		    // 수직 라인 위치
+		    const lineX = x(d.date) + margin.left;
+		    focusLine
+		      .attr("x1", lineX)
+		      .attr("x2", lineX)
+		      .attr("y1", margin.top)
+		      .attr("y2", totalHeight - margin.bottom)
+		      .style("opacity", 1);
+
+		    // Tooltip 위치 및 내용 업데이트
+		    tooltip
+		      .style("left", `${lineX + 10}px`)
+		      .style("top", `${event.pageY - 40}px`)
+		      .style("opacity", 1)
+		      .html(`
+		        <strong>${d3.timeFormat("%Y-%m-%d")(d.date)}</strong><br/>
+		        종가: ${d.close}<br/>
+		        거래량: ${d.volume}<br/>
+		        RSI: ${d.rsi}<br/>
+		        MACD: ${d.macd}<br/>
+		        Signal: ${d.signal}<br/>
+		        Histogram: ${d.histogram}
+		      `);
+		  })
+		  .on("mouseleave", function () {
+		    focusLine.style("opacity", 0);
+		    tooltip.style("opacity", 0);
+		  });
+	  
+	  
+		
 	}
 
 	drawCombinedChart(data1);
@@ -286,146 +431,7 @@ function drawCombinedChart(data) {
 	  drawCombinedChart(data2);
 	});
 	
-	const yOBV = d3.scaleLinear()
-	  .domain(d3.extent(data, d => d.obv))
-	  .range([heightOBV, 0]);
-	
-	const obvLine = d3.line()
-	  .x(d => x(d.date))
-	  .y(d => yOBV(d.obv));
-	
-	const obvGroup = svg.append("g")
-	  .attr("transform", `translate(${margin.left}, ${margin.top + heightMain + spacing + heightRSI + spacing + heightMACD + spacing})`);
 
-	obvGroup.append("text")
-	  .attr("x", 0)
-	  .attr("y", -10)
-	  .attr("font-size", "16px")
-	  .attr("font-weight", "bold")
-	  .text("OBV");
-
-	obvGroup.append("g")
-	  .attr("transform", `translate(0,${heightOBV})`)
-	  .call(d3.axisBottom(x));
-
-	obvGroup.append("g")
-	  .call(d3.axisLeft(yOBV));
-
-	obvGroup.append("path")
-	  .datum(data)
-	  .attr("fill", "none")
-	  .attr("stroke", "teal")
-	  .attr("stroke-width", 2)
-	  .attr("class", "obv-line")
-	  .attr("d", obvLine);
-
-	const yStoch = d3.scaleLinear()
-	  .domain([0, 100])
-	  .range([heightStoch, 0]);
-	
-	const stochGroup = svg.append("g")
-	  .attr("transform", `translate(${margin.left}, ${margin.top + heightMain + spacing + heightRSI + spacing + heightMACD + spacing + heightOBV + spacing})`);
-
-	stochGroup.append("text")
-	  .attr("x", 0)
-	  .attr("y", -10)
-	  .attr("font-size", "16px")
-	  .attr("font-weight", "bold")
-	  .text("Stochastic");
-
-	stochGroup.append("g")
-	  .attr("transform", `translate(0,${heightStoch})`)
-	  .call(d3.axisBottom(x));
-
-	stochGroup.append("g")
-	  .call(d3.axisLeft(yStoch));
-	
-	const stochKLine = d3.line()
-	  .x(d => x(d.date))
-	  .y(d => yStoch(d.stochK));
-
-	const stochDLine = d3.line()
-	  .x(d => x(d.date))
-	  .y(d => yStoch(d.stochD));
-
-	stochGroup.append("path")
-	  .datum(data)
-	  .attr("fill", "none")
-	  .attr("stroke", "blue")
-	  .attr("stroke-width", 2)
-	  .attr("class", "stoch-k-line")
-	  .attr("d", stochKLine);
-
-	stochGroup.append("path")
-	  .datum(data)
-	  .attr("fill", "none")
-	  .attr("stroke", "red")
-	  .attr("stroke-width", 2)
-	  .attr("class", "stoch-d-line")
-	  .attr("d", stochDLine);
-	
-	[80, 20].forEach(level => {
-		  stochGroup.append("line")
-		    .attr("x1", 0)
-		    .attr("x2", width)
-		    .attr("y1", yStoch(level))
-		    .attr("y2", yStoch(level))
-		    .attr("stroke", "#ccc")
-		    .attr("stroke-dasharray", "4 2");
-		});
-	
-	const tooltip = d3.select("#tooltip");
-
-	const focusLine = svg.append("line")
-	  .attr("stroke", "gray")
-	  .attr("stroke-dasharray", "3,3")
-	  .attr("stroke-width", 1)
-	  .style("opacity", 0);
-
-	svg.append("rect")
-	  .attr("transform", `translate(${margin.left},${margin.top})`)
-	  .attr("width", width)
-	  .attr("height", totalHeight - margin.top - margin.bottom)
-	  .style("fill", "none")
-	  .style("pointer-events", "all")
-	  .on("mousemove", function (event) {
-	    const [mx] = d3.pointer(event);
-	    const dateX = x.invert(mx);
-
-	    // 가장 가까운 날짜 찾기
-	    const bisect = d3.bisector(d => d.date).left;
-	    const index = bisect(data, dateX);
-	    const d0 = data[index - 1], d1 = data[index];
-	    const d = !d0 ? d1 : !d1 ? d0 : (dateX - d0.date > d1.date - dateX ? d1 : d0);
-
-	    // 수직 라인 위치
-	    const lineX = x(d.date) + margin.left;
-	    focusLine
-	      .attr("x1", lineX)
-	      .attr("x2", lineX)
-	      .attr("y1", margin.top)
-	      .attr("y2", totalHeight - margin.bottom)
-	      .style("opacity", 1);
-
-	    // Tooltip 위치 및 내용 업데이트
-	    tooltip
-	      .style("left", `${lineX + 10}px`)
-	      .style("top", `${event.pageY - 40}px`)
-	      .style("opacity", 1)
-	      .html(`
-	        <strong>${d3.timeFormat("%Y-%m-%d")(d.date)}</strong><br/>
-	        종가: ${d.close}<br/>
-	        거래량: ${d.volume}<br/>
-	        RSI: ${d.rsi}<br/>
-	        MACD: ${d.macd}<br/>
-	        Signal: ${d.signal}<br/>
-	        Histogram: ${d.histogram}
-	      `);
-	  })
-	  .on("mouseleave", function () {
-	    focusLine.style("opacity", 0);
-	    tooltip.style("opacity", 0);
-	  });
 	
 	function calculateMA(data, period = 5) {
 		  const maData = [];
@@ -441,7 +447,7 @@ function drawCombinedChart(data) {
 		  return maData;
 		}
 	
-	const dataWithMA = calculateMA(data);
+	const dataWithMA = calculateMA(data1);
 	
 	function calculateStochastic(data, period = 14, smoothK = 3, smoothD = 3) {
 		  const result = [];
@@ -483,46 +489,8 @@ function drawCombinedChart(data) {
 	
 	    const dataWithStoch = calculateStochastic(data);
 	    
-	    const heightSTC = 100;
-	    const ySTC = d3.scaleLinear().domain([0, 100]).range([heightSTC, 0]);
-
-	    const stcGroup = svg.append("g")
-	      .attr("transform", `translate(${margin.left},${margin.top + heightMain + spacing + heightRSI + spacing + heightOBV + spacing})`);
-
-	    stcGroup.append("g")
-	      .attr("transform", `translate(0,${heightSTC})`)
-	      .call(d3.axisBottom(x));
-
-	    stcGroup.append("g").call(d3.axisLeft(ySTC));
-
-	    stcGroup.append("text")
-	      .attr("x", 0)
-	      .attr("y", -10)
-	      .text("Stochastic Oscillator");
-	
-	    const kLine = d3.line()
-	    .defined(d => d.k !== null)
-	    .x(d => x(d.date))
-	    .y(d => ySTC(d.k));
-
-	  const dLine = d3.line()
-	    .defined(d => d.d !== null)
-	    .x(d => x(d.date))
-	    .y(d => ySTC(d.d));
-
-	  stcGroup.append("path")
-	    .datum(dataWithStoch)
-	    .attr("fill", "none")
-	    .attr("stroke", "blue")
-	    .attr("stroke-width", 1.5)
-	    .attr("d", kLine);
-
-	  stcGroup.append("path")
-	    .datum(dataWithStoch)
-	    .attr("fill", "none")
-	    .attr("stroke", "red")
-	    .attr("stroke-width", 1.5)
-	    .attr("d", dLine);
+	    
+	    
 	  
 </script>
 </body>
