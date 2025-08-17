@@ -68,9 +68,9 @@
 
 <svg id="combined-chart" width="900" height="1200"></svg>
 
+<button id="toggleCrosshair">크로스헤어 ON/OFF</button>
 
 <button id="switchData">다른 데이터 전환</button>
-
 
 
 <div th:replace="CommonFile/footer :: footer"></div>
@@ -119,6 +119,20 @@ const data1 = [
 		  { date: '2026-03-13', close: 119, ma: 117, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.3, histogram: 0.1, obv: 1800000, stochK: 44, stochD: 51, cci: 50 },
 		  { date: '2026-04-08', close: 119, ma: 122, volume: 1600000, rsi: 30, macd: 1.0, signal: 1.1, histogram: 0.2, obv: 2000000, stochK: 45, stochD: 50, cci: 53 }
 	];
+	
+	let crosshairEnabled = false; // 상태 저장
+
+	  d3.select("#toggleCrosshair").on("click", () => {
+	    crosshairEnabled = !crosshairEnabled;
+
+	    if (crosshairEnabled) {
+	      crosshair.style("display", null); // 보이게
+	    } else {
+	      crosshair.style("display", "none"); // 숨기기
+	    }
+	  });
+	
+	
 
 function drawCombinedChart(data) {
 	  const parseDate = d3.timeParse('%Y-%m-%d');
@@ -154,6 +168,7 @@ function drawCombinedChart(data) {
 	  const x = d3.scaleTime()
 	    .domain(d3.extent(data, d => d.date))
 	    .range([0, width]);
+	  
 
 	  // ========== 종가/거래량 차트 ==========
 	  const yPrice = d3.scaleLinear()
@@ -207,6 +222,47 @@ function drawCombinedChart(data) {
 	    .attr("width", 6)
 	    .attr("height", d => heightMain - yVolume(d.volume))
 	    .attr("fill", "lightgray");
+	  
+	  const crosshair = svg.append("g")
+	  .attr("class", "crosshair")
+	  .style("display", "none");
+
+	crosshair.append("line") // 세로선
+	  .attr("id", "crosshairX")
+	  .attr("stroke", "gray")
+	  .attr("stroke-width", 1)
+	  .attr("stroke-dasharray", "3,3")
+	  .attr("y1", 0)
+	  .attr("y2", totalHeight); // 전체 차트 높이만큼
+
+	crosshair.append("line") // 가로선
+	  .attr("id", "crosshairY")
+	  .attr("stroke", "gray")
+	  .attr("stroke-width", 1)
+	  .attr("stroke-dasharray", "3,3")
+	  .attr("x1", 0)
+	  .attr("x2", width);
+	  
+	
+	
+	function mousemove(event) {
+		  if (!crosshairEnabled) return;
+		  const [mx, my] = d3.pointer(event);
+
+		  d3.select("#crosshairX").attr("x1", mx).attr("x2", mx);
+		  d3.select("#crosshairY").attr("y1", my).attr("y2", my);
+		}
+	
+	svg.append("rect")
+	  .attr("class", "overlay")
+	  .attr("width", width)
+	  .attr("height", totalHeight)
+	  .attr("transform", `translate(${margin.left},${margin.top})`)
+	  .style("fill", "none")
+	  .style("pointer-events", "all")
+	  .on("mouseover", () => crosshair.style("display", null))
+	  .on("mouseout", () => crosshair.style("display", "none"))
+	  .on("mousemove", mousemove);
 
 	  // ========== RSI ==========
 	  const yRSI = d3.scaleLinear().domain([0, 100]).range([heightRSI, 0]);
@@ -575,7 +631,19 @@ function drawCombinedChart(data) {
 	
 	    const dataWithStoch = calculateStochastic(data);
 	    
-	    
+	    function mousemove(event) {
+	    	  if (!crosshairEnabled) return; // 꺼져있으면 무시
+
+	    	  const [mx, my] = d3.pointer(event);
+
+	    	  d3.select("#crosshairX")
+	    	    .attr("x1", mx)
+	    	    .attr("x2", mx);
+
+	    	  d3.select("#crosshairY")
+	    	    .attr("y1", my)
+	    	    .attr("y2", my);
+	    	}
 	    
 	  
 </script>
