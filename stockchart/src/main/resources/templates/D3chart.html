@@ -255,17 +255,70 @@ function drawCombinedChart(data) {
 
 		  const [mx, my] = d3.pointer(event, svg.node());
 		  const xDate = x.invert(mx);
-		  const yValue = y.invert(my);
+		  const yValue = yPrice.invert(my);
 
-		  crosshair.style("display", null);
-
-		  crosshair.select(".crosshair-x")
+		  // 클릭할 때마다 새로운 세로선 추가
+		  svg.append("line")
+		    .attr("class", "fixed-crosshair-x")
 		    .attr("x1", mx).attr("x2", mx)
-		    .attr("y1", 0).attr("y2", heightMain);
+		    .attr("y1", 0).attr("y2", heightMain)
+		    .attr("stroke", "blue")
+		    .attr("stroke-width", 1)
+		    .attr("stroke-dasharray", "3,3");
 
-		  crosshair.select(".crosshair-y")
-		    .attr("x1", 0).attr("x2", width)
-		    .attr("y1", my).attr("y2", my);
+		  // === RSI 차트 (gRSI) ===
+		  rsiGroup.append("line")
+		    .attr("class", "fixed-crosshair-x")
+		    .attr("x1", mx).attr("x2", mx)
+		    .attr("y1", 0).attr("y2", heightRSI)
+		    .attr("stroke", "blue")
+		    .attr("stroke-width", 1)
+		    .attr("stroke-dasharray", "3,3");
+
+		  // === MACD 차트 (gMACD) ===
+		  macdGroup.append("line")
+		    .attr("class", "fixed-crosshair-x")
+		    .attr("x1", mx).attr("x2", mx)
+		    .attr("y1", 0).attr("y2", heightMACD)
+		    .attr("stroke", "blue")
+		    .attr("stroke-width", 1)
+		    .attr("stroke-dasharray", "3,3");
+
+		  // === OBV 차트 (gOBV) ===
+		  obvGroup.append("line")
+		    .attr("class", "fixed-crosshair-x")
+		    .attr("x1", mx).attr("x2", mx)
+		    .attr("y1", 0).attr("y2", heightOBV)
+		    .attr("stroke", "blue")
+		    .attr("stroke-width", 1)
+		    .attr("stroke-dasharray", "3,3");
+
+		  // === CCI 차트 (gCCI) ===
+		  cciGroup.append("line")
+		    .attr("class", "fixed-crosshair-x")
+		    .attr("x1", mx).attr("x2", mx)
+		    .attr("y1", 0).attr("y2", heightCCI)
+		    .attr("stroke", "blue")
+		    .attr("stroke-width", 1)
+		    .attr("stroke-dasharray", "3,3");
+		  
+		  // === sto 차트 ===
+		  stochGroup.append("line")
+		    .attr("class", "fixed-crosshair-x")
+		    .attr("x1", mx).attr("x2", mx)
+		    .attr("y1", 0).attr("y2", heightSTC)
+		    .attr("stroke", "blue")
+		    .attr("stroke-width", 1)
+		    .attr("stroke-dasharray", "3,3");
+		  
+
+		  // === Tooltip (주가 기준) ===
+		  d3.select("#tooltip")
+		    .style("left", `${event.pageX + 10}px`)
+		    .style("top", `${event.pageY - 20}px`)
+		    .style("display", "inline-block")
+		    .html(`날짜: ${d3.timeFormat("%Y-%m-%d")(xDate)}`);
+	
 
 		  d3.select("#tooltip")
 		    .style("left", `${event.pageX + 10}px`)
@@ -273,8 +326,7 @@ function drawCombinedChart(data) {
 		    .style("display", "inline-block")
 		    .html(`날짜: ${d3.timeFormat("%Y-%m-%d")(xDate)}<br/>값: ${yValue.toFixed(2)}`);
 		
-
-		  
+	
 	});
 	  
 	  // ========== RSI ==========
