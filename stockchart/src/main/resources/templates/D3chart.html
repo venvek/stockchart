@@ -250,6 +250,26 @@ function drawCombinedChart(data) {
 	  .attr("x1", 0)
 	  .attr("x2", width);
 	  
+	function addCrosshairLine(group, orientation, mx, my, width, height, color="blue") {
+		  if (orientation === "vertical") {
+		    group.append("line")
+		      .attr("class", "fixed-crosshair-x")
+		      .attr("x1", mx).attr("x2", mx)
+		      .attr("y1", 0).attr("y2", height)
+		      .attr("stroke", color)
+		      .attr("stroke-width", 1)
+		      .attr("stroke-dasharray", "3,3");
+		  } else if (orientation === "horizontal") {
+		    group.append("line")
+		      .attr("class", "fixed-crosshair-y")
+		      .attr("x1", 0).attr("x2", width)
+		      .attr("y1", my).attr("y2", my)
+		      .attr("stroke", color)
+		      .attr("stroke-width", 1)
+		      .attr("stroke-dasharray", "3,3");
+		  }
+		}
+	  
 	svg.on("click", function(event) {
 		  if (!crosshairEnabled) return;
 
@@ -257,77 +277,37 @@ function drawCombinedChart(data) {
 		  const xDate = x.invert(mx);
 		  const yValue = yPrice.invert(my);
 
-		  // 클릭할 때마다 새로운 세로선 추가
-		  svg.append("line")
-		    .attr("class", "fixed-crosshair-x")
-		    .attr("x1", mx).attr("x2", mx)
-		    .attr("y1", 0).attr("y2", heightMain)
-		    .attr("stroke", "blue")
-		    .attr("stroke-width", 1)
-		    .attr("stroke-dasharray", "3,3");
+		  // === 주가 차트 ===
+		  addCrosshairLine(svg, "vertical", mx, my, width, heightMain);
+		  addCrosshairLine(svg, "horizontal", mx, my, width, heightMain);
 
-		  // === RSI 차트 (gRSI) ===
-		  rsiGroup.append("line")
-		    .attr("class", "fixed-crosshair-x")
-		    .attr("x1", mx).attr("x2", mx)
-		    .attr("y1", 0).attr("y2", heightRSI)
-		    .attr("stroke", "blue")
-		    .attr("stroke-width", 1)
-		    .attr("stroke-dasharray", "3,3");
+		  // === RSI 차트 ===
+		  addCrosshairLine(rsiGroup, "vertical", mx, my, width, heightRSI);
+		  addCrosshairLine(rsiGroup, "horizontal", mx, my, width, heightRSI);
 
-		  // === MACD 차트 (gMACD) ===
-		  macdGroup.append("line")
-		    .attr("class", "fixed-crosshair-x")
-		    .attr("x1", mx).attr("x2", mx)
-		    .attr("y1", 0).attr("y2", heightMACD)
-		    .attr("stroke", "blue")
-		    .attr("stroke-width", 1)
-		    .attr("stroke-dasharray", "3,3");
+		  // === MACD 차트 ===
+		  addCrosshairLine(macdGroup, "vertical", mx, my, width, heightMACD);
+		  addCrosshairLine(macdGroup, "horizontal", mx, my, width, heightMACD);
 
-		  // === OBV 차트 (gOBV) ===
-		  obvGroup.append("line")
-		    .attr("class", "fixed-crosshair-x")
-		    .attr("x1", mx).attr("x2", mx)
-		    .attr("y1", 0).attr("y2", heightOBV)
-		    .attr("stroke", "blue")
-		    .attr("stroke-width", 1)
-		    .attr("stroke-dasharray", "3,3");
+		  // === OBV 차트 ===
+		  addCrosshairLine(obvGroup, "vertical", mx, my, width, heightOBV);
+		  addCrosshairLine(obvGroup, "horizontal", mx, my, width, heightOBV);
 
-		  // === CCI 차트 (gCCI) ===
-		  cciGroup.append("line")
-		    .attr("class", "fixed-crosshair-x")
-		    .attr("x1", mx).attr("x2", mx)
-		    .attr("y1", 0).attr("y2", heightCCI)
-		    .attr("stroke", "blue")
-		    .attr("stroke-width", 1)
-		    .attr("stroke-dasharray", "3,3");
+		  // === CCI 차트 ===
+		  addCrosshairLine(cciGroup, "vertical", mx, my, width, heightCCI);
+		  addCrosshairLine(cciGroup, "horizontal", mx, my, width, heightCCI);
 		  
-		  // === sto 차트 ===
-		  stochGroup.append("line")
-		    .attr("class", "fixed-crosshair-x")
-		    .attr("x1", mx).attr("x2", mx)
-		    .attr("y1", 0).attr("y2", heightSTC)
-		    .attr("stroke", "blue")
-		    .attr("stroke-width", 1)
-		    .attr("stroke-dasharray", "3,3");
-		  
+		// === CCI 차트 ===
+		  addCrosshairLine(stochGroup, "vertical", mx, my, width, heightStoch);
+		  addCrosshairLine(stochGroup, "horizontal", mx, my, width, heightStoch);
 
 		  // === Tooltip (주가 기준) ===
 		  d3.select("#tooltip")
 		    .style("left", `${event.pageX + 10}px`)
 		    .style("top", `${event.pageY - 20}px`)
 		    .style("display", "inline-block")
-		    .html(`날짜: ${d3.timeFormat("%Y-%m-%d")(xDate)}`);
-	
-
-		  d3.select("#tooltip")
-		    .style("left", `${event.pageX + 10}px`)
-		    .style("top", `${event.pageY - 20}px`)
-		    .style("display", "inline-block")
-		    .html(`날짜: ${d3.timeFormat("%Y-%m-%d")(xDate)}<br/>값: ${yValue.toFixed(2)}`);
-		
-	
-	});
+		    .html(`날짜: ${d3.timeFormat("%Y-%m-%d")(xDate)}<br/>가격: ${yValue.toFixed(2)}`);
+		});
 	  
 	  // ========== RSI ==========
 	  const yRSI = d3.scaleLinear().domain([0, 100]).range([heightRSI, 0]);
