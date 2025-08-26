@@ -258,7 +258,7 @@ function drawCombinedChart(data) {
 		      .attr("y1", 0).attr("y2", height)
 		      .attr("stroke", color)
 		      .attr("stroke-width", 1)
-		      .attr("stroke-dasharray", "3,3");
+
 		  } else if (orientation === "horizontal") {
 		    group.append("line")
 		      .attr("class", "fixed-crosshair-y")
@@ -266,7 +266,7 @@ function drawCombinedChart(data) {
 		      .attr("y1", my).attr("y2", my)
 		      .attr("stroke", color)
 		      .attr("stroke-width", 1)
-		      .attr("stroke-dasharray", "3,3");
+
 		  }
 		}
 	  
