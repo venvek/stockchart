@@ -250,25 +250,42 @@ function drawCombinedChart(data) {
 	  .attr("x1", 0)
 	  .attr("x2", width);
 	  
+	// 전역에 저장할 스택
+	let crosshairHistory = [];
+
+	// === 선 추가 함수 수정 ===
 	function addCrosshairLine(group, orientation, mx, my, width, height, color="blue") {
-		  if (orientation === "vertical") {
-		    group.append("line")
-		      .attr("class", "fixed-crosshair-x")
-		      .attr("x1", mx).attr("x2", mx)
-		      .attr("y1", 0).attr("y2", height)
-		      .attr("stroke", color)
-		      .attr("stroke-width", 1)
+	  let line;
 
-		  } else if (orientation === "horizontal") {
-		    group.append("line")
-		      .attr("class", "fixed-crosshair-y")
-		      .attr("x1", 0).attr("x2", width)
-		      .attr("y1", my).attr("y2", my)
-		      .attr("stroke", color)
-		      .attr("stroke-width", 1)
+	  if (orientation === "vertical") {
+	    line = group.append("line")
+	      .attr("class", "fixed-crosshair-x")
+	      .attr("x1", mx).attr("x2", mx)
+	      .attr("y1", 0).attr("y2", height)
+	      .attr("stroke", color)
+	      .attr("stroke-width", 1)
+	      .attr("stroke-dasharray", "3,3");
+	  } else if (orientation === "horizontal") {
+	    line = group.append("line")
+	      .attr("class", "fixed-crosshair-y")
+	      .attr("x1", 0).attr("x2", width)
+	      .attr("y1", my).attr("y2", my)
+	      .attr("stroke", color)
+	      .attr("stroke-width", 1)
+	      .attr("stroke-dasharray", "3,3");
+	  }
 
-		  }
-		}
+	  // 스택에 넣어주기
+	  crosshairHistory.push(line);
+	}
+
+	// === 키보드 이벤트 리스너 ===
+	document.addEventListener("keydown", function(event) {
+	  if (event.ctrlKey && event.key === "z") {
+	    const lastLine = crosshairHistory.pop();
+	    if (lastLine) lastLine.remove();  // 마지막 선 삭제
+	  }
+	});
 	  
 	svg.on("click", function(event) {
 		  if (!crosshairEnabled) return;
@@ -276,6 +293,10 @@ function drawCombinedChart(data) {
 		  const [mx, my] = d3.pointer(event, svg.node());
 		  const xDate = x.invert(mx);
 		  const yValue = yPrice.invert(my);
+		  
+		// 🔵 고정선 추가 (스택에 push)
+		  addCrosshairLine(svg, "vertical", mx, my, width, heightMain, "blue");
+		  addCrosshairLine(svg, "horizontal", mx, my, width, heightMain, "blue");
 
 		  // === 주가 차트 ===
 		  addCrosshairLine(svg, "vertical", mx, my, width, heightMain);
