@@ -254,30 +254,23 @@ function drawCombinedChart(data) {
 	let crosshairHistory = [];
 
 	// === 선 추가 함수 수정 ===
-	function addCrosshairLine(group, orientation, mx, my, width, height, color="blue") {
-	  let line;
+	function addCrosshairLine(svg, type, mx, my, width, height, color, dashed = false) {
+  const line = svg.append("line")
+    .attr("stroke", color)
+    .attr("stroke-width", 1.5);
 
-	  if (orientation === "vertical") {
-	    line = group.append("line")
-	      .attr("class", "fixed-crosshair-x")
-	      .attr("x1", mx).attr("x2", mx)
-	      .attr("y1", 0).attr("y2", height)
-	      .attr("stroke", color)
-	      .attr("stroke-width", 1)
-	      .attr("stroke-dasharray", "3,3");
-	  } else if (orientation === "horizontal") {
-	    line = group.append("line")
-	      .attr("class", "fixed-crosshair-y")
-	      .attr("x1", 0).attr("x2", width)
-	      .attr("y1", my).attr("y2", my)
-	      .attr("stroke", color)
-	      .attr("stroke-width", 1)
-	      .attr("stroke-dasharray", "3,3");
-	  }
+  if (dashed) {
+    line.attr("stroke-dasharray", "5,5"); // 점선
+  }
 
-	  // 스택에 넣어주기
-	  crosshairHistory.push(line);
-	}
+  if (type === "vertical") {
+    line.attr("x1", mx).attr("x2", mx).attr("y1", 0).attr("y2", height);
+  } else if (type === "horizontal") {
+    line.attr("x1", 0).attr("x2", width).attr("y1", my).attr("y2", my);
+  }
+
+  crosshairHistory.push(line);
+}
 
 	// === 키보드 이벤트 리스너 ===
 	document.addEventListener("keydown", function(event) {
