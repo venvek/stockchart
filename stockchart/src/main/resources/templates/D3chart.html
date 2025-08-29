@@ -66,7 +66,7 @@
 
 <div id="tooltip" class="tooltip"></div>
 
-<svg id="combined-chart" width="900" height="700"></svg>
+<svg id="combined-chart" width="900" height="800"></svg>
 
 <button id="toggleCrosshair">Crosshair On/Off</button>
 
@@ -142,7 +142,7 @@ function drawCombinedChart(data) {
 	  data.forEach(d => d.date = parseDate(d.date));
 
 	  const margin = { top: 30, right: 60, bottom: 30, left: 60 };
-	  const width = 1400;
+	  const width = 1500;
 	  const heightMain = 200;
 	  const heightRSI = 100;
 	  const heightMACD = 100;
@@ -253,32 +253,44 @@ function drawCombinedChart(data) {
 	// 전역에 저장할 스택
 	let crosshairHistory = [];
 
-	// === 선 추가 함수 수정 ===
-	function addCrosshairLine(svg, type, mx, my, width, height, color, dashed = false) {
-  const line = svg.append("line")
-    .attr("stroke", color)
-    .attr("stroke-width", 1.5);
+	window.addEventListener("keydown", function(event) {
+		  if (event.ctrlKey && event.key.toLowerCase() === "z") {
+		    event.preventDefault(); // 브라우저 기본 undo 막기
+		    if (crosshairHistory.length > 0) {
+		      const lastLine = crosshairHistory.pop();
+		      lastLine.remove();
+		      console.log("Undo: 마지막 라인 삭제됨");
+		    }
+		  }
+		});
+	
+    function addCrosshairLine(group, orientation, mx, my, width, height, color="blue") {
+        let line;
 
-  if (dashed) {
-    line.attr("stroke-dasharray", "5,5"); // 점선
-  }
+        if (orientation === "vertical") {
+          line = group.append("line")
+            .attr("class", "fixed-crosshair-x")
+            .attr("x1", mx).attr("x2", mx)
+            .attr("y1", 0).attr("y2", height)
+            .attr("stroke", color)
+            .attr("stroke-width", 1.5)
+            .attr("stroke-dasharray", "5,5");
+          
+        } else if (orientation === "horizontal") {
+          line = group.append("line")
+            .attr("class", "fixed-crosshair-y")
+            .attr("x1", 0).attr("x2", width)
+            .attr("y1", my).attr("y2", my)
+            .attr("stroke", color)
+            .attr("stroke-width", 1.5)
+            .attr("stroke-dasharray", "5,5");
+        }
 
-  if (type === "vertical") {
-    line.attr("x1", mx).attr("x2", mx).attr("y1", 0).attr("y2", height);
-  } else if (type === "horizontal") {
-    line.attr("x1", 0).attr("x2", width).attr("y1", my).attr("y2", my);
-  }
+        // 스택에 넣어주기
+        crosshairHistory.push(line);
+      }
 
-  crosshairHistory.push(line);
-}
 
-	// === 키보드 이벤트 리스너 ===
-	document.addEventListener("keydown", function(event) {
-	  if (event.ctrlKey && event.key === "z") {
-	    const lastLine = crosshairHistory.pop();
-	    if (lastLine) lastLine.remove();  // 마지막 선 삭제
-	  }
-	});
 	  
 	svg.on("click", function(event) {
 		  if (!crosshairEnabled) return;
@@ -288,10 +300,21 @@ function drawCombinedChart(data) {
 		  const yValue = yPrice.invert(my);
 		  
 		// 🔵 고정선 추가 (스택에 push)
-		  addCrosshairLine(svg, "vertical", mx, my, width, heightMain, "blue");
+		  addCrosshairLine(svg, "vertical", mx, my, width, heightMain, "red");
 		  addCrosshairLine(svg, "horizontal", mx, my, width, heightMain, "blue");
 
 		  // === 주가 차트 ===
+		  const yValuePrice = yPrice.invert(my); // 주가 스케일 기준 변환
+ 		  const lineMainV = svgMain.append("line")
+          .attr("x1", mx).attr("x2", mx)
+    	  .attr("y1", 0).attr("y2", heightMain)
+    	  .attr("stroke", "blue").attr("stroke-width", 1.5);
+  	  	  const lineMainH = svgMain.append("line")
+   		  .attr("x1", 0).attr("x2", width)
+   		  .attr("y1", yPrice(yValuePrice)).attr("y2", yPrice(yValuePrice))
+    	  .attr("stroke", "blue").attr("stroke-width", 1.5);
+  		  lines.push(lineMainV, lineMainH);  
+		    
 		  addCrosshairLine(svg, "vertical", mx, my, width, heightMain);
 		  addCrosshairLine(svg, "horizontal", mx, my, width, heightMain);
 
