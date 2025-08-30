@@ -303,17 +303,41 @@ function drawCombinedChart(data) {
 		  addCrosshairLine(svg, "vertical", mx, my, width, heightMain, "red");
 		  addCrosshairLine(svg, "horizontal", mx, my, width, heightMain, "blue");
 
-		  // === 주가 차트 ===
+		// ========= 주가 차트 =========
 		  const yValuePrice = yPrice.invert(my); // 주가 스케일 기준 변환
- 		  const lineMainV = svgMain.append("line")
-          .attr("x1", mx).attr("x2", mx)
-    	  .attr("y1", 0).attr("y2", heightMain)
-    	  .attr("stroke", "blue").attr("stroke-width", 1.5);
-  	  	  const lineMainH = svgMain.append("line")
-   		  .attr("x1", 0).attr("x2", width)
-   		  .attr("y1", yPrice(yValuePrice)).attr("y2", yPrice(yValuePrice))
-    	  .attr("stroke", "blue").attr("stroke-width", 1.5);
-  		  lines.push(lineMainV, lineMainH);  
+		  const lineMainV = svgMain.append("line")
+		    .attr("x1", mx).attr("x2", mx)
+		    .attr("y1", 0).attr("y2", heightMain)
+		    .attr("stroke", "blue").attr("stroke-width", 1.5);
+		  const lineMainH = svgMain.append("line")
+		    .attr("x1", 0).attr("x2", width)
+		    .attr("y1", yPrice(yValuePrice)).attr("y2", yPrice(yValuePrice))
+		    .attr("stroke", "blue").attr("stroke-width", 1.5);
+		  lines.push(lineMainV, lineMainH);
+
+		  // ========= RSI 차트 =========
+		  const yValueRSI = yRSI.invert(my - (heightMain + padding)); // 위치 보정 필요
+		  const lineRSIV = svgRSI.append("line")
+		    .attr("x1", mx).attr("x2", mx)
+		    .attr("y1", 0).attr("y2", heightRSI)
+		    .attr("stroke", "blue").attr("stroke-width", 1.2).attr("stroke-dasharray", "5,5");
+		  const lineRSIH = svgRSI.append("line")
+		    .attr("x1", 0).attr("x2", width)
+		    .attr("y1", yRSI(yValueRSI)).attr("y2", yRSI(yValueRSI))
+		    .attr("stroke", "blue").attr("stroke-width", 1.2).attr("stroke-dasharray", "5,5");
+		  lines.push(lineRSIV, lineRSIH);
+
+		  // ========= MACD 차트 =========
+		  const yValueMACD = yMACD.invert(my - (heightMain + heightRSI + 2*padding));
+		  const lineMACDV = svgMACD.append("line")
+		    .attr("x1", mx).attr("x2", mx)
+		    .attr("y1", 0).attr("y2", heightMACD)
+		    .attr("stroke", "blue").attr("stroke-width", 1.2).attr("stroke-dasharray", "5,5");
+		  const lineMACDH = svgMACD.append("line")
+		    .attr("x1", 0).attr("x2", width)
+		    .attr("y1", yMACD(yValueMACD)).attr("y2", yMACD(yValueMACDm))
+		    .attr("stroke", "blue").attr("stroke-width", 1.2).attr("stroke-dasharray", "5,5");
+		  lines.push(lineMACDV, lineMACDH);
 		    
 		  addCrosshairLine(svg, "vertical", mx, my, width, heightMain);
 		  addCrosshairLine(svg, "horizontal", mx, my, width, heightMain);
