@@ -72,6 +72,12 @@
 
 <button id="switchData">다른 데이터 전환</button>
 
+<div>
+  <button id="btnDay">일봉</button>
+  <button id="btnWeek">주봉</button>
+  <button id="btnMonth">월봉</button>
+</div>
+
 
 <div th:replace="CommonFile/footer :: footer"></div>
 
@@ -303,41 +309,7 @@ function drawCombinedChart(data) {
 		  addCrosshairLine(svg, "vertical", mx, my, width, heightMain, "red");
 		  addCrosshairLine(svg, "horizontal", mx, my, width, heightMain, "blue");
 
-		// ========= 주가 차트 =========
-		  const yValuePrice = yPrice.invert(my); // 주가 스케일 기준 변환
-		  const lineMainV = svgMain.append("line")
-		    .attr("x1", mx).attr("x2", mx)
-		    .attr("y1", 0).attr("y2", heightMain)
-		    .attr("stroke", "blue").attr("stroke-width", 1.5);
-		  const lineMainH = svgMain.append("line")
-		    .attr("x1", 0).attr("x2", width)
-		    .attr("y1", yPrice(yValuePrice)).attr("y2", yPrice(yValuePrice))
-		    .attr("stroke", "blue").attr("stroke-width", 1.5);
-		  lines.push(lineMainV, lineMainH);
 
-		  // ========= RSI 차트 =========
-		  const yValueRSI = yRSI.invert(my - (heightMain + padding)); // 위치 보정 필요
-		  const lineRSIV = svgRSI.append("line")
-		    .attr("x1", mx).attr("x2", mx)
-		    .attr("y1", 0).attr("y2", heightRSI)
-		    .attr("stroke", "blue").attr("stroke-width", 1.2).attr("stroke-dasharray", "5,5");
-		  const lineRSIH = svgRSI.append("line")
-		    .attr("x1", 0).attr("x2", width)
-		    .attr("y1", yRSI(yValueRSI)).attr("y2", yRSI(yValueRSI))
-		    .attr("stroke", "blue").attr("stroke-width", 1.2).attr("stroke-dasharray", "5,5");
-		  lines.push(lineRSIV, lineRSIH);
-
-		  // ========= MACD 차트 =========
-		  const yValueMACD = yMACD.invert(my - (heightMain + heightRSI + 2*padding));
-		  const lineMACDV = svgMACD.append("line")
-		    .attr("x1", mx).attr("x2", mx)
-		    .attr("y1", 0).attr("y2", heightMACD)
-		    .attr("stroke", "blue").attr("stroke-width", 1.2).attr("stroke-dasharray", "5,5");
-		  const lineMACDH = svgMACD.append("line")
-		    .attr("x1", 0).attr("x2", width)
-		    .attr("y1", yMACD(yValueMACD)).attr("y2", yMACD(yValueMACDm))
-		    .attr("stroke", "blue").attr("stroke-width", 1.2).attr("stroke-dasharray", "5,5");
-		  lines.push(lineMACDV, lineMACDH);
 		    
 		  addCrosshairLine(svg, "vertical", mx, my, width, heightMain);
 		  addCrosshairLine(svg, "horizontal", mx, my, width, heightMain);
@@ -761,6 +733,74 @@ function drawCombinedChart(data) {
 	    	    d3.select("#tooltip").style("display", "none");
 	    	  }
 	    	});
+	  
+	    function resampleData(data, type) {
+	    	  if (type === "day") return data;
+
+	    	  const grouped = d3.groups(data, d => {
+	    	    const date = new Date(d.date);
+	    	    if (type === "week") {
+	    	      return d3.timeFormat("%Y-%W")(date); // 주단위 (ISO Week)
+	    	    }
+	    	    if (type === "month") {
+	    	      return d3.timeFormat("%Y-%m")(date); // 월단위
+	    	    }
+	    	  });
+
+	    	  return grouped.map(([key, values]) => {
+	    	    return {
+	    	      date: values[0].date, // 대표 날짜 = 첫날
+	    	      open: values[0].open,
+	    	      close: values[values.length - 1].close,
+	    	      high: d3.max(values, v => v.high),
+	    	      low: d3.min(values, v => v.low),
+	    	      volume: d3.sum(values, v => v.volume)
+	    	    };
+	    	  });
+	    	}
+
+	    	// 초기 데이터 (rawData는 일봉 데이터)
+	    	let currentData = rawData;
+
+	    	// 차트 그리기 함수
+	    	function updateChart(data) {
+	    	  // 스케일 다시 정의
+	    	  const x = d3.scaleTime()
+	    	    .domain(d3.extent(data, d => new Date(d.date)))
+	    	    .range([0, width]);
+
+	    	  const yPrice = d3.scaleLinear()
+	    	    .domain([d3.min(data, d => d.close) * 0.95, d3.max(data, d => d.close) * 1.05])
+	    	    .range([heightMain, 0]);
+
+	    	  // 차트 업데이트 (예: 주가 라인)
+	    	  const line = d3.line()
+	    	    .x(d => x(new Date(d.date)))
+	    	    .y(d => yPrice(d.close));
+
+	    	  svgMain.selectAll(".price-line")
+	    	    .data([data])
+	    	    .join("path")
+	    	    .attr("class", "price-line")
+	    	    .attr("fill", "none")
+	    	    .attr("stroke", "steelblue")
+	    	    .attr("stroke-width", 1.5)
+	    	    .attr("d", line);
+
+	    	  // 축 업데이트
+	    	  svgMain.select(".x-axis")
+	    	    .transition().call(d3.axisBottom(x));
+	    	  svgMain.select(".y-axis")
+	    	    .transition().call(d3.axisLeft(yPrice));
+	    	}
+
+	    	// 버튼 이벤트
+	    	d3.select("#btnDay").on("click", () => updateChart(resampleData(rawData, "day")));
+	    	d3.select("#btnWeek").on("click", () => updateChart(resampleData(rawData, "week")));
+	    	d3.select("#btnMonth").on("click", () => updateChart(resampleData(rawData, "month")));
+
+	    	// 초기 차트
+	    	updateChart(rawData);
 	    
 	  
 </script>
