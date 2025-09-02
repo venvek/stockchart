@@ -45,7 +45,7 @@ public class StockDataController {
     
     @GetMapping("/join")
     public String joinpage() {
-    	return "joinpage";
+    	return "join";
     }
     
     @GetMapping("/mypage")
