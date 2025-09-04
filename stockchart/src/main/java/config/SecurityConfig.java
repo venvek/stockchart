@@ -1,45 +1,35 @@
 package config;
 
-import java.util.List;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
-	@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           CustomOAuth2UserService customOAuth2UserService) throws Exception {
         http
-            .cors()  // CORS 설정 적용
-            .and()
-            .csrf().disable() // (REST API 용일 경우 CSRF 비활성화)
+            .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()      //.authenticated() .requestMatchers("/public", "/login", "/signup","/stocks").permitAll()
+                .requestMatchers("/", "/login", "/css/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN") // ADMIN 전용
+                .anyRequest().authenticated()
             )
-            
-            .httpBasic();
+            .oauth2Login(oauth2 -> oauth2
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(customOAuth2UserService)
+                )
+            )
+            .logout(logout -> logout
+                .logoutSuccessUrl("/")
+            );
 
         return http.build();
     }
-
-    // CORS 설정
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(List.of("http://localhost:8080"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
-        config.setAllowCredentials(true); // 쿠키 포함 허용
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config); // 모든 경로에 대해 설정 적용
-        return source;
-    } 
 }
