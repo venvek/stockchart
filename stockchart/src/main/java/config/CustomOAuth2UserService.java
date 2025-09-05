@@ -22,25 +22,30 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private UserRepository userRepository;
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    public OAuth2User loadUser(OAuth2UserRequest userRequest)
+            throws OAuth2AuthenticationException {
+
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId(); // google/naver/kakao
+        String registrationId = userRequest.getClientRegistration().getRegistrationId(); // google
         String userNameAttribute = userRequest.getClientRegistration()
-                                              .getProviderDetails()
-                                              .getUserInfoEndpoint()
-                                              .getUserNameAttributeName();
+                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName(); // "sub"
 
         String oauthId = oAuth2User.getAttribute(userNameAttribute);
 
-        // ✅ user 변수 선언 필수
+        // DB에서 사용자 조회 or 신규 저장
         User user = userRepository.findByProviderAndProviderId(registrationId, oauthId)
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setProvider(registrationId);
                     newUser.setProviderId(oauthId);
-                    newUser.setEmail(oAuth2User.getAttribute("email"));
-                    newUser.setName(oAuth2User.getAttribute("name"));
+
+                    Object email = oAuth2User.getAttribute("email");
+                    newUser.setEmail(email != null ? email.toString() : null);
+
+                    Object name = oAuth2User.getAttribute("username");
+                    newUser.setUsername(name != null ? name.toString() : null);
+
                     newUser.setRole("USER"); // 기본 USER
                     return userRepository.save(newUser);
                 });
@@ -51,5 +56,5 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 userNameAttribute
         );
     }
-    }
+}
 

@@ -21,7 +21,9 @@ public class User {
     private String provider;      // google, naver, kakao
     private String providerId;    // 소셜 고유 ID
     private String email;
-    private String name;
+    private String username;
     private String profileImage;
     private String role;          // USER, ADMIN
+    private String subscription_plan;
+    
 }
