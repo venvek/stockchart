@@ -13,9 +13,19 @@ public class OauthController {
         return "메인 페이지 (로그인 버튼 만들어서 /oauth2/authorization/google 로 이동)";
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/google")
     public String profile(@AuthenticationPrincipal OAuth2User oAuth2User) {
         return "로그인한 사용자: " + oAuth2User.getAttributes();
     }
     
+    
+    @GetMapping("/naver")
+    public String profile2(@AuthenticationPrincipal OAuth2User oAuth2User) {
+        return "로그인한 사용자: " + oAuth2User.getAttributes();
+    }
+    
+    @GetMapping("/kakao")
+    public String profile3(@AuthenticationPrincipal OAuth2User oAuth2User) {
+        return "로그인한 사용자: " + oAuth2User.getAttributes();
+    }
 }

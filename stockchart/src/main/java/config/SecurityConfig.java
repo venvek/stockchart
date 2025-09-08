@@ -7,29 +7,21 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 
 
+
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http,
-                                           CustomOAuth2UserService customOAuth2UserService) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   CustomOAuth2UserService customOAuth2UserService) throws Exception {
         http
-            .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/css/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN") // ADMIN 전용
+                .requestMatchers("/", "/login/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .oauth2Login(oauth2 -> oauth2
-                .userInfoEndpoint(userInfo -> userInfo
-                    .userService(customOAuth2UserService)
-                )
-            )
-            .logout(logout -> logout
-                .logoutSuccessUrl("/")
+            .oauth2Login(oauth -> oauth
+                .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
             );
-
         return http.build();
     }
 }
