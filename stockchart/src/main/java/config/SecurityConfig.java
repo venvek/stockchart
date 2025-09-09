@@ -12,16 +12,16 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   CustomOAuth2UserService customOAuth2UserService) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/", "/css/**", "/js/**", "/images/**").permitAll() // 홈페이지/정적 리소스 누구나 접근
+                .anyRequest().authenticated() // 나머지는 로그인 필요
             )
             .oauth2Login(oauth -> oauth
-                .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                .defaultSuccessUrl("/", true) // ✅ 로그인 성공 후 홈페이지로 이동
             );
+
         return http.build();
     }
 }

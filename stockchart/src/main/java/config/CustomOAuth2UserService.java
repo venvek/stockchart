@@ -31,21 +31,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
         Map<String, Object> attributes = oAuth2User.getAttributes();
+        Map<String, Object> parsedAttributes = attributes; // 새 변수 사용
 
-        // ✅ 네이버 처리
         if ("naver".equals(registrationId)) {
-            attributes = (Map<String, Object>) attributes.get("response");
+            parsedAttributes = (Map<String, Object>) attributes.get("response");
         }
 
-        // ✅ 카카오 처리
         if ("kakao".equals(registrationId)) {
             Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
             Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
 
-            // ID, 이메일, 이름을 attributes에 맞춰 넣기
-            attributes.put("id", attributes.get("id"));
-            attributes.put("email", kakaoAccount.get("email"));
-            attributes.put("name", profile.get("nickname"));
+            parsedAttributes.put("id", attributes.get("id"));
+            parsedAttributes.put("email", kakaoAccount.get("email"));
+            parsedAttributes.put("username", profile.get("nickname"));
+            parsedAttributes.put("profileImage", profile.get("profile_image_url"));
         }
 
         // ID 가져오기
@@ -59,15 +58,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     newUser.setProvider(registrationId);
                     newUser.setProviderId(oauthId);
 
-                    // 이메일 안전하게 변환
+                    // 이메일
                     Object emailObj = attributes.get("email");
                     newUser.setEmail(emailObj != null ? emailObj.toString() : null);
 
-                    // 이름 안전하게 변환
-                    Object nameObj = attributes.get("name");
-                    newUser.setName(nameObj != null ? nameObj.toString() : null);
+                    // 사용자 이름
+                    Object usernameObj = attributes.get("username");
+                    newUser.setUsername(usernameObj != null ? usernameObj.toString() : null);
 
-                    newUser.setRole("USER"); // 기본 권한
+                    // 프로필 이미지
+                    Object profileImageObj = attributes.get("profileImage");
+                    newUser.setProfileImage(profileImageObj != null ? profileImageObj.toString() : null);
+
+                    newUser.setRole("USER");
                     return userRepository.save(newUser);
                 });
 
