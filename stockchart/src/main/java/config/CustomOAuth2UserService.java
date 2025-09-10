@@ -47,7 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             parsedAttributes.put("profileImage", profile.get("profile_image_url"));
         }
 
-        // ID 가져오기
+        // ID 가져오
         Object oauthIdObj = attributes.get(userNameAttributeName);
         String oauthId = oauthIdObj != null ? oauthIdObj.toString() : null;
 
