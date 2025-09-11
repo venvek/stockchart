@@ -66,7 +66,8 @@ body {
            
     <div class="col search-bar" style="display:flex; align-items:center;">
     <form id="stockSearchForm" action="/stocks" method="get" >
-    <input type="text" id="tickerInput" name="ticker" placeholder="티커를 입력해주세요."  style="width:480px">
+    <input type="text" id="searchBox" placeholder="종목 검색..." autocomplete="off">
+	<div id="searchResults" class="dropdown"></div>
     <button type="submit">Search</button>
 	</form>
     </div>
@@ -135,6 +136,43 @@ const autocompleteList = document.getElementById('autocompleteList');
 	}
 	
 	let userTheme = /*[[${theme}]]*/ 'light';
+	
+	const searchBox = document.getElementById("searchBox");
+	const searchResults = document.getElementById("searchResults");
+
+	searchBox.addEventListener("keyup", async (e) => {
+	    const query = e.target.value.trim();
+	    if (!query) {
+	        searchResults.innerHTML = "";
+	        return;
+	    }
+
+	    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+	    const data = await res.json();
+
+	    // 결과 렌더링
+	    let html = "";
+
+	    if (data.favorites.length > 0) {
+	        html += "<strong>⭐ 즐겨찾기</strong><ul>";
+	        data.favorites.forEach(t => html += `<li><a href="/stocks/${t}">${t}</a></li>`);
+	        html += "</ul>";
+	    }
+
+	    if (data.recent.length > 0) {
+	        html += "<strong>🕒 최근 조회</strong><ul>";
+	        data.recent.forEach(t => html += `<li><a href="/stocks/${t}">${t}</a></li>`);
+	        html += "</ul>";
+	    }
+
+	    if (data.results.length > 0) {
+	        html += "<strong>🔍 검색 결과</strong><ul>";
+	        data.results.forEach(t => html += `<li><a href="/stocks/${t}">${t}</a></li>`);
+	        html += "</ul>";
+	    }
+
+	    searchResults.innerHTML = html;
+	});
 	
 </script>
 

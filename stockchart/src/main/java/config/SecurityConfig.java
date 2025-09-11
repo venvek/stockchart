@@ -20,7 +20,7 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth -> oauth
                 .loginPage("/login")
-                .defaultSuccessUrl("/", true) // ✅ 로그인 성공 후 홈페이지로 이동
+                .defaultSuccessUrl("/home", true) // ✅ 로그인 성공 후 홈페이지로 이동
             );
 
         return http.build();
