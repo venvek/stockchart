@@ -51,8 +51,6 @@ public interface StockDataRepo extends JpaRepository<Stock_Data, Long> {
 	
 	List<Stock_Data> findTop1ByCompanyOrderByDateDesc(Company company);
 	
-	//즐겨찾기
-    List<Stock_Data> findTop10ByTickerContainingIgnoreCaseOrNameContainingIgnoreCase(
-            String ticker, String name);
+	List<Stock_Data> findTop10ByTickerContainingIgnoreCaseOrCompany_NameContainingIgnoreCase(String ticker, String name);
 	
 }

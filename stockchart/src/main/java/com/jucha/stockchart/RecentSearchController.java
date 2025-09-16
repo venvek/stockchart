@@ -31,4 +31,11 @@ public class RecentSearchController {
         recent.setTicker(ticker);
         recentRepo.save(recent);
     }
+    
+    private Long getUserIdFromPrincipal(OAuth2User principal) {
+        if (principal == null) return null;
+
+        Object idObj = principal.getAttribute("id");
+        return (idObj != null) ? Long.valueOf(idObj.toString()) : null;
+    }
 }

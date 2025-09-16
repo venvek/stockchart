@@ -30,4 +30,11 @@ public class SearchController {
             "results", searchService.searchTickers(query)
         );
     }
+    
+    private Long getUserIdFromPrincipal(OAuth2User principal) {
+        if (principal == null) return null;
+
+        Object idObj = principal.getAttribute("id");
+        return (idObj != null) ? Long.valueOf(idObj.toString()) : null;
+    }
 }

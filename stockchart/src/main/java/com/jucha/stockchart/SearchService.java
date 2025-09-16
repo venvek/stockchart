@@ -36,9 +36,10 @@ public class SearchService {
 
     public List<String> searchTickers(String query) {
         List<Stock_Data> stockList =
-                stockRepo.findTop10ByTickerContainingIgnoreCaseOrNameContainingIgnoreCase(query, query);
+                stockRepo.findTop10ByTickerContainingIgnoreCaseOrCompany_NameContainingIgnoreCase(query, query);
+
         return stockList.stream()
-                .map(Stock_Data::getTicker) // ✅ Stock_Data로 변경
+                .map(Stock_Data::getTicker) // ✅ 엔티티명 맞춰야 함
                 .collect(Collectors.toList());
     }
 }
