@@ -5,8 +5,8 @@
 <style>
   /* 검색창 스타일 */
   #tickerInput {
-    width: 400px;
-    height: 400px; 
+    width: 300px;
+    height: 300px; 
     padding: 8px;
     font-size: 16px;
   }
@@ -63,14 +63,17 @@ body {
         <img src="/images/logo2.png" alt="Logo" class="logo-img" width="150" height="auto"/>
 		</a>
 </div>
-           
-    <div class="col search-bar" style="display:flex; align-items:center;">
-    <form id="stockSearchForm" action="/stocks" method="get" >
-    <input type="text" id="searchBox" placeholder="종목 검색..." autocomplete="off">
-	<div id="searchResults" class="dropdown"></div>
-    <button type="submit">Search</button>
-	</form>
-    </div>
+              
+    <div class="col search-bar" style="display: flex; align-items: center;">
+    <form id="stockSearchForm" onsubmit="goToStock(event)" 
+          style="display: flex; align-items: center; gap: 8px; width: 100%;">
+        <input type="text" id="searchBox" name="ticker"
+               placeholder="종목 검색..." autocomplete="off"
+               style="flex: 1; padding: 6px;">
+        <button type="submit" style="padding: 6px 12px; white-space: nowrap;">Search</button>
+    </form>
+    <div id="searchResults" class="dropdown"></div>
+</div>
     
                 <div class="col" style="display:flex;justify-content: space-around">
    <button id="darkModeButton">다크 모드 on off</button>
@@ -173,6 +176,14 @@ const autocompleteList = document.getElementById('autocompleteList');
 
 	    searchResults.innerHTML = html;
 	});
+	
+	function goToStock(event) {
+	    event.preventDefault(); // form 기본 제출 막기
+	    const ticker = document.getElementById('searchBox').value.trim();
+	    if (ticker) {
+	        window.location.href = "/stocks/" + encodeURIComponent(ticker);
+	    }
+	}
 	
 </script>
 
