@@ -152,6 +152,10 @@ public class StockDataController {
         return "D3chart";
     }
     
+    @GetMapping("/tickers")
+    public List<Stock_Data> getAllTickers() {
+        return stockDataService.getAllTickers();
+    }
     
     
 	/*

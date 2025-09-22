@@ -53,5 +53,19 @@ public class StockDataService {
 		return repository.scanStocks(null, null);
 		
 	}
+	
+	 public List<Stock_Data> getAllTickers() {
+		 List<Stock_Data> stockList = repository
+			        .findTop10ByTickerContainingIgnoreCaseOrCompany_NameContainingIgnoreCase(query, query);
+
+			    return stockList.stream()
+			        .map(stock -> {
+			        	Stock_Data dto = new Stock_Data();
+			            dto.setTicker(stock.getTicker());
+			            dto.company_id(stock.getCompany() != null ? stock.getCompany().getName() : "");
+			            return dto;
+			        })
+			        .toList();
 }
 
+}
