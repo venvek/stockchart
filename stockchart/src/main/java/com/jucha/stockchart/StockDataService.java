@@ -3,6 +3,7 @@ package com.jucha.stockchart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,18 +55,19 @@ public class StockDataService {
 		
 	}
 	
-	 public List<Stock_Data> getAllTickers() {
-		 List<Stock_Data> stockList = repository
-			        .findTop10ByTickerContainingIgnoreCaseOrCompany_NameContainingIgnoreCase(query, query);
+	public List<Map<String, String>> searchTickers(String query) {
+	    List<Stock_Data> stockList =
+	    		repository.findTop10ByTickerContainingIgnoreCaseOrCompany_NameContainingIgnoreCase(query, query);
 
-			    return stockList.stream()
-			        .map(stock -> {
-			        	Stock_Data dto = new Stock_Data();
-			            dto.setTicker(stock.getTicker());
-			            dto.company_id(stock.getCompany() != null ? stock.getCompany().getName() : "");
-			            return dto;
-			        })
-			        .toList();
-}
+	    return stockList.stream()
+	            .map(stock -> {
+	                Map<String, String> result = new HashMap<>();
+	                result.put("ticker", stock.getTicker());
+	                result.put("companyName", 
+	                           (stock.getCompany() != null) ? stock.getCompany().getName() : "");
+	                return result;
+	            })
+	            .toList();
+	}
 
 }

@@ -152,9 +152,9 @@ public class StockDataController {
         return "D3chart";
     }
     
-    @GetMapping("/tickers")
-    public List<Stock_Data> getAllTickers() {
-        return stockDataService.getAllTickers();
+    @GetMapping
+    public List<Map<String, String>> search(@RequestParam String query) {
+        return stockDataService.searchTickers(query);
     }
     
     

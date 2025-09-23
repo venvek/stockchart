@@ -69,10 +69,12 @@ body {
           style="display: flex; align-items: center; gap: 8px; width: 100%;">
         <input type="text" id="searchBox" name="ticker"
                placeholder="종목 검색..." autocomplete="off"
+               value="${ticker}"
                style="flex: 1; padding: 6px;">
         <button type="submit" style="padding: 6px 12px; white-space: nowrap;">Search</button>
     </form>
-    <div id="searchResults" class="dropdown"></div>
+    <div id="searchResults" class="dropdown" 
+         style="position:absolute; background:white; border:1px solid #ccc; width:200px; display:none;"></div>
 </div>
     
                 <div class="col" style="display:flex;justify-content: space-around">
