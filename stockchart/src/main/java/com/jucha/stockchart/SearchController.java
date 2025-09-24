@@ -1,5 +1,7 @@
 package com.jucha.stockchart;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +19,17 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
-    @GetMapping
-    public Map<String, Object> search(
-            @RequestParam("q") String query,
-            @AuthenticationPrincipal OAuth2User principal) {
+    @GetMapping("/search")
+    public Map<String, List<String>> search(@RequestParam("q") String query,
+                                            @AuthenticationPrincipal(expression = "attributes['id']") String userId) {
+        Long uid = (userId != null) ? Long.valueOf(userId) : null;
 
-        Long userId = getUserIdFromPrincipal(principal);
+        Map<String, List<String>> result = new HashMap<>();
+        result.put("favorites", searchService.getFavorites(uid, query));
+        result.put("recent", searchService.getRecentSearches(uid, query));
+        result.put("results", searchService.searchTickers(query));
 
-        return Map.of(
-            "favorites", searchService.getFavorites(userId, query),
-            "recent", searchService.getRecentSearches(userId, query),
-            "results", searchService.searchTickers(query)
-        );
+        return result;
     }
     
     private Long getUserIdFromPrincipal(OAuth2User principal) {

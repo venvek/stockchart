@@ -69,7 +69,6 @@ body {
           style="display: flex; align-items: center; gap: 8px; width: 100%;">
         <input type="text" id="searchBox" name="ticker"
                placeholder="종목 검색..." autocomplete="off"
-               value="${ticker}"
                style="flex: 1; padding: 6px;">
         <button type="submit" style="padding: 6px 12px; white-space: nowrap;">Search</button>
     </form>
@@ -107,85 +106,60 @@ body {
 
 <script th:inline="javascript">
 
-const input = document.getElementById('tickerInput');
-const autocompleteList = document.getElementById('autocompleteList');
+const searchBox = document.getElementById("searchBox");
+const searchResults = document.getElementById("searchResults");
 
-	input.addEventListener('input', async (e) => {
-    const query = e.target.value;
-
-    // 검색어가 없으면 목록 숨김
+// 입력 이벤트
+searchBox.addEventListener("input", async (e) => {
+    const query = e.target.value.trim();
     if (!query) {
-        autocompleteList.innerHTML = '';
+        searchResults.innerHTML = "";
+        searchResults.style.display = "none";
         return;
     }
 
-    // 서버에 검색 요청
-    const response = await fetch(`/api/suggestions?ticker=${query}`);
-    const suggestions = await response.json();
+    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
 
-    // 자동완성 목록 표시
-    autocompleteList.innerHTML = suggestions
-        .map(item => `<div class="autocomplete-item" onclick="selectSuggestion('${item}')">${item}</div>`)
-        .join('');
-	});
+    // 결과 렌더링
+    let html = "";
 
-	// 자동완성 항목 선택 처리
-	function selectSuggestion(value) {
-    input.value = value;
-    autocompleteList.innerHTML = ''; // 목록 초기화
-	}
-	
-	function autocomplete(value2) {	
-	input.value2 = value2;
-	autocompleteList.innerHTML = '';
-	}
-	
-	let userTheme = /*[[${theme}]]*/ 'light';
-	
-	const searchBox = document.getElementById("searchBox");
-	const searchResults = document.getElementById("searchResults");
+    if (data.favorites.length > 0) {
+        html += "<strong>⭐ 즐겨찾기</strong><ul>";
+        data.favorites.forEach(t => html += `<li onclick="selectSuggestion('${t}')">${t}</li>`);
+        html += "</ul>";
+    }
 
-	searchBox.addEventListener("keyup", async (e) => {
-	    const query = e.target.value.trim();
-	    if (!query) {
-	        searchResults.innerHTML = "";
-	        return;
-	    }
+    if (data.recent.length > 0) {
+        html += "<strong>🕒 최근 조회</strong><ul>";
+        data.recent.forEach(t => html += `<li onclick="selectSuggestion('${t}')">${t}</li>`);
+        html += "</ul>";
+    }
 
-	    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-	    const data = await res.json();
+    if (data.results.length > 0) {
+        html += "<strong>🔍 검색 결과</strong><ul>";
+        data.results.forEach(t => html += `<li onclick="selectSuggestion('${t}')">${t}</li>`);
+        html += "</ul>";
+    }
 
-	    // 결과 렌더링
-	    let html = "";
+    searchResults.innerHTML = html;
+    searchResults.style.display = "block"; // 보이게
+});
 
-	    if (data.favorites.length > 0) {
-	        html += "<strong>⭐ 즐겨찾기</strong><ul>";
-	        data.favorites.forEach(t => html += `<li><a href="/stocks/${t}">${t}</a></li>`);
-	        html += "</ul>";
-	    }
+// 자동완성 항목 선택 처리
+function selectSuggestion(value) {
+    searchBox.value = value;
+    searchResults.innerHTML = "";
+    searchResults.style.display = "none";
+}
 
-	    if (data.recent.length > 0) {
-	        html += "<strong>🕒 최근 조회</strong><ul>";
-	        data.recent.forEach(t => html += `<li><a href="/stocks/${t}">${t}</a></li>`);
-	        html += "</ul>";
-	    }
-
-	    if (data.results.length > 0) {
-	        html += "<strong>🔍 검색 결과</strong><ul>";
-	        data.results.forEach(t => html += `<li><a href="/stocks/${t}">${t}</a></li>`);
-	        html += "</ul>";
-	    }
-
-	    searchResults.innerHTML = html;
-	});
-	
-	function goToStock(event) {
-	    event.preventDefault(); // form 기본 제출 막기
-	    const ticker = document.getElementById('searchBox').value.trim();
-	    if (ticker) {
-	        window.location.href = "/stocks/" + encodeURIComponent(ticker);
-	    }
-	}
+function goToStock(event) {
+    event.preventDefault();
+    const ticker = searchBox.value.trim();
+    if (ticker) {
+        window.location.href = "/stocks/" + encodeURIComponent(ticker);
+    }
+}
 	
 </script>
 
