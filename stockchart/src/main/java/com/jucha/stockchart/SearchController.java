@@ -19,7 +19,7 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
-    @GetMapping("/search")
+    @GetMapping("/window")
     public Map<String, List<String>> search(@RequestParam("q") String query,
                                             @AuthenticationPrincipal(expression = "attributes['id']") String userId) {
         Long uid = (userId != null) ? Long.valueOf(userId) : null;

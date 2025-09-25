@@ -64,7 +64,7 @@ body {
 		</a>
 </div>
               
-    <div class="col search-bar" style="display: flex; align-items: center;">
+    <div class="col search-bar" style="display: flex; align-items: center; position:relative;">
     <form id="stockSearchForm" onsubmit="goToStock(event)" 
           style="display: flex; align-items: center; gap: 8px; width: 100%;">
         <input type="text" id="searchBox" name="ticker"
@@ -118,7 +118,7 @@ searchBox.addEventListener("input", async (e) => {
         return;
     }
 
-    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+    const res = await fetch(`/api/search/window?q=${encodeURIComponent(query)}`);
     const data = await res.json();
 
     // 결과 렌더링
@@ -135,15 +135,23 @@ searchBox.addEventListener("input", async (e) => {
         data.recent.forEach(t => html += `<li onclick="selectSuggestion('${t}')">${t}</li>`);
         html += "</ul>";
     }
-
     if (data.results.length > 0) {
         html += "<strong>🔍 검색 결과</strong><ul>";
-        data.results.forEach(t => html += `<li onclick="selectSuggestion('${t}')">${t}</li>`);
+        data.results.forEach(t => {
+            html += `<li onclick="selectSuggestion('${t.ticker}')">
+                       <a href="/stocks/${t.ticker}">
+                          ${t.ticker} - ${t.companyName}
+                       </a>
+                     </li>`;
+        });
         html += "</ul>";
+
+        searchResults.style.display = "block"; 
+    } else {
+        searchResults.style.display = "none"; 
     }
 
-    searchResults.innerHTML = html;
-    searchResults.style.display = "block"; // 보이게
+  
 });
 
 // 자동완성 항목 선택 처리
@@ -163,7 +171,7 @@ function goToStock(event) {
 	
 </script>
 
-<script th:src="@{/js/theme-toggle.js}">
+<!-- <script th:src="@{/js/theme-toggle.js}">
 
 const toggleButton = document.getElementById('theme-toggle');
 const html = document.documentElement;
@@ -176,6 +184,6 @@ toggleButton.addEventListener('click', () => {
   localStorage.setItem('theme', newTheme);
 });
 
-</script>
+</script> -->
 </body>
 </html>
