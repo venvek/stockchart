@@ -34,12 +34,14 @@ public class SearchService {
                 .collect(Collectors.toList());
     }
 
-    public List<String> searchTickers(String query) {
+    public List<SearchResultDto> searchTickers(String query) {
         List<Stock_Data> stockList =
-                stockRepo.findTop10ByTickerContainingIgnoreCaseOrCompany_NameContainingIgnoreCase(query, query);
-
+            stockRepo.findTop10ByTickerContainingIgnoreCaseOrCompany_NameContainingIgnoreCase(query, query);
         return stockList.stream()
-                .map(Stock_Data::getTicker) // ✅ 엔티티명 맞춰야 함
-                .collect(Collectors.toList());
+            .map(s -> new SearchResultDto(
+                s.getTicker(),
+                (s.getCompany() != null ? s.getCompany().getName() : "")
+            ))
+            .collect(Collectors.toList());
     }
 }

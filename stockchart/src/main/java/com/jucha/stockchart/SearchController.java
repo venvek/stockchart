@@ -20,14 +20,14 @@ public class SearchController {
     private SearchService searchService;
 
     @GetMapping("/window")
-    public Map<String, List<String>> search(@RequestParam("q") String query,
-                                            @AuthenticationPrincipal(expression = "attributes['id']") String userId) {
-        Long uid = (userId != null) ? Long.valueOf(userId) : null;
+    public Map<String, Object> search(@RequestParam("q") String query,
+                                      @AuthenticationPrincipal(expression = "attributes['id']") String userid) {
+        Long uid = (userid != null) ? Long.valueOf(userid) : null;
 
-        Map<String, List<String>> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         result.put("favorites", searchService.getFavorites(uid, query));
         result.put("recent", searchService.getRecentSearches(uid, query));
-        result.put("results", searchService.searchTickers(query));
+        result.put("results", searchService.searchTickers(query)); // ✅ DTO 리스트
 
         return result;
     }
