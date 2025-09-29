@@ -49,6 +49,16 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
+searchResults {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    width: 200px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
 </style>
 
 	<link href="/css/header.css" rel="stylesheet" type="text/css">
@@ -64,11 +74,10 @@ body {
 		</a>
 </div>
               
-    <div class="col search-bar" style="display: flex; align-items: center; position:relative;">
-    <form id="stockSearchForm" onsubmit="goToStock(event)" 
-          style="display: flex; align-items: center; gap: 8px; width: 100%;">
-        <input type="text" id="searchBox" name="ticker"
-               placeholder="종목 검색..." autocomplete="off"
+    <div class="col search-bar" style="display: flex; align-items: center;">
+    <!-- ✅ action, method 제거 -->
+    <form id="stockSearchForm" style="display: flex; align-items: center; gap: 8px; width: 100%;">
+        <input type="text" id="searchBox" placeholder="종목 검색..." autocomplete="off"
                style="flex: 1; padding: 6px;">
         <button type="submit" style="padding: 6px 12px; white-space: nowrap;">Search</button>
     </form>
@@ -105,11 +114,11 @@ body {
 </header>
 
 <script th:inline="javascript">
-
 const searchBox = document.getElementById("searchBox");
 const searchResults = document.getElementById("searchResults");
+const form = document.getElementById("stockSearchForm");
 
-// 입력 이벤트
+// 🔍 입력 이벤트 - 자동완성
 searchBox.addEventListener("input", async (e) => {
     const query = e.target.value.trim();
     if (!query) {
@@ -121,7 +130,6 @@ searchBox.addEventListener("input", async (e) => {
     const res = await fetch(`/api/search/window?q=${encodeURIComponent(query)}`);
     const data = await res.json();
 
-    // 결과 렌더링
     let html = "";
 
     if (data.favorites.length > 0) {
@@ -135,39 +143,42 @@ searchBox.addEventListener("input", async (e) => {
         data.recent.forEach(t => html += `<li onclick="selectSuggestion('${t}')">${t}</li>`);
         html += "</ul>";
     }
+
     if (data.results.length > 0) {
         html += "<strong>🔍 검색 결과</strong><ul>";
         data.results.forEach(t => {
             html += `<li onclick="selectSuggestion('${t.ticker}')">
-                       <a href="/stocks/${t.ticker}">
-                          ${t.ticker} - ${t.companyName}
-                       </a>
+                        <a href="/stocks/${t.ticker}">
+                           ${t.ticker} - ${t.companyName}
+                        </a>
                      </li>`;
         });
         html += "</ul>";
-
-        searchResults.style.display = "block"; 
+        searchResults.style.display = "block";
     } else {
-        searchResults.style.display = "none"; 
+        searchResults.style.display = "none";
     }
 
-  
+    searchResults.innerHTML = html;
 });
 
-// 자동완성 항목 선택 처리
+// ✅ 자동완성 항목 선택 처리
 function selectSuggestion(value) {
     searchBox.value = value;
     searchResults.innerHTML = "";
     searchResults.style.display = "none";
 }
 
-function goToStock(event) {
-    event.preventDefault();
+form.addEventListener("submit", function(e) {
+    e.preventDefault(); // 기본 submit 막기
     const ticker = searchBox.value.trim();
     if (ticker) {
         window.location.href = "/stocks/" + encodeURIComponent(ticker);
     }
-}
+});
+
+
+</script>
 	
 </script>
 
