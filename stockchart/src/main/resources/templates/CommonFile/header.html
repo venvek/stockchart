@@ -64,7 +64,8 @@ searchResults {
 	<link href="/css/header.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<header class="header"style="width:2200px; height:130px;">
+
+<header th:fragment="header" class="header" style="width:2200px; height:130px;">
     <div class="container">
     
         <div class="row header-top"> 
@@ -75,14 +76,13 @@ searchResults {
 </div>
               
     <div class="col search-bar" style="display: flex; align-items: center;">
-    <!-- ✅ action, method 제거 -->
     <form id="stockSearchForm" style="display: flex; align-items: center; gap: 8px; width: 100%;">
-        <input type="text" id="searchBox" placeholder="종목 검색..." autocomplete="off"
+        <input type="text" id="searchBox" name="ticker"
+               placeholder="종목 검색..." autocomplete="off"
                style="flex: 1; padding: 6px;">
         <button type="submit" style="padding: 6px 12px; white-space: nowrap;">Search</button>
     </form>
-    <div id="searchResults" class="dropdown" 
-         style="position:absolute; background:white; border:1px solid #ccc; width:200px; display:none;"></div>
+    <div id="searchResults" class="dropdown"></div>
 </div>
     
                 <div class="col" style="display:flex;justify-content: space-around">
@@ -113,74 +113,8 @@ searchResults {
     </div>
 </header>
 
-<script th:inline="javascript">
-const searchBox = document.getElementById("searchBox");
-const searchResults = document.getElementById("searchResults");
-const form = document.getElementById("stockSearchForm");
+<script src="/CommonFile/header.js"></script>
 
-// 🔍 입력 이벤트 - 자동완성
-searchBox.addEventListener("input", async (e) => {
-    const query = e.target.value.trim();
-    if (!query) {
-        searchResults.innerHTML = "";
-        searchResults.style.display = "none";
-        return;
-    }
-
-    const res = await fetch(`/api/search/window?q=${encodeURIComponent(query)}`);
-    const data = await res.json();
-
-    let html = "";
-
-    if (data.favorites.length > 0) {
-        html += "<strong>⭐ 즐겨찾기</strong><ul>";
-        data.favorites.forEach(t => html += `<li onclick="selectSuggestion('${t}')">${t}</li>`);
-        html += "</ul>";
-    }
-
-    if (data.recent.length > 0) {
-        html += "<strong>🕒 최근 조회</strong><ul>";
-        data.recent.forEach(t => html += `<li onclick="selectSuggestion('${t}')">${t}</li>`);
-        html += "</ul>";
-    }
-
-    if (data.results.length > 0) {
-        html += "<strong>🔍 검색 결과</strong><ul>";
-        data.results.forEach(t => {
-            html += `<li onclick="selectSuggestion('${t.ticker}')">
-                        <a href="/stocks/${t.ticker}">
-                           ${t.ticker} - ${t.companyName}
-                        </a>
-                     </li>`;
-        });
-        html += "</ul>";
-        searchResults.style.display = "block";
-    } else {
-        searchResults.style.display = "none";
-    }
-
-    searchResults.innerHTML = html;
-});
-
-// ✅ 자동완성 항목 선택 처리
-function selectSuggestion(value) {
-    searchBox.value = value;
-    searchResults.innerHTML = "";
-    searchResults.style.display = "none";
-}
-
-form.addEventListener("submit", function(e) {
-    e.preventDefault(); // 기본 submit 막기
-    const ticker = searchBox.value.trim();
-    if (ticker) {
-        window.location.href = "/stocks/" + encodeURIComponent(ticker);
-    }
-});
-
-
-</script>
-	
-</script>
 
 <!-- <script th:src="@{/js/theme-toggle.js}">
 
