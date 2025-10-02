@@ -27,8 +27,8 @@ public class StockhtmlController {
 		return "candlechart";
 	}
 	
-	@GetMapping("/stocks")
-	public String getStockChart(@RequestParam("ticker") String ticker, Model model) {
+    @GetMapping("/stocks/{ticker}")
+    public String getStockChart(@PathVariable String ticker, Model model) {
 	    List<Stock_Data> stockDataList = stockDataService.getStockDataByTicker(ticker);
 	    List<Indicators> indicatorList = stockDataService.getindicatorsByTicker(ticker);
 
