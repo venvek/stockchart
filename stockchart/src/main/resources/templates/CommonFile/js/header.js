@@ -9,13 +9,14 @@ document.addEventListener("DOMContentLoaded", function() {
     // 검색창 submit 처리
     const form = document.getElementById("stockSearchForm");
     const searchBox = document.getElementById("searchBox");
+	
 	form.addEventListener("submit", function(event) {
 	    event.preventDefault();
 	    const newTicker = searchBox.value.trim();
 	    if (newTicker) {
-	        // PathVariable 방식으로 이동
-	        window.location.href = `/stocks/${encodeURIComponent(newTicker)}`;
-	    }
+	        // PathVariable 방식 이동
+			window.location.href = "/stocks/" + encodeURIComponent(ticker);
+			            }
 	});
 
 async function loadStockChart(ticker) {
