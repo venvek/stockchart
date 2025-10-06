@@ -78,12 +78,13 @@ searchResults {
 </div>
               
     <div class="col search-bar" style="display: flex; align-items: center;">
-    <form id="stockSearchForm" style="display: flex; align-items: center; gap: 8px; width: 100%;">
-        <input type="text" id="searchBox" name="ticker"
-               placeholder="종목 검색..." autocomplete="off"
-               style="flex: 1; padding: 6px;">
-        <button type="submit" style="padding: 6px 12px; white-space: nowrap;">Search</button>
-    </form>
+    <form id="stockSearchForm" 
+      action="" 
+      onsubmit="event.preventDefault(); 
+                window.location.href='/stocks/' + encodeURIComponent(this.ticker.value);">
+    <input type="text" id="searchBox" name="ticker" placeholder="종목 검색..." autocomplete="off">
+    <button type="submit">Search</button>
+</form>
     <div id="searchResults" class="dropdown"></div>
 </div>
     
