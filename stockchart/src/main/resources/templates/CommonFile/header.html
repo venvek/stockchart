@@ -60,8 +60,8 @@ searchResults {
 }
 
 </style>
+<script src="/js/header.js"></script>
 
-<script src="/CommonFile/header.js"></script>
 
 	<link href="/css/header.css" rel="stylesheet" type="text/css">
 </head>
@@ -85,6 +85,11 @@ searchResults {
     <input type="text" id="searchBox" name="ticker" placeholder="종목 검색..." autocomplete="off">
     <button type="submit">Search</button>
 </form>
+<div id="searchResults" 
+         style="position: absolute; top: 40px; left: 0; right: 0; 
+                background: white; border: 1px solid #ccc; 
+                display: none; z-index: 1000;"></div>
+</div>
     <div id="searchResults" class="dropdown"></div>
 </div>
     
@@ -116,7 +121,7 @@ searchResults {
     </div>
 </header>
 
-<script src="/js/header.js"></script>
+
 
 
 <!-- <script th:src="@{/js/theme-toggle.js}">

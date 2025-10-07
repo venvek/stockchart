@@ -1,3 +1,5 @@
+const searchResults = document.getElementById("searchResults");
+
 document.addEventListener("DOMContentLoaded", function() { 
     const params = new URLSearchParams(window.location.search);
     const ticker = params.get("ticker");
@@ -6,11 +8,13 @@ document.addEventListener("DOMContentLoaded", function() {
         loadStockChart(ticker);
     }
 
+	
     // 검색창 submit 처리
     const form = document.getElementById("stockSearchForm");
     const searchBox = document.getElementById("searchBox");
 	
-	form.addEventListener("submit", function(event) {
+		
+	form.addEventListener("submit", function(event) {	
 	    event.preventDefault();
 	    const newTicker = searchBox.value.trim();
 	    if (newTicker) {
@@ -19,6 +23,44 @@ document.addEventListener("DOMContentLoaded", function() {
 			            }
 	});
 
+	searchBox.addEventListener("input", async (e) => {
+	    const query = e.target.value.trim();
+	    if (!query) {
+	        searchResults.innerHTML = "";
+	        searchResults.style.display = "none";
+	        return;
+	    }
+
+	    // 서버에서 데이터 가져오기
+	    const res = await fetch(`/api/search/window?q=${encodeURIComponent(query)}`);
+	    const data = await res.json();
+
+	    // 결과 렌더링 (ticker + 회사명 같이 표시)
+	    let html = "";
+	    if (data.results.length > 0) {
+	        html += "<ul style='list-style:none; padding:0; margin:0;'>";
+	        data.results.forEach(item => {
+	            html += `
+	                <li style="padding: 6px; cursor: pointer;"
+	                    onclick="selectSuggestion('${item.ticker}')">
+	                    <strong>${item.ticker}</strong> – ${item.companyName}
+	                </li>`;
+	        });
+	        html += "</ul>";
+	        searchResults.innerHTML = html;
+	        searchResults.style.display = "block";
+	    } else {
+	        searchResults.style.display = "none";
+	    }
+	});
+
+	// 자동완성 항목 선택 처리
+	function selectSuggestion(value) {
+	    searchBox.value = value;
+	    searchResults.innerHTML = "";
+	    searchResults.style.display = "none";
+	}
+	
 async function loadStockChart(ticker) {
     const res = await fetch(`/api/stock-data?ticker=${encodeURIComponent(ticker)}`);
     const data = await res.json();
