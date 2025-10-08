@@ -1,66 +1,62 @@
-const searchResults = document.getElementById("searchResults");
+document.addEventListener("DOMContentLoaded", function () {
+    const searchBox = document.getElementById("searchBox");
+    const searchResults = document.getElementById("searchResults");
+    const form = document.getElementById("stockSearchForm");
 
-document.addEventListener("DOMContentLoaded", function() { 
+    // URL 파라미터에서 ticker 가져오기 → 페이지 로드시 차트 로딩
     const params = new URLSearchParams(window.location.search);
     const ticker = params.get("ticker");
-
     if (ticker) {
         loadStockChart(ticker);
     }
 
-	
-    // 검색창 submit 처리
-    const form = document.getElementById("stockSearchForm");
-    const searchBox = document.getElementById("searchBox");
-	
-		
-	form.addEventListener("submit", function(event) {	
-	    event.preventDefault();
-	    const newTicker = searchBox.value.trim();
-	    if (newTicker) {
-	        // PathVariable 방식 이동
-			window.location.href = "/stocks/" + encodeURIComponent(ticker);
-			            }
-	});
+    // 검색창 입력 시 자동완성
+    searchBox.addEventListener("input", async (e) => {
+        const query = e.target.value.trim();
+        if (!query) {
+            searchResults.innerHTML = "";
+            searchResults.style.display = "none";
+            return;
+        }
 
-	searchBox.addEventListener("input", async (e) => {
-	    const query = e.target.value.trim();
-	    if (!query) {
-	        searchResults.innerHTML = "";
-	        searchResults.style.display = "none";
-	        return;
-	    }
+        const res = await fetch(`/api/search/window?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
 
-	    // 서버에서 데이터 가져오기
-	    const res = await fetch(`/api/search/window?q=${encodeURIComponent(query)}`);
-	    const data = await res.json();
+        let html = "";
+        if (data.results.length > 0) {
+            html += "<ul style='list-style:none; padding:0; margin:0;'>";
+            data.results.forEach(item => {
+                html += `
+                    <li style="padding: 6px; cursor: pointer;"
+                        onclick="goToTicker('${item.ticker}')">
+                        <strong>${item.ticker}</strong> – ${item.companyName}
+                    </li>`;
+            });
+            html += "</ul>";
+            searchResults.innerHTML = html;
+            searchResults.style.display = "block";
+        } else {
+            searchResults.style.display = "none";
+        }
+    });
 
-	    // 결과 렌더링 (ticker + 회사명 같이 표시)
-	    let html = "";
-	    if (data.results.length > 0) {
-	        html += "<ul style='list-style:none; padding:0; margin:0;'>";
-	        data.results.forEach(item => {
-	            html += `
-	                <li style="padding: 6px; cursor: pointer;"
-	                    onclick="selectSuggestion('${item.ticker}')">
-	                    <strong>${item.ticker}</strong> – ${item.companyName}
-	                </li>`;
-	        });
-	        html += "</ul>";
-	        searchResults.innerHTML = html;
-	        searchResults.style.display = "block";
-	    } else {
-	        searchResults.style.display = "none";
-	    }
-	});
+    // 검색창 직접 입력 후 엔터 → 이동
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const newTicker = searchBox.value.trim();
+        if (newTicker) {
+            goToTicker(newTicker);
+        }
+    });
 
-	// 자동완성 항목 선택 처리
-	function selectSuggestion(value) {
-	    searchBox.value = value;
-	    searchResults.innerHTML = "";
-	    searchResults.style.display = "none";
-	}
-	
+});
+
+// 자동완성 항목 선택 시 이동
+function goToTicker(ticker) {
+    window.location.href = `/stocks/${encodeURIComponent(ticker)}`;
+}
+
+// 차트 로딩
 async function loadStockChart(ticker) {
     const res = await fetch(`/api/stock-data?ticker=${encodeURIComponent(ticker)}`);
     const data = await res.json();
@@ -86,5 +82,4 @@ async function loadStockChart(ticker) {
             }
         }
     });
-}
 }

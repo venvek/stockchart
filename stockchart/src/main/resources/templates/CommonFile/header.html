@@ -77,21 +77,19 @@ searchResults {
 		</a>
 </div>
               
-    <div class="col search-bar" style="display: flex; align-items: center;">
-    <form id="stockSearchForm" 
-      action="" 
-      onsubmit="event.preventDefault(); 
-                window.location.href='/stocks/' + encodeURIComponent(this.ticker.value);">
-    <input type="text" id="searchBox" name="ticker" placeholder="종목 검색..." autocomplete="off">
-    <button type="submit">Search</button>
-</form>
-<div id="searchResults" 
+<div class="col search-bar" style="position: relative; display: flex; align-items: center;">
+    <form id="stockSearchForm" style="display: flex; align-items: center; gap: 8px; width: 100%;">
+        <input type="text" id="searchBox" name="ticker"
+               placeholder="종목 검색..." autocomplete="off"
+               style="flex: 1; padding: 6px;">
+        <button type="submit" style="padding: 6px 12px; white-space: nowrap;">Search</button>
+    </form>
+    <div id="searchResults" 
          style="position: absolute; top: 40px; left: 0; right: 0; 
                 background: white; border: 1px solid #ccc; 
                 display: none; z-index: 1000;"></div>
 </div>
-    <div id="searchResults" class="dropdown"></div>
-</div>
+
     
                 <div class="col" style="display:flex;justify-content: space-around">
    <button id="darkModeButton">다크 모드 on off</button>
