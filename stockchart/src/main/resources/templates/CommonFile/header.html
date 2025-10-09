@@ -49,15 +49,20 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
-searchResults {
+#searchResults {
     position: absolute;
     background: white;
     border: 1px solid #ccc;
-    width: 200px;
+    width: 300px;
     max-height: 200px;
     overflow-y: auto;
     z-index: 1000;
 }
+
+#searchResults li:hover {
+    background-color: #f0f0f0;
+}
+
 
 </style>
 <script src="/js/header.js"></script>

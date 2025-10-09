@@ -19,6 +19,9 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
+    @Autowired
+    private CompanyRepository companyRepo;
+    
     @GetMapping("/window")
     public Map<String, Object> search(@RequestParam("q") String query,
                                       @AuthenticationPrincipal(expression = "attributes['id']") String userid) {
@@ -30,6 +33,23 @@ public class SearchController {
         result.put("results", searchService.searchTickers(query)); // ✅ DTO 리스트
 
         return result;
+    }
+    
+    @GetMapping("/window2")
+    public Map<String, Object> searchCompanies(@RequestParam("q") String query) {
+        List<Company> results = companyRepo.findTop10ByTickerContainingIgnoreCaseOrCompanyNameContainingIgnoreCase(query, query);
+
+        // 필요한 필드만 보내기 (ticker, companyName)
+        List<Map<String, String>> mappedResults = results.stream()
+                .map(c -> Map.of(
+                        "ticker", c.getTicker(),
+                        "companyName", c.getCompanyName()
+                ))
+                .toList();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", mappedResults);
+        return response;
     }
     
     private Long getUserIdFromPrincipal(OAuth2User principal) {

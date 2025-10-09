@@ -25,6 +25,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query("SELECT s.close FROM Stock_Data s WHERE s.company.ticker = :ticker ORDER BY s.date DESC")
     List<BigDecimal> findLatestCloseByTicker(@Param("ticker") String ticker, Pageable pageable);
     
+    List<Company> findTop10ByTickerContainingIgnoreCaseOrCompanyNameContainingIgnoreCase(String ticker, String companyName);
+    
 	/*
 	 * @Query("SELECT new com.example.dto.HeatmapDto(c.name, c.ticker, c.sector, c.marketCap, "
 	 * + "((c.open - c.previousClose) / c.previousClose * 100)) FROM Company c " +
