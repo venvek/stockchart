@@ -27,6 +27,9 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     
     List<Company> findTop10ByTickerContainingIgnoreCaseOrCompanyNameContainingIgnoreCase(String ticker, String companyName);
     
+    List<Company> findByTickerContainingIgnoreCaseOrNameContainingIgnoreCase(String ticker, String name);
+    Optional<Company> findByTickerIgnoreCaseOrNameIgnoreCase(String ticker, String name);
+    
 	/*
 	 * @Query("SELECT new com.example.dto.HeatmapDto(c.name, c.ticker, c.sector, c.marketCap, "
 	 * + "((c.open - c.previousClose) / c.previousClose * 100)) FROM Company c " +

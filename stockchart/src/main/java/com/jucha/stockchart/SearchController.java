@@ -3,6 +3,8 @@ package com.jucha.stockchart;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,18 +40,30 @@ public class SearchController {
     @GetMapping("/window2")
     public Map<String, Object> searchCompanies(@RequestParam("q") String query) {
         List<Company> results = companyRepo.findTop10ByTickerContainingIgnoreCaseOrCompanyNameContainingIgnoreCase(query, query);
-
-        // 필요한 필드만 보내기 (ticker, companyName)
+        
         List<Map<String, String>> mappedResults = results.stream()
-                .map(c -> Map.of(
-                        "ticker", c.getTicker(),
-                        "companyName", c.getCompanyName()
-                ))
-                .toList();
+        	    .map(c -> {
+        	        Map<String, String> map = new HashMap<>();
+        	        map.put("ticker", c.getTicker());
+        	        map.put("name", c.getName());
+        	        return map;
+        	    })
+        	    .collect(Collectors.toList());
+
 
         Map<String, Object> response = new HashMap<>();
         response.put("results", mappedResults);
         return response;
+    }
+    
+    @GetMapping("/check")
+    public Map<String, Object> checkTickerOrName(@RequestParam String tickerOrName) {
+        Optional<Company> company = companyRepo.findByTickerIgnoreCaseOrNameIgnoreCase(tickerOrName, tickerOrName);
+        if (company.isPresent()) {
+            return Map.of("exists", true, "ticker", company.get().getTicker());
+        } else {
+            return Map.of("exists", false);
+        }
     }
     
     private Long getUserIdFromPrincipal(OAuth2User principal) {
