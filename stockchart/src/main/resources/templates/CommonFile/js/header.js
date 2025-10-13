@@ -2,7 +2,7 @@ const searchBox = document.getElementById("searchBox");
 const searchResults = document.getElementById("searchResults");
 const form = document.getElementById("stockSearchForm");
 
-// 자동완성 (티커 / 회사명 표시)
+// 🔍 자동완성
 searchBox.addEventListener("input", async (e) => {
     const query = e.target.value.trim();
     if (!query) {
@@ -15,12 +15,12 @@ searchBox.addEventListener("input", async (e) => {
     const data = await res.json();
 
     if (data.results.length > 0) {
-        let html = "<ul style='list-style:none; padding:0; margin:0; border:1px solid #ccc; background:white;'>";
+        let html = "<ul style='list-style:none; padding:0; margin:0; border:1px solid #ccc; background:white; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.15);'>";
         data.results.forEach(item => {
             html += `
-                <li style="padding:6px; cursor:pointer;"
+                <li style="padding:8px 10px; cursor:pointer; border-bottom:1px solid #eee;"
                     onclick="goToTicker('${item.ticker}')"
-                    onmouseover="this.style.backgroundColor='#eee'"
+                    onmouseover="this.style.backgroundColor='#f5f5f5'"
                     onmouseout="this.style.backgroundColor='white'">
                     <strong>${item.ticker}</strong> / ${item.companyName}
                 </li>`;
@@ -34,46 +34,73 @@ searchBox.addEventListener("input", async (e) => {
     }
 });
 
-// 클릭 시 이동
+// 🖱️ 클릭 시 이동
 function goToTicker(ticker) {
     window.location.href = `/stocks/${encodeURIComponent(ticker)}`;
 }
 
-// 엔터 입력 시 처리
+// ⌨️ 엔터 입력 시 처리
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const keyword = searchBox.value.trim();
     if (!keyword) return;
 
-    // 서버에 존재 여부 확인 요청
     const res = await fetch(`/api/search/check?tickerOrName=${encodeURIComponent(keyword)}`);
     const data = await res.json();
 
     if (data.exists) {
         window.location.href = `/stocks/${encodeURIComponent(data.ticker)}`;
     } else {
-        // 🚫 팝업 경고창 띄우기
-        showPopup(`"${keyword}"에 해당하는 종목을 찾을 수 없습니다.`);
+        showModal(`"${keyword}"에 해당하는 종목을 찾을 수 없습니다.`);
     }
 });
 
-// 간단한 팝업 함수
-function showPopup(message) {
-    const popup = document.createElement("div");
-    popup.textContent = message;
-    popup.style.position = "fixed";
-    popup.style.top = "20px";
-    popup.style.left = "50%";
-    popup.style.transform = "translateX(-50%)";
-    popup.style.background = "#ffdddd";
-    popup.style.color = "#333";
-    popup.style.padding = "10px 20px";
-    popup.style.border = "1px solid #f00";
-    popup.style.borderRadius = "6px";
-    popup.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
-    popup.style.zIndex = "9999";
-    document.body.appendChild(popup);
+// 💬 모달 표시 함수
+function showModal(message) {
+    // 기존 모달이 있으면 제거
+    const existing = document.getElementById("notFoundModal");
+    if (existing) existing.remove();
 
-    // 2초 후 자동 사라짐
-    setTimeout(() => popup.remove(), 2000);
+    const modal = document.createElement("div");
+    modal.id = "notFoundModal";
+    modal.innerHTML = `
+        <div style="
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        ">
+            <div style="
+                background: white;
+                padding: 20px 30px;
+                border-radius: 12px;
+                text-align: center;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                max-width: 320px;
+            ">
+                <h3 style="margin-bottom: 10px; color: #333;">❌ 검색 결과 없음</h3>
+                <p style="margin-bottom: 20px; color: #666;">${message}</p>
+                <button id="modalCloseBtn" style="
+                    padding: 8px 16px;
+                    background: #007bff;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                ">확인</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // 닫기 버튼 클릭 시 모달 제거
+    document.getElementById("modalCloseBtn").addEventListener("click", () => {
+        modal.remove();
+    });
+
+    // 배경 클릭 시 닫기
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.remove();
+    });
 }
