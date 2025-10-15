@@ -26,12 +26,11 @@ public class SearchService {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getRecentSearches(Long userId, String query) {
-        if (userId == null) return List.of();
-        return recentRepo.findTop5ByUserIdAndTickerContainingIgnoreCaseOrderByViewedAtDesc(userId, query)
+    public List<String> getRecentTickers(Long userId) {
+        return recentRepo.findTop5ByUserIdOrderBySearchedAtDesc(userId)
                 .stream()
-                .map(RecentSearch::getTicker) // ✅ ticker 값만 꺼내기
-                .collect(Collectors.toList());
+                .v(RecentSearch::getTicker)
+                .toList();
     }
 
     public List<SearchResultDto> searchTickers(String query) {
@@ -44,4 +43,23 @@ public class SearchService {
             ))
             .collect(Collectors.toList());
     }
+    
+    public void saveSearch(Long userId, String ticker) {
+        if (userId == null || ticker == null || ticker.isBlank()) return;
+
+        // 중복 제거
+        recentRepo.deleteAll(
+            recentRepo.findAll().stream()
+                .filter(r -> r.getUserId().equals(userId) && r.getTicker().equalsIgnoreCase(ticker))
+                .toList()
+        );
+
+        // 새 검색 저장
+        RecentSearch search = new RecentSearch();
+        search.setUserId(userId);
+        search.setTicker(ticker);
+        recentRepo.save(search);
+    }
+    
+    
 }

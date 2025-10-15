@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,5 +38,14 @@ public class RecentSearchController {
 
         Object idObj = principal.getAttribute("id");
         return (idObj != null) ? Long.valueOf(idObj.toString()) : null;
+    }
+    
+    @PostMapping("/record")
+    public void recordSearch(
+        @RequestParam("ticker") String ticker,
+        @AuthenticationPrincipal(expression = "attributes['id']") String userId
+    ) {
+        Long uid = (userId != null) ? Long.valueOf(userId) : null;
+        recentRepo.saveSearch(uid, ticker);
     }
 }

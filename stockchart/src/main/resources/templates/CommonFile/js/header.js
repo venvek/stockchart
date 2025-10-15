@@ -34,8 +34,18 @@ searchBox.addEventListener("input", async (e) => {
     }
 });
 
-// 🖱️ 클릭 시 이동
+async function recordSearch(ticker) {
+    try {
+        await fetch(`/api/search/record?ticker=${encodeURIComponent(ticker)}`, {
+            method: "POST"
+        });
+    } catch (err) {
+        console.error("검색 기록 저장 실패:", err);
+    }
+}
+
 function goToTicker(ticker) {
+    recordSearch(ticker); // 서버 기록
     window.location.href = `/stocks/${encodeURIComponent(ticker)}`;
 }
 

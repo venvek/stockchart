@@ -8,5 +8,7 @@ public interface RecentSearchRepository extends JpaRepository<RecentSearch, Long
 
     List<RecentSearch> findTop5ByUserIdAndTickerContainingIgnoreCaseOrderByViewedAtDesc(
             Long userId, String ticker);
+    
+    List<RecentSearch> findTop5ByUserIdOrderBySearchedAtDesc(Long userId);
 }
 
