@@ -10,5 +10,11 @@ public interface RecentSearchRepository extends JpaRepository<RecentSearch, Long
             Long userId, String ticker);
     
     List<RecentSearch> findTop5ByUserIdOrderBySearchedAtDesc(Long userId);
+    
+    boolean existsByUserIdAndTicker(Long userId, String ticker);
+
+    void deleteByUserIdAndTicker(Long userId, String ticker);
+    
+    
 }
 

@@ -26,12 +26,11 @@ public class SearchService {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getRecentTickers(Long userId) {
-        return recentRepo.findTop5ByUserIdOrderBySearchedAtDesc(userId)
-                .stream()
-                .v(RecentSearch::getTicker)
-                .toList();
-    }
+	/*
+	 * public List<String> getRecentTickers(Long userId) { return
+	 * recentRepo.findTop5ByUserIdOrderBySearchedAtDesc(userId) .stream()
+	 * .v(RecentSearch::getTicker) .toList(); }
+	 */
 
     public List<SearchResultDto> searchTickers(String query) {
         List<Stock_Data> stockList =
