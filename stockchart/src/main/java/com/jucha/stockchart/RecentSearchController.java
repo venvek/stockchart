@@ -46,6 +46,6 @@ public class RecentSearchController {
         @AuthenticationPrincipal(expression = "attributes['id']") String userId
     ) {
         Long uid = (userId != null) ? Long.valueOf(userId) : null;
-        recentRepo.save(new RecentSearch(userId, ticker));
+        recentRepo.save(new RecentSearch(uid, ticker));
     }
 }

@@ -1,9 +1,9 @@
 package com.jucha.stockchart;
 
-import java.sql.Timestamp;
+
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,32 +37,6 @@ public class RecentSearch {
 	        this.searchedAt = LocalDateTime.now();
 	    }
 	    
-	    public Long getId() {
-	        return id;
-	    }
-
-	    public Long getUserId() {
-	        return userId;
-	    }
-
-	    public void setUserId(Long userId) {
-	        this.userId = userId;
-	    }
-
-	    public String getTicker() {
-	        return ticker;
-	    }
-
-	    public void setTicker(String ticker) {
-	        this.ticker = ticker;
-	    }
-
-	    public LocalDateTime getSearchedAt() {
-	        return searchedAt;
-	    }
-
-	    public void setSearchedAt(LocalDateTime searchedAt) {
-	        this.searchedAt = searchedAt;
-	    }
+	    
 	    
 }
