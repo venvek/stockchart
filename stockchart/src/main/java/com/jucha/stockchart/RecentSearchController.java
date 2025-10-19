@@ -27,12 +27,11 @@ public class RecentSearchController {
         if (userId == null) return;
 
         String ticker = body.get("ticker");
-        RecentSearch recent = new RecentSearch();
-        recent.setUserId(userId);
-        recent.setTicker(ticker);
-        recentRepo.save(recent);
+        if (ticker == null || ticker.isBlank()) return;
+
+        recentRepo.save(new RecentSearch(userId, ticker));
     }
-    
+
     private Long getUserIdFromPrincipal(OAuth2User principal) {
         if (principal == null) return null;
 
