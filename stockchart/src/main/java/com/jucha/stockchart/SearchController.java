@@ -41,17 +41,16 @@ public class SearchController {
 	 
     @GetMapping("/window2")
     public Map<String, Object> searchCompanies(@RequestParam("q") String query) {
-        List<Company> results = companyRepo.findTop10ByTickerContainingIgnoreCaseOrCompanyNameContainingIgnoreCase(query, query);
-        
-        List<Map<String, String>> mappedResults = results.stream()
-        	    .map(c -> {
-        	        Map<String, String> map = new HashMap<>();
-        	        map.put("ticker", c.getTicker());
-        	        map.put("name", c.getName());
-        	        return map;
-        	    })
-        	    .collect(Collectors.toList());
+        List<Company> results = companyRepo.findTop10ByTickerContainingIgnoreCaseOrNameContainingIgnoreCase(query, query);
 
+        List<Map<String, String>> mappedResults = results.stream()
+            .map(c -> {
+                Map<String, String> map = new HashMap<>();
+                map.put("ticker", c.getTicker());
+                map.put("name", c.getName());
+                return map;
+            })
+            .collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
         response.put("results", mappedResults);
