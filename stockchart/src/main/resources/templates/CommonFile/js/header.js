@@ -51,7 +51,7 @@ function goToTicker(ticker) {
 
 // ⌨️ 엔터 입력 시 처리
 form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+    
     const keyword = searchBox.value.trim();
     if (!keyword) return;
 
