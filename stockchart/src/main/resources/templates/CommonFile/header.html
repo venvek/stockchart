@@ -65,7 +65,7 @@ body {
 
 
 </style>
-<script src="/js/header.js"></script>
+
 
 
 	<link href="/css/header.css" rel="stylesheet" type="text/css">
@@ -83,16 +83,17 @@ body {
 </div>
               
 <div class="col search-bar" style="position: relative; display: flex; align-items: center;">
-    <form id="stockSearchForm" style="display: flex; align-items: center; gap: 8px; width: 100%;">
-        <input type="text" id="searchBox" name="ticker"
-               placeholder="종목 검색..." autocomplete="off"
-               style="flex: 1; padding: 6px;">
-        <button type="submit" style="padding: 6px 12px; white-space: nowrap;">Search</button>
-    </form>
-    <div id="searchResults" 
-         style="position: absolute; top: 40px; left: 0; right: 0; 
-                background: white; border: 1px solid #ccc; 
-                display: none; z-index: 1000;"></div>
+  <form id="stockSearchForm" style="display: flex; align-items: center; gap: 8px; width: 100%;">
+    <input type="text" id="searchBox" name="ticker"
+           placeholder="종목 검색..." autocomplete="off"
+           style="flex: 1; padding: 6px;">
+    <button type="button" id="searchBtn"
+            style="padding: 6px 12px; white-space: nowrap;">Search</button>
+  </form>
+  <div id="searchResults" 
+       style="position: absolute; top: 40px; left: 0; right: 0; 
+              background: white; border: 1px solid #ccc; 
+              display: none; z-index: 1000;"></div>
 </div>
 
     
@@ -142,4 +143,5 @@ toggleButton.addEventListener('click', () => {
 
 </script> -->
 </body>
+<script src="/js/search.js"></script>
 </html>
