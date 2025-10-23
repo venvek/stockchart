@@ -45,7 +45,7 @@ async function performSearch() {
 
   if (data.exists) {
     await recordSearch(data.ticker);
-    window.location.href = `/stocks/${encodeURIComponent(data.ticker)}`;
+    window.location.href = `/stocks?ticker=${encodeURIComponent(data.ticker)}`;
   } else {
     showModal(`"${keyword}"에 해당하는 종목을 찾을 수 없습니다.`);
   }
@@ -76,7 +76,7 @@ async function recordSearch(ticker) {
 
 function goToTicker(ticker) {
   recordSearch(ticker);
-  window.location.href = `/stocks/${encodeURIComponent(ticker)}`;
+  window.location.href = `/stocks?ticker=${encodeURIComponent(ticker)}`;
 }
 
 // 💬 모달 표시
