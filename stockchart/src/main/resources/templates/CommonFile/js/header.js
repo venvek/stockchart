@@ -12,7 +12,7 @@ searchBox.addEventListener("input", async (e) => {
     return;
   }
 
-  const res = await fetch(`/api/search/window?q=${encodeURIComponent(query)}`);
+  const res = await fetch(`/api/search/window2?q=${encodeURIComponent(query)}`);
   const data = await res.json();
 
   if (data.results.length > 0) {
@@ -47,7 +47,7 @@ async function performSearch() {
     await recordSearch(data.ticker);
     window.location.href = `/stocks?ticker=${encodeURIComponent(data.ticker)}`;
   } else {
-    showModal(`"${keyword}"에 해당하는 종목을 찾을 수 없습니다.`);
+	window.location.href = `/api/stock-data/notfound?ticker=${encodeURIComponent(keyword)}`;
   }
 }
 

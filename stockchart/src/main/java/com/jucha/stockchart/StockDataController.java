@@ -89,6 +89,11 @@ public class StockDataController {
     	return "layout";
     }
     
+    @GetMapping("/notfound")
+    public String notfoundpage() {
+    	return "notfound";
+    }
+    
 	/*
 	 * @GetMapping("/stocks/{ticker}") // API 요청을 위한 경로
 	 * 

@@ -24,20 +24,20 @@ public class SearchController {
     @Autowired
     private CompanyRepository companyRepo;
     
-	/*
-	 * @GetMapping("/window") public Map<String, Object> search(@RequestParam("q")
-	 * String query,
-	 * 
-	 * @AuthenticationPrincipal(expression = "attributes['id']") String userid) {
-	 * Long uid = (userid != null) ? Long.valueOf(userid) : null;
-	 * 
-	 * Map<String, Object> result = new HashMap<>(); result.put("favorites",
-	 * searchService.getFavorites(uid, query)); result.put("recent",
-	 * searchService.getRecentSearches(uid, query)); result.put("results",
-	 * searchService.searchTickers(query)); // ✅ DTO 리스트
-	 * 
-	 * return result; }
-	 */
+	
+	 @GetMapping("/window") public Map<String, Object> search(@RequestParam("q")
+	 String query,
+	 
+	 @AuthenticationPrincipal(expression = "attributes['id']") String userid) {
+	 Long uid = (userid != null) ? Long.valueOf(userid) : null;
+	 
+	 Map<String, Object> result = new HashMap<>(); result.put("favorites",
+	 searchService.getFavorites(uid, query)); result.put("recent",
+	 //searchService.getRecentSearches(uid, query)); result.put("results",
+	 searchService.searchTickers(query)); // ✅ DTO 리스트
+	 
+	 return result; }
+	 
 	 
     @GetMapping("/window2")
     public Map<String, Object> searchCompanies(@RequestParam("q") String query) {
