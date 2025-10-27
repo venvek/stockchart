@@ -36,6 +36,7 @@ searchBox.addEventListener("input", async (e) => {
 });
 
 // ✅ 검색 함수 (공용)
+
 async function performSearch() {
   const keyword = searchBox.value.trim();
   if (!keyword) return;
@@ -45,9 +46,10 @@ async function performSearch() {
 
   if (data.exists) {
     await recordSearch(data.ticker);
-    window.location.href = `/stocks?ticker=${encodeURIComponent(data.ticker)}`;
+    window.location.href = `/stocks?ticker=${encodeURIComponent(data.ticker)}`; // ✅ 정상 이동
   } else {
-	window.location.href = `/api/stock-data/notfound?ticker=${encodeURIComponent(keyword)}`;
+    // ❌ 없으면 NotFound 페이지로 이동
+    window.location.href = `/notfound?ticker=${encodeURIComponent(keyword)}`;
   }
 }
 

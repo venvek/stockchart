@@ -58,13 +58,19 @@ public class SearchController {
     }
     
     @GetMapping("/check")
-    public Map<String, Object> checkTickerOrName(@RequestParam String tickerOrName) {
-        Optional<Company> company = companyRepo.findByTickerIgnoreCaseOrNameIgnoreCase(tickerOrName, tickerOrName);
-        if (company.isPresent()) {
-            return Map.of("exists", true, "ticker", company.get().getTicker());
+    public Map<String, Object> checkTickerOrName(@RequestParam("tickerOrName") String query) {
+        Map<String, Object> result = new HashMap<>();
+
+        Optional<Company> companyOpt = companyRepo.findByTickerIgnoreCaseOrNameIgnoreCase(query, query);
+
+        if (companyOpt.isPresent()) {
+            result.put("exists", true);
+            result.put("ticker", companyOpt.get().getTicker());
         } else {
-            return Map.of("exists", false);
+            result.put("exists", false);
         }
+
+        return result;
     }
     
     private Long getUserIdFromPrincipal(OAuth2User principal) {
