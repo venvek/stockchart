@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Market Summary</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            margin: 40px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            width: 300px;
+            text-align: center;
+        }
+        .value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        .change {
+            font-size: 1.2em;
+        }
+        .positive { color: #10b981; }
+        .negative { color: #ef4444; }
+        canvas { height: 100px !important; }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center; margin-bottom:10px;">📊 Market Summary</h2>
+<p style="text-align:center; color:#555;">Updated: <span th:text="${updated}"></span></p>
+
+<div class="container">
+    <div th:each="index : ${indices}" class="card">
+        <h3 th:text="${index.name}"></h3>
+        <div class="value" th:text="${index.value}"></div>
+        <div th:class="'change ' + (${index.change} >= 0 ? 'positive' : 'negative')"
+             th:text="${index.change >= 0 ? '+' + index.change + '%' : index.change + '%'}">
+        </div>
+        <canvas th:attr="id=${index.name.replace(' ', '')}Chart"></canvas>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const indices = [[${indices}]];
+    indices.forEach(i => {
+        const ctx = document.getElementById(i.name.replace(' ', '') + 'Chart');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['1','2','3','4','5'],
+                datasets: [{
+                    data: i.trend,
+                    borderColor: i.change >= 0 ? '#10b981' : '#ef4444',
+                    fill: false,
+                    tension: 0.3,
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false }},
+                scales: { x: { display: false }, y: { display: false } }
+            }
+        });
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>
