@@ -52,7 +52,7 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    const indices = [[${indices}]];
+    const indices = /*[[${indices}]]*/ [];
     indices.forEach(i => {
         const ctx = document.getElementById(i.name.replace(' ', '') + 'Chart');
         new Chart(ctx, {
