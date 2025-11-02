@@ -2,19 +2,29 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    
+    <link href="/css/footer.css" rel="stylesheet" type="text/css">
+
+	<link href="/css/header.css" rel="stylesheet" type="text/css">
+    
     <title>Fear & Greed Index</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body style="max-width: 800px; margin: 40px auto;">
 
+<div th:replace="CommonFile/header :: header"></div>
+
 <h2>📊 Fear & Greed Index</h2>
+
 <p>현재 지수: <strong th:text="${latest.indexValue}"></strong></p>
 
 <canvas id="fearGreedChart"></canvas>
 
+<div th:replace="CommonFile/footer :: footer"></div>
+
 <script th:inline="javascript">
     const data = /*[[${data}]]*/ [];
-    
+   ㅂ
     const labels = data.map(d => d.date);
     const values = data.map(d => d.indexValue);
 

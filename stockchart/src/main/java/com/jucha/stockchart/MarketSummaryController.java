@@ -12,6 +12,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 public class MarketSummaryController {
 
+	private static final Map<String, String> INDICES = Map.of(
+	        "S&P 500", "^GSPC",
+	        "NASDAQ", "^IXIC",
+	        "Dow Jones", "^DJI"
+	    );
+	
     @GetMapping("/market-summary")
     public String marketSummary(Model model) {
         try {
