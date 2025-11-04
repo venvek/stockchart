@@ -22,7 +22,8 @@ public class MarketSummaryController {
 	private static final Map<String, String> INDICES = Map.of(
 	        "S&P 500", "^GSPC",
 	        "NASDAQ", "^IXIC",
-	        "Dow Jones", "^DJI"
+	        "Dow Jones", "^DJI",
+	        "KOSPI", "^KS11" 
 	    );
 	
 	@GetMapping("/market-summary")
@@ -46,16 +47,18 @@ public class MarketSummaryController {
                 JsonNode result = root.path("chart").path("result").get(0);
                 JsonNode closes = result.path("indicators").path("quote").get(0).path("close");
 
-                // 최근 종가 5개
                 List<Double> trend = new ArrayList<>();
                 for (JsonNode node : closes) {
                     if (!node.isNull()) trend.add(node.asDouble());
                 }
 
+                if (trend.size() < 2) continue;
+
                 double current = trend.get(trend.size() - 1);
                 double prev = trend.get(trend.size() - 2);
-                double change = Math.round((current - prev) / prev * 10000.0) / 100.0; // %
-                trend = trend.subList(trend.size() - 5, trend.size());
+                double change = Math.round((current - prev) / prev * 10000.0) / 100.0;
+
+                trend = trend.subList(Math.max(trend.size() - 5, 0), trend.size());
 
                 Map<String, Object> data = new HashMap<>();
                 data.put("name", name);
@@ -66,7 +69,7 @@ public class MarketSummaryController {
                 indexList.add(data);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Error fetching " + name + ": " + e.getMessage());
             }
         }
 

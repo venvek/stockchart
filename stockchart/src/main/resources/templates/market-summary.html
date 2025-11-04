@@ -60,7 +60,7 @@
 <div th:replace="CommonFile/footer :: footer"></div>
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
+
     const indices = /*[[${indices}]]*/ [];
     indices.forEach(i => {
         const ctx = document.getElementById(i.name.replace(' ', '') + 'Chart');
@@ -81,7 +81,7 @@
             }
         });
     });
-    /*]]>*/
+
 </script>
 
 </body>
