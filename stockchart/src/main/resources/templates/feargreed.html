@@ -1,53 +1,28 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    
-    <link href="/css/footer.css" rel="stylesheet" type="text/css">
-
-	<link href="/css/header.css" rel="stylesheet" type="text/css">
-    
     <title>Fear & Greed Index</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body style="max-width: 800px; margin: 40px auto;">
-
-<div th:replace="CommonFile/header :: header"></div>
-
-<h2>📊 Fear & Greed Index</h2>
-
-<p>현재 지수: <strong th:text="${latest.indexValue}"></strong></p>
-
-<canvas id="fearGreedChart"></canvas>
-
-<div th:replace="CommonFile/footer :: footer"></div>
-
-<script th:inline="javascript">
-    const data = /*[[${data}]]*/ [];
-   ㅂ
-    const labels = data.map(d => d.date);
-    const values = data.map(d => d.indexValue);
-
-    const ctx = document.getElementById('fearGreedChart');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Fear & Greed Index',
-                data: values,
-                borderColor: 'rgb(75,192,192)',
-                tension: 0.2,
-                fill: false
-            }]
-        },
-        options: {
-            scales: {
-                y: { min: 0, max: 100 }
-            }
+    <style>
+        body { font-family: Arial; background: #fafafa; text-align: center; }
+        .circle {
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            margin: 50px auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2em; font-weight: bold;
+            color: white;
         }
-    });
-</script>
-
+    </style>
+</head>
+<body>
+<h1>공포 · 탐욕 지수 (Fear & Greed Index)</h1>
+<div class="circle"
+     th:style="'background-color:' + (${score} < 25 ? '#ef4444' :
+                                       ${score} < 55 ? '#facc15' :
+                                       '#10b981')">
+    <span th:text="${score}"></span>
+</div>
+<h2 th:text="${sentiment}"></h2>
+<p>업데이트: <span th:text="${updated}"></span></p>
 </body>
 </html>
