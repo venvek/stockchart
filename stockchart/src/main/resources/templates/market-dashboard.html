@@ -22,12 +22,6 @@
         .change { font-size: 1em; font-weight: bold; }
         .positive { color: #10b981; }
         .negative { color: #ef4444; }
-        .circle {
-            width: 180px; height: 180px; border-radius: 50%;
-            margin: 0 auto 20px auto;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2em; font-weight: bold; color: white;
-        }
     </style>
 </head>
 <body>
@@ -43,14 +37,11 @@
         <canvas th:attr="id=${index.name.replace(' ', '')}Chart"></canvas>
     </div>
 
+    <!-- ✅ Fear & Greed Index (도넛 게이지형) -->
     <div class="card">
         <h3>Fear & Greed Index</h3>
-        <div class="circle"
-             th:style="'background-color:' + (${fearGreed} < 25 ? '#ef4444' :
-                                               ${fearGreed} < 55 ? '#facc15' :
-                                               '#10b981')">
-            <span th:text="${fearGreed}"></span>
-        </div>
+        <canvas id="fearGreedGauge" width="200" height="200"></canvas>
+        <h2 th:text="${fearGreed} + ' / 100'"></h2>
         <h4 th:text="${sentiment}"></h4>
     </div>
 </div>
@@ -62,6 +53,10 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     const indices = /*[[${indices}]]*/ [];
+    const fearGreed =/* [[${fearGreed}]]*/  [];
+    const sentiment =/* [[${sentiment}]]*/ [];
+
+    // ===== 시장 지수 차트 =====
     indices.forEach(i => {
         const ctx = document.getElementById(i.name.replace(' ', '') + 'Chart');
         new Chart(ctx, {
@@ -80,6 +75,33 @@
                 scales: { x: { display: false }, y: { display: false } }
             }
         });
+    });
+
+    // ===== 공포탐욕 지수 도넛 차트 =====
+    const ctxFG = document.getElementById("fearGreedGauge");
+    const color =
+        fearGreed < 25 ? "#ef4444" :   // 공포: 빨강
+        fearGreed < 55 ? "#facc15" :   // 중립: 노랑
+                         "#10b981";    // 탐욕: 초록
+
+    new Chart(ctxFG, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [fearGreed, 100 - fearGreed],
+                backgroundColor: [color, "#e5e7eb"],
+                borderWidth: 0,
+                cutout: "70%"
+            }]
+        },
+        options: {
+            rotation: -90,
+            circumference: 180, // 반원 게이지
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: false }
+            }
+        }
     });
     /*]]>*/
 </script>
