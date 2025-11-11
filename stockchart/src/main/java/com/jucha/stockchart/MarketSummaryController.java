@@ -19,64 +19,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 public class MarketSummaryController {
 
+	private final MarketSummaryService marketSummaryService;
+
+    // ✅ 여기서 타입을 MarketSummaryService 로 바꿔야 함
+    public MarketSummaryController(MarketSummaryService marketSummaryService) {
+        this.marketSummaryService = marketSummaryService;
+    }
+
+    @GetMapping("/market-summary")
+    public String marketSummary(Model model) {
+        List<Map<String, Object>> indices = marketSummaryService.fetchMarketIndices();
+        model.addAttribute("indices", indices);
+        model.addAttribute("updated", new java.util.Date());
+        return "market-summary";
+    }
+	
 	private static final Map<String, String> INDICES = Map.of(
 	        "S&P 500", "^GSPC",
 	        "NASDAQ", "^IXIC",
 	        "Dow Jones", "^DJI",
 	        "KOSPI", "^KS11" 
 	    );
-	
-	@GetMapping("/market-summary")
-    public String marketSummary(Model model) {
-        RestTemplate restTemplate = new RestTemplate();
-        ObjectMapper mapper = new ObjectMapper();
-        List<Map<String, Object>> indexList = new ArrayList<>();
-
-        for (var entry : INDICES.entrySet()) {
-            String name = entry.getKey();
-            String ticker = entry.getValue();
-
-            try {
-                String url = String.format(
-                    "https://query1.finance.yahoo.com/v8/finance/chart/%s?interval=1d&range=7d",
-                    ticker
-                );
-
-                ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-                JsonNode root = mapper.readTree(response.getBody());
-                JsonNode result = root.path("chart").path("result").get(0);
-                JsonNode closes = result.path("indicators").path("quote").get(0).path("close");
-
-                List<Double> trend = new ArrayList<>();
-                for (JsonNode node : closes) {
-                    if (!node.isNull()) trend.add(node.asDouble());
-                }
-
-                if (trend.size() < 2) continue;
-
-                double current = trend.get(trend.size() - 1);
-                double prev = trend.get(trend.size() - 2);
-                double change = Math.round((current - prev) / prev * 10000.0) / 100.0;
-
-                trend = trend.subList(Math.max(trend.size() - 5, 0), trend.size());
-
-                Map<String, Object> data = new HashMap<>();
-                data.put("name", name);
-                data.put("value", Math.round(current * 100.0) / 100.0);
-                data.put("change", change);
-                data.put("trend", trend);
-
-                indexList.add(data);
-
-            } catch (Exception e) {
-                System.out.println("Error fetching " + name + ": " + e.getMessage());
-            }
-        }
-
-        model.addAttribute("indices", indexList);
-        model.addAttribute("updated", new Date().toString());
-        return "market-summary";
-    }
 	
 	@GetMapping("/market-dashboard")
     public String dashboard(Model model) {

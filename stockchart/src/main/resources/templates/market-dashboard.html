@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+	
+	<link href="/css/footer.css" rel="stylesheet" type="text/css">
+
+	<link href="/css/header.css" rel="stylesheet" type="text/css">
+
     <title>시장 요약 대시보드</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -25,6 +30,9 @@
     </style>
 </head>
 <body>
+
+<div th:replace="CommonFile/header :: header"></div>
+
 <h1>📊 시장 요약 + 공포 · 탐욕 지수</h1>
 
 <div class="grid">
@@ -49,6 +57,8 @@
 <p style="text-align:center; margin-top: 30px;">
     업데이트: <span th:text="${updated}"></span>
 </p>
+
+<div th:replace="CommonFile/footer :: footer"></div>
 
 <script th:inline="javascript">
     /*<![CDATA[*/
