@@ -31,6 +31,8 @@ public class MarketSummaryController {
         List<Map<String, Object>> indices = marketSummaryService.fetchMarketIndices();
         model.addAttribute("indices", indices);
         model.addAttribute("updated", new java.util.Date());
+        
+        System.out.println(indices);
 
         // ✅ 예시용 Fear & Greed 데이터 (나중에 API 연동 가능)
         int fearGreed = 62; // 0~100
