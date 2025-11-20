@@ -139,6 +139,12 @@ public class MarketSummaryController {
         return list.get(list.size() - 1);
     }
 	
+	@GetMapping("/market-summary2")
+    public String getMarketSummary(Model model) {
+        model.addAttribute("summary", marketSummaryService.getMockMarketSummary());
+        return "market-summary2";
+    }
+	
 		/*
 		 * @GetMapping("/market-summary") public String marketSummary(Model model) { try
 		 * { // static/json/market_summary.json 파일 읽기 File jsonFile = new

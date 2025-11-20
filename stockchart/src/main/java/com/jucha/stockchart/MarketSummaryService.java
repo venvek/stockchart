@@ -28,6 +28,56 @@ public class MarketSummaryService {
 	    private final RestTemplate restTemplate;
 	    private final ObjectMapper objectMapper = new ObjectMapper();
 
+	    public Map<String, Object> getMockMarketSummary() {
+	        Map<String, Object> data = new HashMap<>();
+
+	        data.put("S&P 500", Map.of(
+	                "price", 5021.15,
+	                "change", +12.45,
+	                "percent", "+0.25%"
+	        ));
+
+	        data.put("NASDAQ", Map.of(
+	                "price", 15987.42,
+	                "change", -25.11,
+	                "percent", "-0.16%"
+	        ));
+
+	        data.put("Dow Jones", Map.of(
+	                "price", 38250.77,
+	                "change", +85.22,
+	                "percent", "+0.22%"
+	        ));
+
+	        data.put("KOSPI", Map.of(
+	                "price", 2601.28,
+	                "change", -12.15,
+	                "percent", "-0.46%"
+	        ));
+
+	        // 공포·탐욕지수(VIX 대신 Fear-Greed Index)
+	        data.put("FearGreed", Map.of(
+	                "score", 62,
+	                "status", "Greed"
+	        ));
+
+	        return data;
+	    }
+
+	    private Map<String, Object> createIndex(
+	            String name,
+	            double value,
+	            double change,
+	            List<Double> trend
+	    ) {
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("name", name);
+	        map.put("value", String.format("%.2f", value));
+	        map.put("change", String.format("%.2f", change));
+	        map.put("trend", trend);
+	        return map;
+	    }
+	    
 	    @Autowired
 	    public MarketSummaryService(RestTemplate restTemplate) {
 	        this.restTemplate = restTemplate;

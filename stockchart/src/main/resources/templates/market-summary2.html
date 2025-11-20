@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <link href="/css/footer.css" rel="stylesheet" type="text/css">
+
+	<link href="/css/header.css" rel="stylesheet" type="text/css">
+
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<style>
+.up { color: green; }
+.down { color: red; }
+</style>
+
+</head>
+
+<div class="market-summary">
+    <h2>📈 Market Summary (임시 데이터)</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Index</th>
+            <th>Price</th>
+            <th>Change</th>
+            <th>Percent</th>
+        </tr>
+
+        <tr th:each="entry : ${summary}">
+            <td th:text="${entry.key}" 
+                th:if="${entry.key != 'FearGreed'}"></td>
+
+            <td th:text="${entry.value.price}" 
+                th:if="${entry.key != 'FearGreed'}"></td>
+
+            <td th:text="${entry.value.change}" 
+                th:if="${entry.key != 'FearGreed'}"
+                th:classappend="${entry.value.change >= 0} ? 'up' : 'down'"></td>
+
+            <td th:text="${entry.value.percent}" 
+                th:if="${entry.key != 'FearGreed'}"></td>
+        </tr>
+    </table>
+
+    <br>
+
+    <h3>😨 Fear & Greed Index</h3>
+    <p>
+        Score: <span th:text="${summary['FearGreed'].score}"></span><br>
+        Status: <strong th:text="${summary['FearGreed'].status}"></strong>
+    </p>
+</div>
+
+
+<body>
+
+</body>
+</html>
