@@ -4,7 +4,9 @@
 
     <link href="/css/footer.css" rel="stylesheet" type="text/css">
 
-	<link href="/css/header.css" rel="stylesheet" type="text/css">
+	<link href="/css/header.css" rel="stylesheet" type="text/css">\
+	
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -12,9 +14,15 @@
 <style>
 .up { color: green; }
 .down { color: red; }
+    #fearGreedGauge {
+        width: 250px !important;
+        height: 150px !important;
+    }
 </style>
 
 </head>
+
+<div th:replace="CommonFile/header :: header"></div>
 
 <div class="market-summary">
     <h2>📈 Market Summary (임시 데이터)</h2>
@@ -46,14 +54,62 @@
     <br>
 
     <h3>😨 Fear & Greed Index</h3>
+  
     <p>
         Score: <span th:text="${summary['FearGreed'].score}"></span><br>
         Status: <strong th:text="${summary['FearGreed'].status}"></strong>
     </p>
+   	
+   	 <canvas id="fearGreedGauge"></canvas>
+   
 </div>
+
+<div th:replace="CommonFile/footer :: footer"></div>
 
 
 <body>
 
 </body>
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const summary = /*[[${summary}]]*/ {};
+        const score = summary.FearGreed.score;
+
+        const ctx = document.getElementById("fearGreedGauge").getContext("2d");
+
+        new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: ["Score", "Remaining"],
+                datasets: [{
+                    data: [score, 100 - score],
+                    backgroundColor: [
+                        getColor(score), 
+                        "#e0e0e0"
+                    ],
+                    borderWidth: 0,
+                    circumference: 180,
+                    rotation: 270
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false }
+                },
+                cutout: "70%"
+            }
+        });
+
+        function getColor(score) {
+            if (score < 20) return "#d9534f";     // Extreme Fear
+            if (score < 40) return "#f0ad4e";     // Fear
+            if (score < 60) return "#5bc0de";     // Neutral
+            if (score < 80) return "#5cb85c";     // Greed
+            return "#2ecc71";                     // Extreme Greed
+        }
+    });
+</script>
+
 </html>
