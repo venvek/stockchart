@@ -111,11 +111,12 @@ public class MarketSummaryService {
 
 	                Map<String, Object> indexInfo = new HashMap<>();
 	                indexInfo.put("name", name);
-	                indexInfo.put("value", last);  // Double
-	                indexInfo.put("change", changePercent);  // Double
+	                indexInfo.put("value", last);            // 🔥 double
+	                indexInfo.put("change", changePercent);  // 🔥 double
 	                indexInfo.put("trend", trend);
 
 	                resultList.add(indexInfo);
+
 	            } catch (Exception e) {
 	                System.out.println("Error fetching: " + name + " / " + e.getMessage());
 	            }

@@ -49,6 +49,8 @@
     </style>
 </head>
 
+<div th:replace="CommonFile/header :: header"></div>
+
 <body>
 
 <h1>📈 시장 요약 + 공포·탐욕 지수</h1>
@@ -57,10 +59,16 @@
     <!-- 주요 지수 카드 -->
     <div th:each="index : ${indices}" class="card">
         <h3 th:text="${index.name}"></h3>
-        <div class="value" th:text="${index.value}"></div>
+        <div class="value"
+     th:text="${#numbers.formatDecimal(index.value * 1.0, 2, 2)}">
+</div>
 
-        <div th:class="'change ' + (${index.change} >= 0 ? 'positive' : 'negative')"
-             th:text="${index.change >= 0 ? '+' + index.change + '%' : index.change + '%'}"></div>
+      <div th:class="'change ' + (${index.change} >= 0 ? 'positive' : 'negative')"
+     th:text="${index.change >= 0 ?
+                '+' + #numbers.formatDecimal(index.change, 2, 2) + '%' :
+                    #numbers.formatDecimal(index.change, 2, 2) + '%'}">
+</div>
+
 
         <canvas th:attr="id=${index.name.replace(' ', '') + 'Chart'}"></canvas>
     </div>
