@@ -54,6 +54,12 @@ public class MarketSummaryService {
 	                "change", -12.15,
 	                "percent", "-0.46%"
 	        ));
+	        
+	        data.put("USD", Map.of(
+	                "price", 1473,
+	                "change", +6.1,
+	                "percent", "+0.42%"
+	        ));
 
 	        // 공포·탐욕지수(VIX 대신 Fear-Greed Index)
 	        data.put("FearGreed", Map.of(
@@ -85,6 +91,7 @@ public class MarketSummaryService {
 
 	    public List<Map<String, Object>> fetchMarketIndices() {
 	        List<Map<String, Object>> resultList = new ArrayList<>();
+	        
 
 	        for (var entry : INDICES.entrySet()) {
 	            String name = entry.getKey();

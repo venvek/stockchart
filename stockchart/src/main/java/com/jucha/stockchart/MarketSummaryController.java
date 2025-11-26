@@ -29,6 +29,16 @@ public class MarketSummaryController {
     @GetMapping("/market-summary")
     public String marketSummary(Model model) {
         List<Map<String, Object>> indices = marketSummaryService.fetchMarketIndices();
+        
+        // ⭐ USD 카드 추가 (임시 환율 1470원)
+        Map<String, Object> usd = new HashMap<>();
+        usd.put("name", "USD/KRW");
+        usd.put("value", 1470.0);   // 원화 기준
+        usd.put("change", 6.1);      // 변동률 %
+        usd.put("trend", List.of(1465.0, 1468.0, 1470.0));  // 임시 트렌드
+        
+        indices.add(usd);
+        
         model.addAttribute("indices", indices);
         model.addAttribute("updated", new java.util.Date());
         
