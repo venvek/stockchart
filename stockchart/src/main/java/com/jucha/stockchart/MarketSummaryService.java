@@ -19,7 +19,8 @@ public class MarketSummaryService {
 	        "S&P 500", "^GSPC",
 	        "NASDAQ", "^IXIC",
 	        "Dow Jones", "^DJI",
-	        "KOSPI", "^KS11"
+	        "KOSPI", "^KS11",
+	        "USD" , "DALLER"
 	    );
 
 	    private static final String API_URL =

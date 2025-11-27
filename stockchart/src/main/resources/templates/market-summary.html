@@ -91,11 +91,11 @@
     <div class="value"
          th:text="${#numbers.formatDecimal(index.value, 2, 2)}"></div>
 
-    <div th:class="'change ' + (index.change >= 0 ? 'positive' : 'negative')"
-         th:text="${index.change >= 0 ?
-                    '+' + #numbers.formatDecimal(index.change, 2, 2) + '%' :
-                         #numbers.formatDecimal(index.change, 2, 2) + '%'}">
-    </div>
+   <div th:class="'change ' + (index.change >= 0 ? 'positive' : 'negative')"
+     th:text="${index.change >= 0 ?
+                '+' + #numbers.formatDecimal(index.change, 2, 2) + '%' :
+                     #numbers.formatDecimal(index.change, 2, 2) + '%'}">
+</div>
 
     <canvas th:attr="id=${index.name.replace(' ', '') + 'Chart'}"></canvas>
 </div>
