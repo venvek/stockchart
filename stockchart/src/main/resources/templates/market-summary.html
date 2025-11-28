@@ -85,22 +85,6 @@
     </div>
 </div>
 
-<div th:each="index : ${indices}" class="card">
-    <h3 th:text="${index.name}"></h3>
-
-    <div class="value"
-         th:text="${#numbers.formatDecimal(index.value, 2, 2)}"></div>
-
-   <div th:class="'change ' + (index.change >= 0 ? 'positive' : 'negative')"
-     th:text="${index.change >= 0 ?
-                '+' + #numbers.formatDecimal(index.change, 2, 2) + '%' :
-                     #numbers.formatDecimal(index.change, 2, 2) + '%'}">
-</div>
-
-    <canvas th:attr="id=${index.name.replace(' ', '') + 'Chart'}"></canvas>
-</div>
-
-
 <p style="text-align:center; margin-top:30px;">
     마지막 업데이트: <span th:text="${updated}"></span>
 </p>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Market Heatmap</title>
+    
+    <link href="/css/footer.css" rel="stylesheet" type="text/css">
+    <link href="/css/header.css" rel="stylesheet" type="text/css">
+    
+    <style>
+        body {
+            background: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .heatmap-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .box {
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .positive {
+            background: rgba(0, 150, 0, 0.75);
+        }
+
+        .negative {
+            background: rgba(200, 0, 0, 0.75);
+        }
+
+        .box small {
+            display: block;
+            margin-top: 8px;
+            font-size: 15px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="CommonFile/header :: header"></div>
+
+<h1 style="text-align:center; margin-top:20px;">📊 Market Heatmap</h1>
+
+<div class="heatmap-container">
+
+    <div th:each="item : ${heatmap}"
+         th:class="'box ' + (item.change >= 0 ? 'positive' : 'negative')">
+
+        <div th:text="${item.name}"></div>
+
+        <small th:text="${item.change >= 0 ?
+                         '+' + item.change + '%' :
+                              item.change + '%'}"></small>
+    </div>
+
+</div>
+
+<div th:replace="CommonFile/footer :: footer"></div>
+
+</body>
+</html>

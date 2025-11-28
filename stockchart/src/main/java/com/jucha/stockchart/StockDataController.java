@@ -76,8 +76,19 @@ public class StockDataController {
     }
     
     @GetMapping("/heatmap")
-    public String heatmappage() {
-    	return "heatmap";
+    public String heatmap(Model model) {
+
+    	List<Map<String, Object>> heatmap = List.of(
+    	        Map.of("name", "S&P 500", "change", 1.25),
+    	        Map.of("name", "NASDAQ", "change", -0.85),
+    	        Map.of("name", "Dow Jones", "change", 0.42),
+    	        Map.of("name", "KOSPI","change", -1.11),
+    	        Map.of("name", "KOSDAQ", "change", 0.77),
+    	        Map.of("name", "USD/KRW", "change", 0.21)
+    	);
+
+        model.addAttribute("heatmap", heatmap);
+        return "heatmap";  
     }
     
     @GetMapping("/ohlc")
