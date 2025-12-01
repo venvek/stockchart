@@ -56,13 +56,15 @@
 <div class="heatmap-container">
 
     <div th:each="item : ${heatmap}"
-         th:class="'box ' + (item.change >= 0 ? 'positive' : 'negative')">
+        <div th:class="'box ' + ((#numbers.parseDecimal(item.change) >= 0) ? 'positive' : 'negative')">
+         
+         
 
         <div th:text="${item.name}"></div>
 
-        <small th:text="${item.change >= 0 ?
-                         '+' + item.change + '%' :
-                              item.change + '%'}"></small>
+<small th:text="${#numbers.parseDecimal(item.change) >= 0 ?
+                 '+' + item.change + '%' :
+                      item.change + '%'}"></small>
     </div>
 
 </div>
