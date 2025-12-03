@@ -7,66 +7,60 @@
     <link href="/css/footer.css" rel="stylesheet" type="text/css">
     <link href="/css/header.css" rel="stylesheet" type="text/css">
     
-    <style>
+ <style>
         body {
-            background: #111;
-            color: #fff;
+            background: #f9fafb;
             font-family: Arial, sans-serif;
+            padding: 30px;
         }
+        h1 { text-align: center; margin-bottom: 30px; }
 
-        .heatmap-container {
+        .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            padding: 20px;
+            gap: 15px;
         }
 
         .box {
-            border-radius: 10px;
             padding: 20px;
-            text-align: center;
-            font-size: 18px;
+            border-radius: 12px;
+            color: white;
             font-weight: bold;
-            color: #fff;
+            text-align: center;
         }
 
         .positive {
-            background: rgba(0, 150, 0, 0.75);
+            background: #10b981; /* 초록 */
         }
 
         .negative {
-            background: rgba(200, 0, 0, 0.75);
+            background: #ef4444; /* 빨강 */
         }
 
-        .box small {
-            display: block;
-            margin-top: 8px;
-            font-size: 15px;
-            opacity: 0.8;
+        .price {
+            font-size: 1.4em;
+            margin-bottom: 5px;
         }
     </style>
-</head>
 
+</head>
 <body>
 
 <div th:replace="CommonFile/header :: header"></div>
 
-<h1 style="text-align:center; margin-top:20px;">📊 Market Heatmap</h1>
+<h1>🔥 Market Heatmap</h1>
 
-<div class="heatmap-container">
-
+<div class="grid">
     <div th:each="item : ${heatmap}"
-        <div th:class="'box ' + ((#numbers.parseDecimal(item.change) >= 0) ? 'positive' : 'negative')">
-         
-         
+         class="box"
+         th:classappend="${item != null and item.change >= 0} ? ' positive' : ' negative'">
 
-        <div th:text="${item.name}"></div>
+        <div th:text="${item.name}">Name</div>
 
-<small th:text="${#numbers.parseDecimal(item.change) >= 0 ?
-                 '+' + item.change + '%' :
-                      item.change + '%'}"></small>
+        <div th:text="${#numbers.formatDecimal(item.change, 1, 2)} + '%'">
+            0%
+        </div>
     </div>
-
 </div>
 
 <div th:replace="CommonFile/footer :: footer"></div>
