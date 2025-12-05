@@ -7,60 +7,91 @@
     <link href="/css/footer.css" rel="stylesheet" type="text/css">
     <link href="/css/header.css" rel="stylesheet" type="text/css">
     
- <style>
-        body {
-            background: #f9fafb;
-            font-family: Arial, sans-serif;
-            padding: 30px;
-        }
-        h1 { text-align: center; margin-bottom: 30px; }
 
-        .grid {
+    <style>
+         .title {
+            font-size: 24px;
+            margin: 20px 0 10px;
+            font-weight: bold;
+        }
+
+        .heatmap-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 12px;
+            margin-bottom: 40px;
         }
 
         .box {
-            padding: 20px;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
+            padding: 16px;
+            border-radius: 10px;
             text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
         }
 
-        .positive {
-            background: #10b981; /* 초록 */
-        }
+        /* 색상 규칙 */
+        .very-positive { background: #0a8f0d; }
+        .positive      { background: #4caf50; }
+        .neutral       { background: #757575; }
+        .negative      { background: #e57373; }
+        .very-negative { background: #c62828; }
 
-        .negative {
-            background: #ef4444; /* 빨강 */
+        .name {
+            font-size: 16px;
+            margin-bottom: 6px;
+            opacity: 0.9;
         }
-
-        .price {
-            font-size: 1.4em;
-            margin-bottom: 5px;
+        .value {
+            font-size: 22px;
         }
     </style>
-
 </head>
 <body>
 
 <div th:replace="CommonFile/header :: header"></div>
 
-<h1>🔥 Market Heatmap</h1>
+<div class="title">📊 글로벌 지수 히트맵</div>
 
-<div class="grid">
-    <div th:each="item : ${heatmap}"
-         class="box"
-         th:classappend="${item != null and item.change >= 0} ? ' positive' : ' negative'">
+<div class="heatmap-grid">
+    <th:block th:each="item : ${indices}">
+        <div class="box"
+             th:with="chg=${item.change + 0}"
+             th:classappend="${
+                chg >= 1 ? ' very-positive' :
+                (chg >= 0.3 ? ' positive' :
+                (chg >= -0.3 ? ' neutral' :
+                (chg >= -1 ? ' negative' : ' very-negative')))
+             }">
 
-        <div th:text="${item.name}">Name</div>
-
-        <div th:text="${#numbers.formatDecimal(item.change, 1, 2)} + '%'">
-            0%
+            <div class="name" th:text="${item.name}"></div>
+            <div class="value" th:text="${chg + '%'}"></div>
         </div>
-    </div>
+    </th:block>
+</div>
+
+
+<!-- =============================== -->
+<!-- 🔥 업종별 히트맵 -->
+<!-- =============================== -->
+<div class="title">🏭 업종별 히트맵</div>
+
+<div class="heatmap-grid">
+    <th:block th:each="item : ${sectors}">
+        <div class="box"
+             th:with="chg=${item.change + 0}"
+             th:classappend="${
+                chg >= 1 ? ' very-positive' :
+                (chg >= 0.3 ? ' positive' :
+                (chg >= -0.3 ? ' neutral' :
+                (chg >= -1 ? ' negative' : ' very-negative')))
+             }">
+
+            <div class="name" th:text="${item.name}"></div>
+            <div class="value" th:text="${chg + '%'}"></div>
+        </div>
+    </th:block>
 </div>
 
 <div th:replace="CommonFile/footer :: footer"></div>
