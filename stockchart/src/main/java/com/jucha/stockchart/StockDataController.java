@@ -92,7 +92,10 @@ public class StockDataController {
     	        Map.of("name", "기술", "change", 2.3),
     	        Map.of("name", "금융", "change", -0.8),
     	        Map.of("name", "헬스케어", "change", 0.4),
-    	        Map.of("name", "소재", "change", -1.7)
+    	        Map.of("name", "소재", "change", -1.7),
+    	        Map.of("name", "정유", "change", 1.2),
+    	        Map.of("name", "반도체", "change", 2.7)
+    	        
     	    );
 
     	    model.addAttribute("indices", indices);

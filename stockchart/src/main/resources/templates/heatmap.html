@@ -9,44 +9,70 @@
     
 
     <style>
-         .title {
-            font-size: 24px;
-            margin: 20px 0 10px;
-            font-weight: bold;
-        }
+	body {
+	font-family: "Inter", sans-serif;
+	background: #0d1117;
+	color: #e6edf3;
+	margin: 0;
+	padding: 20px;
+	}
+	h1 {
+	margin-bottom: 20px;
+	}
+	.sector {
+	margin-bottom: 40px;
+	}
+	.sector-title {
+	margin-bottom: 10px;
+	font-size: 22px;
+	color: #e6edf3;
+	}
+	.grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	}
+	.box { 
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: white;
+    font-weight: bold;
+}
 
-        .heatmap-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 40px;
-        }
-
-        .box {
-            padding: 16px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-        }
-
-        /* 색상 규칙 */
-        .very-positive { background: #0a8f0d; }
-        .positive      { background: #4caf50; }
-        .neutral       { background: #757575; }
-        .negative      { background: #e57373; }
-        .very-negative { background: #c62828; }
-
-        .name {
-            font-size: 16px;
-            margin-bottom: 6px;
-            opacity: 0.9;
-        }
-        .value {
-            font-size: 22px;
-        }
-    </style>
+	.strong-pos { background-color: #089981; }
+	.weak-pos   { background-color: #0ecf9d; }
+	.weak-neg   { background-color: #f23645; }
+	.strong-neg { background-color: #b6242e; }
+	.box:hover {
+	transform: scale(1.05);
+	z-index: 10;
+	}
+	/* TradingView-style heat colors */
+	.up-strong { background: #00a25b; }
+	.up { background: #089981; }
+	.neutral { background: #666; }
+	.down { background: #f23645; }
+	.down-strong { background: #c22532; }
+	/* Tooltip */
+	.tooltip {
+	visibility: hidden;
+	background: rgba(0, 0, 0, 0.85);
+	color: #fff;
+	padding: 6px 10px;
+	border-radius: 4px;
+	font-size: 13px;
+	position: absolute;
+	z-index: 20;
+	bottom: 110%;
+	left: 50%;
+	transform: translateX(-50%);
+	white-space: nowrap;
+	}
+	.box:hover .tooltip {
+	visibility: visible;
+	}
+	</style>
 </head>
 <body>
 
@@ -93,6 +119,8 @@
         </div>
     </th:block>
 </div>
+
+
 
 <div th:replace="CommonFile/footer :: footer"></div>
 
