@@ -84,8 +84,7 @@ public class StockDataController {
     	        Map.of("name", "Dow Jones", "change", 0.42),
     	        Map.of("name", "KOSPI","change", -1.11),
     	        Map.of("name", "KOSDAQ", "change", 0.77),
-    	        Map.of("name", "USD/KRW", "change", 0.21),
-    	        Map.of("name", "qqq", "change", 1.21)
+    	        Map.of("name", "USD/KRW", "change", 1.21)
     	);
     	
     	List<Map<String, Object>> sectors = List.of(
