@@ -93,7 +93,8 @@ public class StockDataController {
     	        Map.of("name", "헬스케어", "change", 0.4),
     	        Map.of("name", "소재", "change", -1.7),
     	        Map.of("name", "정유", "change", 1.2),
-    	        Map.of("name", "반도체", "change", 2.7)
+    	        Map.of("name", "반도체", "change", 2.7),
+    	        Map.of("name", "소비재", "change", -1.4)
     	        
     	    );
 

@@ -9,240 +9,100 @@
     
 
     <style>
-    .very-positive { background-color: #00a25b; }
-.positive      { background-color: #089981; }
-.neutral       { background-color: #6a737d; }
-.negative      { background-color: #f23645; }
-.very-negative { background-color: #c22532; }
-	body {
-	font-family: "Inter", sans-serif;
-	background: #0d1117;
-	color: #e6edf3;
-	margin: 0;
-	padding: 20px;
-	}
-	h1 {
-	margin-bottom: 20px;
-	}
-	.sector {
-	margin-bottom: 40px;
-	}
-	.sector-title {
-	margin-bottom: 10px;
-	font-size: 22px;
-	color: #e6edf3;
-	}
-	.grid {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	}
-	.box { 
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    color: white;
-    font-weight: bold;
+body {
+    font-family: Inter, sans-serif;
+    color: #e6edf3;
+    margin: 0;
+    padding: 20px;
 }
 
-	.strong-pos { background-color: #089981; }
-	.weak-pos   { background-color: #0ecf9d; }
-	.weak-neg   { background-color: #f23645; }
-	.strong-neg { background-color: #b6242e; }
-	.box:hover {
-	transform: scale(1.05);
-	z-index: 10;
-	}
-	/* TradingView-style heat colors */
-	.up-strong { background: #00a25b; }
-	.up { background: #089981; }
-	.neutral { background: #666; }
-	.down { background: #f23645; }
-	.down-strong { background: #c22532; }
-	/* Tooltip */
-	.tooltip {
-	visibility: hidden;
-	background: rgba(0, 0, 0, 0.85);
-	color: #fff;
-	padding: 6px 10px;
-	border-radius: 4px;
-	font-size: 13px;
-	position: absolute;
-	z-index: 20;
-	bottom: 110%;
-	left: 50%;
-	transform: translateX(-50%);
-	white-space: nowrap;
-	}
-	.box:hover .tooltip {
-	visibility: visible;
-	}
-	</style>
+/* Title */
+.title {
+    font-size: 24px;
+    margin: 30px 0 15px;
+}
+
+/* Grid */
+.heatmap-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Box */
+.box {
+    padding: 14px;
+    border-radius: 10px;
+    min-width: 120px;
+    text-align: center;
+    font-weight: 600;
+    color: #e6edf3;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+}
+
+.very-positive { background: #1f7a4d; }
+.positive      { background: #2e9f6f; }
+.neutral       { background: #2b3137; }
+.negative      { background: #b23a48; }
+.very-negative { background: #7a1f2a; }
+
+.name {
+    font-size: 15px;
+}
+
+.value {
+    font-size: 13px;
+    opacity: 0.9;
+}
+</style>
+
 </head>
 <body>
 
 <div th:replace="CommonFile/header :: header"></div>
 
+<!-- 📊 글로벌 지수 -->
 <div class="title">📊 글로벌 지수 히트맵</div>
-
 <div class="heatmap-grid">
-    <th:block th:each="item : ${indices}">
-        <div class="box"
-             th:with="chg=${item.change + 0}"
-             th:classappend="${
-                chg >= 1 ? ' very-positive' :
-                (chg >= 0.3 ? ' positive' :
-                (chg >= -0.3 ? ' neutral' :
-                (chg >= -1 ? ' negative' : ' very-negative')))
-             }">
-
-            <div class="name" th:text="${item.name}"></div>
-            <div class="value" th:text="${chg + '%'}"></div>
-        </div>
-    </th:block>
+    <div class="box"
+         th:each="item : ${indices}"
+         th:with="chg=${item.change}"
+         th:classappend="${
+            chg >= 1 ? ' very-positive' :
+            (chg >= 0.3 ? ' positive' :
+            (chg >= -0.3 ? ' neutral' :
+            (chg >= -1 ? ' negative' : ' very-negative')))
+         }">
+        <div class="name" th:text="${item.name}"></div>
+        <div class="value" th:text="${chg + '%'}"></div>
+    </div>
 </div>
 
-
-<!-- =============================== -->
-<!-- 🔥 업종별 히트맵 -->
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Market Heatmap</title>
-    
-    <link href="/css/footer.css" rel="stylesheet" type="text/css">
-    <link href="/css/header.css" rel="stylesheet" type="text/css">
-    
-
-    <style>
-	body {
-	font-family: "Inter", sans-serif;
-	background: #0d1117;
-	color: #e6edf3;
-	margin: 0;
-	padding: 20px;
-	}
-	h1 {
-	margin-bottom: 20px;
-	}
-	.sector {
-	margin-bottom: 40px;
-	}
-	.sector-title {
-	margin-bottom: 10px;
-	font-size: 22px;
-	color: #e6edf3;
-	}
-	.grid {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	}
-	.box { 
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    color: white;
-    font-weight: bold;
-}
-
-	.strong-pos { background-color: #089981; }
-	.weak-pos   { background-color: #0ecf9d; }
-	.weak-neg   { background-color: #f23645; }
-	.strong-neg { background-color: #b6242e; }
-	.box:hover {
-	transform: scale(1.05);
-	z-index: 10;
-	}
-	/* TradingView-style heat colors */
-	.up-strong { background: #00a25b; }
-	.up { background: #089981; }
-	.neutral { background: #666; }
-	.down { background: #f23645; }
-	.down-strong { background: #c22532; }
-	/* Tooltip */
-	.tooltip {
-	visibility: hidden;
-	background: rgba(0, 0, 0, 0.85);
-	color: #fff;
-	padding: 6px 10px;
-	border-radius: 4px;
-	font-size: 13px;
-	position: absolute;
-	z-index: 20;
-	bottom: 110%;
-	left: 50%;
-	transform: translateX(-50%);
-	white-space: nowrap;
-	}
-	.box:hover .tooltip {
-	visibility: visible;
-	}
-	</style>
-</head>
-<body>
-
-<div th:replace="CommonFile/header :: header"></div>
-
-<div class="title">📊 글로벌 지수 히트맵</div>
-
-<div class="heatmap-grid">
-    <th:block th:each="item : ${indices}">
-        <div class="box"
-             th:with="chg=${item.change + 0}"
-             th:classappend="${
-                chg >= 1 ? ' very-positive' :
-                (chg >= 0.3 ? ' positive' :
-                (chg >= -0.3 ? ' neutral' :
-                (chg >= -1 ? ' negative' : ' very-negative')))
-             }">
-
-            <div class="name" th:text="${item.name}"></div>
-            <div class="value" th:text="${chg + '%'}"></div>
-        </div>
-    </th:block>
-</div>
-
-
-<!-- =============================== -->
-<!-- 🔥 업종별 히트맵 -->
-<!-- =============================== -->
+<!-- 🏭 업종 -->
 <div class="title">🏭 업종별 히트맵</div>
-
 <div class="heatmap-grid">
-    <th:block th:each="item : ${sectors}">
-        <div class="box"
-             th:with="chg=${item.change + 0}"
-             th:classappend="${
-                chg >= 1 ? ' very-positive' :
-                (chg >= 0.3 ? ' positive' :
-                (chg >= -0.3 ? ' neutral' :
-                (chg >= -1 ? ' negative' : ' very-negative')))
-             }">
-
-            <div class="name" th:text="${item.name}"></div>
-            <div class="value" th:text="${chg + '%'}"></div>
-        </div>
-    </th:block>
-</div>
-
-<div class="box"
-     th:with="chg=${#numbers.parseDecimal(item.change)}"
-     th:class="'box ' + 
-        (chg > 1 ? 'strong-pos' :
-        (chg > 0 ? 'weak-pos' :
-        (chg > -1 ? 'weak-neg' : 'strong-neg')))">
-    <span th:text="${item.name}"></span>
-    <span th:text="${item.change + '%'}"></span>
+    <div class="box"
+         th:each="item : ${sectors}"
+         th:with="chg=${item.change}"
+         th:classappend="${
+            chg >= 1 ? ' very-positive' :
+            (chg >= 0.3 ? ' positive' :
+            (chg >= -0.3 ? ' neutral' :
+            (chg >= -1 ? ' negative' : ' very-negative')))
+         }">
+        <div class="name" th:text="${item.name}"></div>
+        <div class="value" th:text="${chg + '%'}"></div>
+    </div>
 </div>
 
 
-
-<div th:replace="CommonFile/footer :: footer"></div>
-
-</body>
-</html>
 
 
 
