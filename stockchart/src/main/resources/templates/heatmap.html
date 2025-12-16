@@ -22,24 +22,24 @@ body {
     margin: 30px 0 15px;
 }
 
-/* Grid */
 .heatmap-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
 }
 
-/* Box */
+/* 기본 박스 */
 .box {
-    padding: 14px;
     border-radius: 10px;
-    min-width: 120px;
-    text-align: center;
-    font-weight: 600;
+    padding: 14px;
     color: #e6edf3;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 90px;
 
     box-shadow: 0 4px 10px rgba(0,0,0,0.35);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .box:hover {
@@ -102,6 +102,27 @@ body {
     </div>
 </div>
 
+<div class="title">시총별 크기나누기</div>
+<div class="heatmap-grid">
+    <th:block th:each="item : ${indices}">
+        <div class="box"
+             th:with="
+                chg=${item.change + 0},
+                size=${item.cap}
+             "
+             th:style="'flex-grow:' + ${size}"
+             th:classappend="${
+                chg >= 1 ? ' very-positive' :
+                (chg >= 0.3 ? ' positive' :
+                (chg >= -0.3 ? ' neutral' :
+                (chg >= -1 ? ' negative' : ' very-negative')))
+             }">
+
+            <div class="name" th:text="${item.name}"></div>
+            <div class="value" th:text="${chg + '%'}"></div>
+        </div>
+    </th:block>
+</div>
 
 
 

@@ -78,14 +78,15 @@ public class StockDataController {
     @GetMapping("/heatmap")
     public String heatmap(Model model) {
 
+    	
     	List<Map<String, Object>> indices = List.of(
-    	        Map.of("name", "S&P 500", "change", 1.25),
-    	        Map.of("name", "NASDAQ", "change", -0.85),
-    	        Map.of("name", "Dow Jones", "change", 0.42),
-    	        Map.of("name", "KOSPI","change", -1.11),
-    	        Map.of("name", "KOSDAQ", "change", 0.77),
-    	        Map.of("name", "USD/KRW", "change", 1.21)
-    	);
+    	        Map.of("name", "S&P 500", "change", 1.25, "cap", 45000),
+    	        Map.of("name","NASDAQ", "change", -0.85, "cap", 30000),
+    	        Map.of("name","Dow Jones", "change", 0.42, "cap", 28000),
+    	        Map.of("name","KOSPI", "change", -1.11, "cap", 18000),
+    	        Map.of("name","KOSDAQ", "change", 0.77, "cap", 9000),
+    	        Map.of("name","USD/KRW", "change", 1.21, "cap", 6000)
+    	    );
     	
     	List<Map<String, Object>> sectors = List.of(
     	        Map.of("name", "기술", "change", 2.3),
