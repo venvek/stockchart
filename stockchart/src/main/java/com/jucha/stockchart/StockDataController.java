@@ -80,13 +80,15 @@ public class StockDataController {
 
     	
     	List<Map<String, Object>> indices = List.of(
-    	        Map.of("name", "S&P 500", "change", 1.25, "cap", 45000),
-    	        Map.of("name","NASDAQ", "change", -0.85, "cap", 30000),
-    	        Map.of("name","Dow Jones", "change", 0.42, "cap", 28000),
-    	        Map.of("name","KOSPI", "change", -1.11, "cap", 18000),
-    	        Map.of("name","KOSDAQ", "change", 0.77, "cap", 9000),
-    	        Map.of("name","USD/KRW", "change", 1.21, "cap", 6000)
+    			  Map.of("name", "기술", "change", 1.42, "cap", 32000, "volume", "2.3T", "leaders", "AAPL, MSFT"),
+    		        Map.of("name","금융", "change", -0.35, "cap", 24000, "volume", "1.4T", "leaders", "JPM, BAC"),
+    		        Map.of("name","헬스케어", "change", 0.18, "cap", 19000, "volume", "980B", "leaders", "JNJ, PFE"),
+    		        Map.of("name","소재", "change", -1.22, "cap", 14000, "volume", "620B", "leaders", "BHP, RIO"),
+    		        Map.of("name","에너지", "change", 0.92, "cap", 17000, "volume", "1.1T", "leaders", "XOM, CVX"),
+    		        Map.of("name","커뮤니케이션", "change", -0.61, "cap", 21000, "volume", "1.6T", "leaders", "GOOGL, META")
     	    );
+    	
+    	
     	
     	List<Map<String, Object>> sectors = List.of(
     	        Map.of("name", "기술", "change", 2.3),

@@ -30,21 +30,35 @@ body {
 
 /* 기본 박스 */
 .box {
-    border-radius: 10px;
-    padding: 14px;
-    color: #e6edf3;
-    font-weight: 600;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 90px;
-
-    box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+    position: relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .box:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+    transform: scale(1.06);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    z-index: 5;
+}
+
+/* Tooltip */
+.tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 15, 20, 0.95);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    width: max-content;
+    white-space: nowrap;
+}
+
+.box:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
 }
 
 .very-positive { background: #1f7a4d; }
@@ -87,24 +101,9 @@ body {
 
 <!-- 🏭 업종 -->
 <div class="title">🏭 업종별 히트맵</div>
-<div class="heatmap-grid">
-    <div class="box"
-         th:each="item : ${sectors}"
-         th:with="chg=${item.change}"
-         th:classappend="${
-            chg >= 1 ? ' very-positive' :
-            (chg >= 0.3 ? ' positive' :
-            (chg >= -0.3 ? ' neutral' :
-            (chg >= -1 ? ' negative' : ' very-negative')))
-         }">
-        <div class="name" th:text="${item.name}"></div>
-        <div class="value" th:text="${chg + '%'}"></div>
-    </div>
-</div>
 
-<div class="title">시총별 크기나누기</div>
 <div class="heatmap-grid">
-    <th:block th:each="item : ${indices}">
+    <th:block th:each="item : ${sectors}">
         <div class="box"
              th:with="
                 chg=${item.change + 0},
@@ -120,6 +119,14 @@ body {
 
             <div class="name" th:text="${item.name}"></div>
             <div class="value" th:text="${chg + '%'}"></div>
+
+            <!-- 🔥 Hover Tooltip -->
+            <div class="tooltip">
+                <div>시총 비중: <span th:text="${item.cap}"></span></div>
+                <div>거래대금: <span th:text="${item.volume}"></span></div>
+                <div>대표 종목: <span th:text="${item.leaders}"></span></div>
+            </div>
+
         </div>
     </th:block>
 </div>
